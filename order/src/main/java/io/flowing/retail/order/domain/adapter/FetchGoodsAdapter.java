@@ -1,4 +1,4 @@
-package io.flowing.retail.order.application.adapter;
+package io.flowing.retail.order.domain.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,12 @@ import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.flowing.retail.order.application.adapter.base.CommandPubEventSubAdapter;
 import io.flowing.retail.order.domain.Order;
 import io.flowing.retail.order.domain.OrderItem;
-import io.flowing.retail.order.domain.OrderRepository;
+import io.flowing.retail.order.domain.adapter.base.CommandPubEventSubAdapter;
 import io.flowing.retail.order.port.Message;
-import io.flowing.retail.order.port.MessageSender;
+import io.flowing.retail.order.port.outbound.MessageSender;
+import io.flowing.retail.order.repository.OrderRepository;
 
 @Component
 public class FetchGoodsAdapter extends CommandPubEventSubAdapter {
@@ -30,39 +30,13 @@ public class FetchGoodsAdapter extends CommandPubEventSubAdapter {
 
     addMessageSubscription(execution, "GoodsFetchedEvent");
     
-    messageSender.send(new Message<FetchGoodsCommand>( //
+    messageSender.send(new Message<FetchGoodsCommandPayload>( //
             "FetchGoodsCommand", //
-            new FetchGoodsCommand() //
+            new FetchGoodsCommandPayload() //
               .setRefId(order.getId()) //
               .setItems(order.getItems()), //
             traceId));
   }  
 
-  public static class FetchGoodsCommand {
-    private String refId;
-    private String reason = "CustomerOrder";
-    private List<OrderItem> items = new ArrayList<>();
-    public String getRefId() {
-      return refId;
-    }
-    public FetchGoodsCommand setRefId(String refId) {
-      this.refId = refId;
-      return this;
-    }
-    public String getReason() {
-      return reason;
-    }
-    public FetchGoodsCommand setReason(String reason) {
-      this.reason = reason;
-      return this;
-    }
-    public List<OrderItem> getItems() {
-      return items;
-    }
-    public FetchGoodsCommand setItems(List<OrderItem> items) {
-      this.items = items;
-      return this;
-    }
-
-  }
+  
 }

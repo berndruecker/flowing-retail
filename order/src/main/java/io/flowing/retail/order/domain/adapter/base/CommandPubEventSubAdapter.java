@@ -1,4 +1,4 @@
-package io.flowing.retail.order.application.adapter.base;
+package io.flowing.retail.order.domain.adapter.base;
 
 import org.camunda.bpm.engine.impl.bpmn.behavior.AbstractBpmnActivityBehavior;
 import org.camunda.bpm.engine.impl.event.EventType;
@@ -7,7 +7,7 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
 
 import io.flowing.retail.order.domain.Order;
-import io.flowing.retail.order.domain.OrderRepository;
+import io.flowing.retail.order.repository.OrderRepository;
 
 public class CommandPubEventSubAdapter extends AbstractBpmnActivityBehavior {
     

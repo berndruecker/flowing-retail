@@ -1,4 +1,4 @@
-package io.flowing.retail.order.domain;
+package io.flowing.retail.order.repository;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.UUID;
 import javax.inject.Singleton;
 
 import org.springframework.stereotype.Component;
+
+import io.flowing.retail.order.domain.Order;
 
 @Component
 @Singleton

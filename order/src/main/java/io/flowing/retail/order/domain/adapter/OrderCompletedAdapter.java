@@ -1,4 +1,4 @@
-package io.flowing.retail.order.application.adapter;
+package io.flowing.retail.order.domain.adapter;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.flowing.retail.order.domain.Order;
-import io.flowing.retail.order.domain.OrderRepository;
 import io.flowing.retail.order.port.Message;
-import io.flowing.retail.order.port.MessageSender;
+import io.flowing.retail.order.port.outbound.MessageSender;
+import io.flowing.retail.order.repository.OrderRepository;
 
 @Component
 public class OrderCompletedAdapter implements JavaDelegate {
@@ -23,22 +23,13 @@ public class OrderCompletedAdapter implements JavaDelegate {
     String traceId = (String)execution.getVariable("traceId"); // Business key?
 
     messageSender.send( //
-        new Message<OrderCompletedEvent>( //
+        new Message<OrderCompletedEventPayload>( //
             "OrderCompletedEvent", //
-            new OrderCompletedEvent() //
+            new OrderCompletedEventPayload() //
               .setOrderId(orderId), //
             traceId));
   }
 
-  public static class OrderCompletedEvent {
-    private String orderId;
-    public String getOrderId() {
-      return orderId;
-    }
-    public OrderCompletedEvent setOrderId(String orderId) {
-      this.orderId = orderId;
-      return this;
-    }
-  }
+  
 
 }

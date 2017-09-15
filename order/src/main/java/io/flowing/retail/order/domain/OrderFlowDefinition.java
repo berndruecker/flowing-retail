@@ -1,4 +1,4 @@
-package io.flowing.retail.order.application;
+package io.flowing.retail.order.domain;
 
 import javax.annotation.PostConstruct;
 
@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import io.flowing.retail.order.application.adapter.FetchGoodsAdapter;
-import io.flowing.retail.order.application.adapter.OrderCompletedAdapter;
-import io.flowing.retail.order.application.adapter.RetrievePaymentAdapter;
-import io.flowing.retail.order.application.adapter.ShipGoodsAdapter;
+import io.flowing.retail.order.domain.adapter.FetchGoodsAdapter;
+import io.flowing.retail.order.domain.adapter.OrderCompletedAdapter;
+import io.flowing.retail.order.domain.adapter.RetrievePaymentAdapter;
+import io.flowing.retail.order.domain.adapter.ShipGoodsAdapter;
 
 @Configuration
-public class CamundaFlowDefinition {
+public class OrderFlowDefinition {
 
   @Autowired
   private ProcessEngine engine;

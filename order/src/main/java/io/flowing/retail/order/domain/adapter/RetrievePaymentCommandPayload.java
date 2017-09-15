@@ -1,6 +1,6 @@
-package io.flowing.retail.order.application.adapter;
+package io.flowing.retail.order.domain.adapter;
 
-public class RetrievePaymentPayload {
+public class RetrievePaymentCommandPayload {
   
   private String refId;
   private String reason;
@@ -9,21 +9,21 @@ public class RetrievePaymentPayload {
   public String getRefId() {
     return refId;
   }
-  public RetrievePaymentPayload setRefId(String refId) {
+  public RetrievePaymentCommandPayload setRefId(String refId) {
     this.refId = refId;
     return this;
   }
   public String getReason() {
     return reason;
   }
-  public RetrievePaymentPayload setReason(String reason) {
+  public RetrievePaymentCommandPayload setReason(String reason) {
     this.reason = reason;
     return this;
   }
   public int getAmount() {
     return amount;
   }
-  public RetrievePaymentPayload setAmount(int amount) {
+  public RetrievePaymentCommandPayload setAmount(int amount) {
     this.amount = amount;
     return this;
   }

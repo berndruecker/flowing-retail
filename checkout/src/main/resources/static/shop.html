@@ -15,7 +15,7 @@
               data: {}
           }).done(function(result) {
             count = count+1;
-            $('#thanks').html('Thank you for order #' + count + '.<br>Transaction id: <b>' + JSON.parse(result).transactionId + '</b>');
+            $('#thanks').html('Thank you for order #' + count + '.<br>Trace id: <b>' + JSON.parse(result).traceId + '</b>');
           })
 		}
 	</script>

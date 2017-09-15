@@ -1,4 +1,4 @@
-package io.flowing.retail.order.port;
+package io.flowing.retail.order.port.inbound;
 
 import java.io.IOException;
 
@@ -16,7 +16,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.flowing.retail.order.domain.Order;
-import io.flowing.retail.order.domain.OrderRepository;
+import io.flowing.retail.order.port.Message;
+import io.flowing.retail.order.repository.OrderRepository;
 
 @Component
 @EnableBinding(Sink.class)
@@ -27,21 +28,19 @@ public class MessageListener {
   
   @Autowired
   private ProcessEngine camunda;
-
-  
-//  @StreamListener(target = Sink.INPUT)
-//  @Transactional
-//  public void orderPlacedReceived1(String orderPlacedEventJsonString) throws JsonParseException, JsonMappingException, IOException {
-//    Message<Order> orderPlacedEvent = new ObjectMapper().readValue(orderPlacedEventJsonString, new TypeReference<Message<Order>>(){});
-//    Order order = orderPlacedEvent.getPayload();
-//    System.out.println(order);
-//  }
     
+  /**
+   * Handles incoming OrderPlacedEvents. 
+   * 
+   *  Using the conditional {@link StreamListener} from 
+   * https://github.com/spring-cloud/spring-cloud-stream/blob/master/spring-cloud-stream-core-docs/src/main/asciidoc/spring-cloud-stream-overview.adoc
+   * in a way close to what Axion
+   *  would do (see e.g. https://dturanski.wordpress.com/2017/03/26/spring-cloud-stream-for-event-driven-architectures/)
+   */
   @StreamListener(target = Sink.INPUT, 
       condition="payload.messageType.toString()=='OrderPlacedEvent'")
   @Transactional
   public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-//    System.out.println(orderPlacedEvent);    
     Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>(){});
     Order order = message.getPayload();
     System.out.println(order);
@@ -57,7 +56,6 @@ public class MessageListener {
   /**
    * Very generic listener for simplicity. It might make very much sense to
    * handle each and every message type individually.
-   * @param message
    */
   @StreamListener(target = Sink.INPUT, 
       condition="payload.messageType.toString().endsWith('Event')")

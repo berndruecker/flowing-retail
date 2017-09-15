@@ -1,4 +1,4 @@
-package io.flowing.retail.order.port;
+package io.flowing.retail.order.port.outbound;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -9,6 +9,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.flowing.retail.order.port.Message;
 
 @Component
 @EnableBinding(Source.class)

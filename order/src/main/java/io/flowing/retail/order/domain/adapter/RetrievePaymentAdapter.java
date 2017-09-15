@@ -1,14 +1,14 @@
-package io.flowing.retail.order.application.adapter;
+package io.flowing.retail.order.domain.adapter;
 
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.flowing.retail.order.application.adapter.base.CommandPubEventSubAdapter;
 import io.flowing.retail.order.domain.Order;
-import io.flowing.retail.order.domain.OrderRepository;
+import io.flowing.retail.order.domain.adapter.base.CommandPubEventSubAdapter;
 import io.flowing.retail.order.port.Message;
-import io.flowing.retail.order.port.MessageSender;
+import io.flowing.retail.order.port.outbound.MessageSender;
+import io.flowing.retail.order.repository.OrderRepository;
 
 @Component
 public class RetrievePaymentAdapter extends CommandPubEventSubAdapter {
@@ -27,9 +27,9 @@ public class RetrievePaymentAdapter extends CommandPubEventSubAdapter {
     addMessageSubscription(execution, "PaymentReceivedEvent");
     
     messageSender.send( //
-        new Message<RetrievePaymentPayload>( //
+        new Message<RetrievePaymentCommandPayload>( //
             "RetrievePaymentCommand", //
-            new RetrievePaymentPayload() //
+            new RetrievePaymentCommandPayload() //
               .setRefId(order.getId()) //
               .setAmount(order.getTotalSum()), //
             execution.getBusinessKey()));
