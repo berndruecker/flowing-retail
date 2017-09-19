@@ -1,0 +1,74 @@
+<html>
+<head>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+    <script src="/app.js"></script>
+</head>
+<body>   
+
+<div id="main-content" class="container">
+    <div class="row">
+    	<h1>Flowing retail event monitor</h1>
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <button id="connect" class="btn btn-default" type="submit">Connect websocket</button>
+                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect websocket
+                    </button>
+                </div>
+            </form>
+        </div>   
+            <!-- Popup 
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document" style="width: 90%; ">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Event details</h4>
+                  </div>
+                  <div id="popupPanel" class="modal-body" >
+                    <div id="eventDetails">HALLO</div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Transaction</th>
+                    <th>Event flow</th>
+                </tr>
+                </thead>
+                <tbody id="events">
+                </tbody>
+            </table>
+        </div>
+    </div> 
+    </form>
+</div>
+</body>
+<script type="text/javascript">
+
+		function load() {
+			 $.ajax({
+              url: "./event",
+              type: "get",
+          }).done(function(eventList) {
+            for (var index = 0; index < eventList.length; ++index) {
+			    console.log(eventList[index]);
+			}
+          })
+		}
+</script> 
+
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+      
+  <!-- own CCS style for highlight of activity - color can be easily changed here -->
+  <style type="text/css">
+  .djs-container .highlight .djs-outline {
+     stroke-width: 2px important;
+     stroke: #08c !important;
+     fill: rgba(82,180,21,0.35) !important;
+  }
+  .djs-container .highlight .djs-visual>:nth-child(1) {
+     fill: rgba(82,180,21,0.35) !important;
+  }
+  .bpmn-badge {
+      display: inline-block;
+      min-width: 10px;
+      padding: 3px 7px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      line-height: 1;
+      vertical-align: baseline;
+      white-space: nowrap;
+      text-align: center;
+      background-color: #777;
+      border-radius: 10px;
+      border-width: 1px;
+      border-style: solid;
+      background-color: #52b415; // bpmn.io #610000 // camunda
+      border-color: #143d52;
+      color: #143d52;
+    } 
+    .bpmn-badge-error {
+        background-color: #e41717;
+    }
+  </style>
+
+  <link type="text/css" rel="stylesheet" href="webjars/bootstrap/css/bootstrap.css" />
+  
+  <!-- load jquery and bpmn-js dependencies -->
+  <script type="text/javascript" src="webjars/jquery/jquery.js"></script>
+ 
+  <!-- bpmn-js viewer -->
+  <script type="text/javascript" src="webjars/bpmn-js/dist/bpmn-navigated-viewer.js"></script>
+  <link type="text/css" rel="stylesheet" href="webjars/bpmn-js/dist/assets/diagram-js.css" />
+  <link type="text/css" rel="stylesheet" href="webjars/bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css" />
+  <!--
+  <link type="text/css" rel="stylesheet" href="resources/css/modeler.css" />
+  -->
+</head>
+<body>
+  <div id="bpmnViewer">
+      <div class="content" id="js-drop-zone">        
+      </div> 
+   
+  </div>
+</div>
+<script>
+  var BpmnViewer = window.BpmnJS;  
+  //var restAccess = "/rest/engine/default";  
+  var restAccess = "http://localhost:8080/engine-rest/engine/default";  
+  var processViewers = {};
+  var transactionId = getUrlParameterByName("transactionId");
+
+  $(document).ready(function() {
+    loadModels();
+  });
+
+  function loadModels() {
+    $.get(restAccess + '/history/process-instance/?variables=transactionId_eq_' + transactionId + '&sortBy=startTime&sortOrder=asc', 
+      function(processInstances) {
+        for (var index = 0; index < processInstances.length; ++index) {
+            var pi = processInstances[index];
+            $.ajax({
+              type: "GET",
+              url: restAccess + '/process-definition/' + pi.processDefinitionId + '/xml',
+              processInstance: pi,
+              index: index,
+              success: function (data) {
+                createViewer(data.bpmn20Xml, this.processInstance, this.index);
+              }
+            });     
+        }
+      }
+    );    
+  }
+
+  function createViewer(xml, pi, index) {
+      //$("#bpmnViewer").append('<div id="#js-drop-zone-' + index + '"></div>');
+      var viewer = new BpmnViewer({container: '#js-drop-zone', width: '100%', height: '500px'});
+      processViewers[pi.id] = {
+        processInstance:  pi,
+        viewer: viewer,
+        overlays: viewer.get('overlays')
+      }
+
+      // show it in bpmn.io
+      viewer.importXML(xml, function(err) {
+        if (err) {
+          console.log('error rendering', err);
+        } else {
+          // zoom to fit full viewport
+          viewer.get('canvas').zoom('fit-viewport');
+          loadData();
+        }
+      });
+  }
+
+  function loadData() {
+    for (var processInstanceId in processViewers) {
+        // skip loop if the property is from prototype
+        if (!processViewers.hasOwnProperty(processInstanceId)) continue;
+
+        var overlays = processViewers[processInstanceId].overlays;
+        overlays.clear();
+          
+        $.ajax({
+          type: "GET",
+          url: restAccess + "/history/activity-instance/?processInstanceId=" + processInstanceId,
+          overlays: overlays,
+          success: function (instances) {
+           addActivityInstances(this.overlays, instances);                
+          }
+        });
+        $.ajax({
+          type: "GET",
+          url: restAccess +  "/incident/?processInstanceId=" + processInstanceId,
+          overlays: overlays,
+          success: function (incidents) {
+           addIncidents(this.overlays, incidents);                
+          }
+        });   
+    }
+  }
+  
+  
+  function addActivityInstances(overlays, activities) {
+    var sums = activities.reduce(function(sums,entry){
+       sums[entry.activityId] = (sums[entry.activityId] || 0) + 1;
+       return sums;
+    },{});    
+    for (var activityId in sums) {
+        overlays.add(activityId, {
+          position: {top: 0, right: 0},
+          show: {minZoom: 0, maxZoom: 100.0}, 
+          html: '<div class="bpmn-badge">'+(sums[activityId])+'</div>'
+        });
+    }
+  }
+
+  function addIncidents(overlays, incidents) {
+    for (index = 0; index < incidents.length; ++index) {
+        overlays.add(incidents[index].activityId, {
+          position: {top: 0, right: 0},
+          show: {minZoom: 0, maxZoom: 100.0}, 
+          html: '<div class="bpmn-badge bpmn-badge-error">'+incidents[index].incidentMessage+'</div>'
+        });
+    }
+  };
+
+  function getUrlParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+  }  
+</script>
+      
+  </body>
+</html>
