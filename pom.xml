@@ -13,14 +13,13 @@
 	</properties>
 
 	<modules>
-		<module>starter</module>
-
 		<module>checkout</module>
-
-		<module>inventory</module>
 		<module>order</module>
 		<module>payment</module>
+		<module>inventory</module>
 		<module>shipping</module>
+
+		<module>monitor</module>
 	</modules>
 
 	<build>
