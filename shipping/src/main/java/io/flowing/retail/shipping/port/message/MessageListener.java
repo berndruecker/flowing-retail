@@ -12,12 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.flowing.retail.shipping.application.ShippingService;
+
 @Component
 @EnableBinding(Sink.class)
 public class MessageListener {    
   
   @Autowired
   private MessageSender messageSender;
+  
+  @Autowired
+  private ShippingService shippingService;
 
   @StreamListener(target = Sink.INPUT, 
       condition="payload.messageType.toString()=='ShipGoodsCommand'")
@@ -25,16 +30,18 @@ public class MessageListener {
   public void shipGoodsCommandReceived(String messageJson) throws Exception {
     Message<ShipGoodsCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<ShipGoodsCommandPayload>>(){});
 
-    // and directly send response, just make up some shipment id
-    String shipmentId = UUID.randomUUID().toString();
-    
-    System.out.println("Shipping to " + message.getPayload().getRecipientAddress());
-    
+    String shipmentId = shippingService.createShipment( //
+        message.getPayload().getPickId(), //
+        message.getPayload().getRecipientName(), //
+        message.getPayload().getRecipientAddress(), //
+        message.getPayload().getLogisticsProvider());
+        
     messageSender.send( //
         new Message<GoodsShippedEventPayload>( //
             "GoodsShippedEvent", //
             message.getTraceId(), //
             new GoodsShippedEventPayload() //
+              .setRefId(message.getPayload().getRefId())
               .setShipmentId(shipmentId)));
   }
     

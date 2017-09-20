@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.flowing.retail.inventory.application.InventoryService;
 import io.flowing.retail.inventory.domain.PickOrder;
 
 @Component
@@ -22,17 +23,19 @@ public class MessageListener {
   
   @Autowired
   private MessageSender messageSender;
+  
+  @Autowired
+  private InventoryService inventoryService;
 
   @StreamListener(target = Sink.INPUT, 
       condition="payload.messageType.toString()=='FetchGoodsCommand'")
   @Transactional
   public void retrievePaymentCommandReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
     Message<FetchGoodsCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<FetchGoodsCommandPayload>>(){});
-    FetchGoodsCommandPayload fetchGoodsCommand = message.getPayload();    
-    System.out.println(fetchGoodsCommand);
     
-    PickOrder pickOrder = new PickOrder().setItems(fetchGoodsCommand.getItems());
-    // and directly send response
+    FetchGoodsCommandPayload fetchGoodsCommand = message.getPayload();    
+    String pickId = inventoryService.pickItems( // 
+        fetchGoodsCommand.getItems(), fetchGoodsCommand.getReason(), fetchGoodsCommand.getRefId());
     
     messageSender.send( //
         new Message<GoodsFetchedEventPayload>( //
@@ -40,7 +43,7 @@ public class MessageListener {
             message.getTraceId(), //
             new GoodsFetchedEventPayload() //
               .setRefId(fetchGoodsCommand.getRefId())
-              .setPickId(pickOrder.getPickId())));
+              .setPickId(pickId)));
   }
     
     

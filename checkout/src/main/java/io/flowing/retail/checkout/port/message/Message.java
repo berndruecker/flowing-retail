@@ -8,6 +8,7 @@ public class Message<T> {
   private String messageType;
   private String id = UUID.randomUUID().toString(); // unique id of this message
   private String traceId = UUID.randomUUID().toString(); // trace id, default: new unique
+  private String sender = "Checkout"; // for new messages
   private Date timestamp = new Date();
 
   private T payload;
@@ -64,5 +65,13 @@ public class Message<T> {
 
   public void setTraceId(String traceId) {
     this.traceId = traceId;
+  }
+
+  public String getSender() {
+    return sender;
+  }
+
+  public void setSender(String sender) {
+    this.sender = sender;
   }
 }

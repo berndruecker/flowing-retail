@@ -22,4 +22,8 @@ public class PickOrder {
     this.items = items;
     return this;
   }
+  @Override
+  public String toString() {
+    return "PickOrder [pickId=" + pickId + ", items=" + items + "]";
+  }
 }

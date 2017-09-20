@@ -2,6 +2,7 @@ package io.flowing.retail.shipping.port.message;
 
 public class ShipGoodsCommandPayload {
   
+  private String refId;
   private String pickId;
   private String logisticsProvider;
   private String recipientName;
@@ -34,5 +35,11 @@ public class ShipGoodsCommandPayload {
   public ShipGoodsCommandPayload setRecipientAddress(String recipientAddress) {
     this.recipientAddress = recipientAddress;
     return this;
+  }
+  public String getRefId() {
+    return refId;
+  }
+  public void setRefId(String refId) {
+    this.refId = refId;
   }
 }

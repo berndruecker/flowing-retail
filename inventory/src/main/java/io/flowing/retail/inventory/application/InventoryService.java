@@ -2,16 +2,14 @@ package io.flowing.retail.inventory.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+
+import org.springframework.stereotype.Component;
 
 import io.flowing.retail.inventory.domain.Item;
+import io.flowing.retail.inventory.domain.PickOrder;
 
-/**
- * unused at the moment
- */
+@Component
 public class InventoryService {
-  
-  public static InventoryService instance = new InventoryService();
   
   /**
    * reserve goods on stock for a defined period of time
@@ -40,8 +38,9 @@ public class InventoryService {
    * @return a unique pick ID 
    */
   public String pickItems(List<Item> items, String reason, String refId) {
-    // TODO: Implement
-    return UUID.randomUUID().toString();
+    PickOrder pickOrder = new PickOrder().setItems(items);    
+    System.out.println("# Items picked: " + pickOrder);      
+    return pickOrder.getPickId();
   }
 
   /**
