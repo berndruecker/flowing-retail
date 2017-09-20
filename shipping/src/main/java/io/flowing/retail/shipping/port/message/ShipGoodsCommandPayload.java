@@ -39,7 +39,8 @@ public class ShipGoodsCommandPayload {
   public String getRefId() {
     return refId;
   }
-  public void setRefId(String refId) {
+  public ShipGoodsCommandPayload setRefId(String refId) {
     this.refId = refId;
+    return this;
   }
 }
