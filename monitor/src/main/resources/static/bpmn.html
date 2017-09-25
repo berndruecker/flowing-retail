@@ -59,106 +59,63 @@
 </div>
 <script>
   var BpmnViewer = window.BpmnJS;  
-  //var restAccess = "/rest/engine/default";  
-  var restAccess = "http://localhost:8080/engine-rest/engine/default";  
-  var processViewers = {};
-  var transactionId = getUrlParameterByName("transactionId");
+  var traceId = getUrlParameterByName("traceId");
+  var viewer = new BpmnViewer({container: '#js-drop-zone', width: '100%', height: '500px'});
+    var overlays = viewer.get('overlays');
+    var elementRegistry = viewer.get('elementRegistry');
 
   $(document).ready(function() {
-    loadModels();
+    loadModel();
   });
 
-  function loadModels() {
-    $.get(restAccess + '/history/process-instance/?variables=transactionId_eq_' + transactionId + '&sortBy=startTime&sortOrder=asc', 
-      function(processInstances) {
-        for (var index = 0; index < processInstances.length; ++index) {
-            var pi = processInstances[index];
-            $.ajax({
-              type: "GET",
-              url: restAccess + '/process-definition/' + pi.processDefinitionId + '/xml',
-              processInstance: pi,
-              index: index,
-              success: function (data) {
-                createViewer(data.bpmn20Xml, this.processInstance, this.index);
-              }
-            });     
-        }
-      }
-    );    
-  }
-
-  function createViewer(xml, pi, index) {
-      //$("#bpmnViewer").append('<div id="#js-drop-zone-' + index + '"></div>');
-      var viewer = new BpmnViewer({container: '#js-drop-zone', width: '100%', height: '500px'});
-      processViewers[pi.id] = {
-        processInstance:  pi,
-        viewer: viewer,
-        overlays: viewer.get('overlays')
-      }
-
-      // show it in bpmn.io
-      viewer.importXML(xml, function(err) {
-        if (err) {
-          console.log('error rendering', err);
-        } else {
-          // zoom to fit full viewport
-          viewer.get('canvas').zoom('fit-viewport');
-          loadData();
-        }
-      });
+  function loadModel() {
+    $.get('/order-collaboration.bpmn', function(data) {
+       viewer.importXML(data, function(err) {
+         if (err) {
+           console.log('error rendering', err);
+         } else {
+           // zoom to fit full viewport
+           viewer.get('canvas').zoom('fit-viewport');
+           loadData();
+         }
+       });
+    });             
   }
 
   function loadData() {
-    for (var processInstanceId in processViewers) {
-        // skip loop if the property is from prototype
-        if (!processViewers.hasOwnProperty(processInstanceId)) continue;
-
-        var overlays = processViewers[processInstanceId].overlays;
-        overlays.clear();
-          
         $.ajax({
           type: "GET",
-          url: restAccess + "/history/activity-instance/?processInstanceId=" + processInstanceId,
-          overlays: overlays,
-          success: function (instances) {
-           addActivityInstances(this.overlays, instances);                
+          url: "/event/" + traceId,
+          success: function (eventList) {
+           addActivityInstances(eventList);                
           }
         });
-        $.ajax({
-          type: "GET",
-          url: restAccess +  "/incident/?processInstanceId=" + processInstanceId,
-          overlays: overlays,
-          success: function (incidents) {
-           addIncidents(this.overlays, incidents);                
-          }
-        });   
-    }
   }
   
   
-  function addActivityInstances(overlays, activities) {
-    var sums = activities.reduce(function(sums,entry){
-       sums[entry.activityId] = (sums[entry.activityId] || 0) + 1;
-       return sums;
-    },{});    
-    for (var activityId in sums) {
-        overlays.add(activityId, {
-          position: {top: 0, right: 0},
-          show: {minZoom: 0, maxZoom: 100.0}, 
-          html: '<div class="bpmn-badge">'+(sums[activityId])+'</div>'
-        });
+  function addActivityInstances(eventList) {
+
+    console.log(eventList);
+
+    for (index = 0; index < eventList.length; ++index) {
+      var event = eventList[index];
+      console.log(event.name);
+      tryToAddOverlay(event.name);
+      tryToAddOverlay('Send_' + event.name);
+      tryToAddOverlay('Receive_' + event.name);
+      
     }
   }
 
-  function addIncidents(overlays, incidents) {
-    for (index = 0; index < incidents.length; ++index) {
-        overlays.add(incidents[index].activityId, {
-          position: {top: 0, right: 0},
-          show: {minZoom: 0, maxZoom: 100.0}, 
-          html: '<div class="bpmn-badge bpmn-badge-error">'+incidents[index].incidentMessage+'</div>'
-        });
-    }
-  };
+  function tryToAddOverlay(id) {
+    if (elementRegistry.get(id)!=null) {
+          overlays.add(id, {
+            position: {top: 0, right: 0},
+            show: {minZoom: 0, maxZoom: 100.0}, 
+            html: '<div class="bpmn-badge">'+'<span class=" glyphicon glyphicon-ok"></span>'+'</div>'
+          });
+    }    
+  }
 
   function getUrlParameterByName(name) {
     var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);

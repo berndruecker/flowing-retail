@@ -17,6 +17,10 @@ public class LogRepository {
     return events;    
   }
 
+  public List<PastEvent> getAllPastEvents(String transactionId) {
+    return events.get(transactionId);
+  }
+
   public void addEvent(PastEvent pastEvent) {
     if (!events.containsKey(pastEvent.getTransactionId())) {
       events.put(pastEvent.getTransactionId(), new ArrayList<PastEvent>());
