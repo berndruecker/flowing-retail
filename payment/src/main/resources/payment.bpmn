@@ -36,8 +36,12 @@
       <bpmn:outgoing>SequenceFlow_0gx4352</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1irsftt</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0gx4352" sourceRef="ExclusiveGateway_0esmlay" targetRef="ServiceTask_10hm6pn" />
-    <bpmn:sequenceFlow id="SequenceFlow_1irsftt" sourceRef="ExclusiveGateway_0esmlay" targetRef="EndEvent_0769is9" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gx4352" sourceRef="ExclusiveGateway_0esmlay" targetRef="ServiceTask_10hm6pn">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1irsftt" sourceRef="ExclusiveGateway_0esmlay" targetRef="EndEvent_0769is9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1" name="Payment retrieval requested">
       <bpmn:outgoing>SequenceFlow_0si7w2m</bpmn:outgoing>
     </bpmn:startEvent>
@@ -60,7 +64,7 @@
     <bpmn:boundaryEvent id="BoundaryEvent_0ptmqni" attachedToRef="Task_0e2306u">
       <bpmn:compensateEventDefinition />
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Task_1xuole4" name="Restore customer credit" isForCompensation="true" />
+    <bpmn:serviceTask id="Task_1xuole4" name="Restore customer credit" isForCompensation="true" camunda:expression="#{true}" />
     <bpmn:endEvent id="EndEvent_1no2aoc" name="Payment failed">
       <bpmn:extensionElements>
         <camunda:executionListener class="io.flowing.retail.payment.flow.camunda.PaymentFailedAdapter" event="start" />

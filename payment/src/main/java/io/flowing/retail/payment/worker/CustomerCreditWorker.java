@@ -23,6 +23,7 @@ import org.camunda.bpm.engine.rest.dto.externaltask.LockedExternalTaskDto;
  */
 public class CustomerCreditWorker {
 
+  private static final String BASE_URL = "http://localhost:8092/rest/engine/default/";
   private static String WORKER_ID= "someWorker";
 
   public static void main(String[] args) throws InterruptedException {
@@ -54,7 +55,7 @@ public class CustomerCreditWorker {
     boolean running=true;
     while (running) {
       List<LockedExternalTaskDto> tasks = client
-          .target("http://localhost:8092/rest/engine/default/external-task/fetchAndLock")
+          .target(BASE_URL + "external-task/fetchAndLock")
           .request(MediaType.APPLICATION_JSON) //
           .post(
               Entity.entity(fetchExternalTasksDto, MediaType.APPLICATION_JSON), //

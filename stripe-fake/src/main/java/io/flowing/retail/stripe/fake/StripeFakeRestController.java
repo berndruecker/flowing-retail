@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,7 @@ public class StripeFakeRestController {
   }
   
   @RequestMapping(path = "/charge", method = POST)
-  public CreateChargeResponse chargeCreditCard(CreateChargeRequest request) {
+  public CreateChargeResponse chargeCreditCard(@RequestBody CreateChargeRequest request) {
     CreateChargeResponse response = new CreateChargeResponse();
     
     System.out.println("CHARGE " + request.amount + " ON CREDIT CARD");
