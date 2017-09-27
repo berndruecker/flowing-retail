@@ -1,4 +1,4 @@
-package io.flowing.retail.payment.port.message;
+package io.flowing.retail.payment.port.adapter;
 
 public class PaymentReceivedEventPayload {
   private String refId;

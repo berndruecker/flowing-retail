@@ -15,6 +15,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.flowing.retail.payment.port.adapter.PaymentReceivedEventPayload;
+
 @Component
 @EnableBinding(Sink.class)
 public class MessageListener {  
@@ -34,14 +36,12 @@ public class MessageListener {
     
     System.out.println("Retrieve payment: " + retrievePaymentCommand.getAmount() + " for " + retrievePaymentCommand.getRefId());
     
-    // and directly send response
-    
-    messageSender.send( //
-        new Message<PaymentReceivedEventPayload>( //
-            "PaymentReceivedEvent", //
-            message.getTraceId(), //
-            new PaymentReceivedEventPayload() //
-              .setRefId(retrievePaymentCommand.getRefId())));
+    camunda.getRuntimeService().createMessageCorrelation(message.getMessageType()) //
+      .processInstanceBusinessKey(message.getTraceId())
+      .setVariable("amount", retrievePaymentCommand.getAmount()) //
+      .setVariable("remainingAmount", retrievePaymentCommand.getAmount()) //
+      .setVariable("refId", retrievePaymentCommand.getRefId()) //
+      .correlateWithResult();    
   }
     
     

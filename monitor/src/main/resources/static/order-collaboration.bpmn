@@ -6,7 +6,7 @@
     <bpmn:participant id="GoodsFetchedEvent" name="Inventory" />
     <bpmn:participant id="ShipGoodsCommand" name="Shipping" processRef="Process_1h737zl" />
     <bpmn:messageFlow id="Send_RetrievePaymentCommand" sourceRef="Receive_PaymentReceivedEvent" targetRef="XReceive_RetrievePaymentCommand" />
-    <bpmn:messageFlow id="MessageFlow_11k2hh1" sourceRef="Send_PaymentReceivedEvent" targetRef="Receive_PaymentReceivedEvent" />
+    <bpmn:messageFlow id="CSend_PaymentReceivedEvent" sourceRef="Send_PaymentReceivedEvent" targetRef="Receive_PaymentReceivedEvent" />
     <bpmn:messageFlow id="Send_FetchGoodsCommand" sourceRef="Receive_GoodsFetchedEvent" targetRef="GoodsFetchedEvent" />
     <bpmn:messageFlow id="MessageFlow_1natodm" sourceRef="GoodsFetchedEvent" targetRef="Receive_GoodsFetchedEvent" />
     <bpmn:messageFlow id="Send_ShipGoodsCommand" sourceRef="GoodsShippedEvent" targetRef="StartEvent_08ihbvw" />
@@ -41,10 +41,10 @@
       <bpmn:outgoing>SequenceFlow_1f6v63w</bpmn:outgoing>
       <bpmn:messageEventDefinition />
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1f6v63w" sourceRef="XReceive_RetrievePaymentCommand" targetRef="Task_1ld927u" />
-    <bpmn:sequenceFlow id="SequenceFlow_1jyisns" sourceRef="Task_1ld927u" targetRef="Task_0semfj0" />
-    <bpmn:sequenceFlow id="SequenceFlow_1ve1quz" sourceRef="Task_0semfj0" targetRef="Send_PaymentReceivedEvent" />
-    <bpmn:task id="Task_0semfj0" name="Charge credit card">
+    <bpmn:sequenceFlow id="SequenceFlow_1f6v63w" sourceRef="XReceive_RetrievePaymentCommand" targetRef="CustomerCreditUsedEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jyisns" sourceRef="CustomerCreditUsedEvent" targetRef="CreditCardChargedEvent" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ve1quz" sourceRef="CreditCardChargedEvent" targetRef="Send_PaymentReceivedEvent" />
+    <bpmn:task id="CreditCardChargedEvent" name="Charge credit card">
       <bpmn:incoming>SequenceFlow_1jyisns</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ve1quz</bpmn:outgoing>
     </bpmn:task>
@@ -52,7 +52,7 @@
       <bpmn:incoming>SequenceFlow_1ve1quz</bpmn:incoming>
       <bpmn:messageEventDefinition />
     </bpmn:endEvent>
-    <bpmn:task id="Task_1ld927u" name="Deduct from customer credit">
+    <bpmn:task id="CustomerCreditUsedEvent" name="Deduct from customer credit">
       <bpmn:incoming>SequenceFlow_1f6v63w</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1jyisns</bpmn:outgoing>
     </bpmn:task>
@@ -125,7 +125,7 @@
           <dc:Bounds x="296" y="544" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1ld927u_di" bpmnElement="Task_1ld927u">
+      <bpmndi:BPMNShape id="Task_1ld927u_di" bpmnElement="CustomerCreditUsedEvent">
         <dc:Bounds x="341" y="482" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1f6v63w_di" bpmnElement="SequenceFlow_1f6v63w">
@@ -151,7 +151,7 @@
           <dc:Bounds x="412" y="501" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_11k2hh1_di" bpmnElement="MessageFlow_11k2hh1">
+      <bpmndi:BPMNEdge id="MessageFlow_11k2hh1_di" bpmnElement="CSend_PaymentReceivedEvent">
         <di:waypoint xsi:type="dc:Point" x="625" y="504" />
         <di:waypoint xsi:type="dc:Point" x="625" y="385" />
         <di:waypoint xsi:type="dc:Point" x="463" y="385" />
@@ -233,7 +233,7 @@
           <dc:Bounds x="1253.5" y="356" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Task_0semfj0_di" bpmnElement="Task_0semfj0">
+      <bpmndi:BPMNShape id="Task_0semfj0_di" bpmnElement="CreditCardChargedEvent">
         <dc:Bounds x="473" y="482" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1ve1quz_di" bpmnElement="SequenceFlow_1ve1quz">
