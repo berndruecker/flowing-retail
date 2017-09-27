@@ -24,18 +24,27 @@ public class OrderFulfillmentFlowDefinition {
   
   @PostConstruct
   public void createFlow() {
+    /*
+     * Currently the order.bpmn in src/main/resources is used
+     * You can either define flows as BPMN 2.0 XML or by Model API:
+     
     engine.getRepositoryService().createDeployment() //
       .addModelInstance("order.bpmn", Bpmn.createProcess("order").executable() //
         .startEvent().message("OrderPlacedEvent")
-        .serviceTask().name("Retrieve payment").camundaDelegateExpression(exp(RetrievePaymentAdapter.class))
-        .serviceTask().name("Fetch goods").camundaDelegateExpression(exp(FetchGoodsAdapter.class))
+        .sendTask().name("Fetch goods").camundaDelegateExpression(exp(FetchGoodsAdapter.class))
+        .receiveTask().name("Goods fetched").message("GoodsFetchedEvent")
           .camundaOutputParameter("pickId", "#{PAYLOAD_GoodsFetchedEvent.jsonPath('$.pickId').stringValue()}")
-        .serviceTask().name("Ship goods").camundaDelegateExpression(exp(ShipGoodsAdapter.class))
+        .sendTask("payment").name("Retrieve payment").camundaDelegateExpression(exp(RetrievePaymentAdapter.class))
+        .receiveTask().name("Payment received").message("PaymentReceivedEvent")
+        .sendTask().name("Ship goods").camundaDelegateExpression(exp(ShipGoodsAdapter.class))
+        .receiveTask().name("Goods shipped").message("GoodsShippedEvent")
         .endEvent().camundaExecutionListenerDelegateExpression("end", exp(OrderCompletedAdapter.class))
         .done()
       ).deploy();
+      */
   }
   
+  @SuppressWarnings("rawtypes")
   public String exp(Class delegateClass) {
     String[] beanNames = applicationContext.getBeanNamesForType(delegateClass);
     if (beanNames.length>1) {
@@ -43,5 +52,10 @@ public class OrderFulfillmentFlowDefinition {
     }
     return "#{" + beanNames[0] + "}";
   }
+  
+  /*
+        .boundaryEvent().timerWithDuration("PT5S").endEvent().compensateEventDefinition().compensateEventDefinitionDone()
+        .moveToNode("payment")
+   */
   
  }

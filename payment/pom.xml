@@ -56,6 +56,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.camunda.bpm.extension.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension.springboot</groupId>
 			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
 		</dependency>
 		<dependency>
