@@ -23,7 +23,8 @@ public class PaymentRestController {
   public String retrievePayment(String retrievePaymentPayload) throws InterruptedException {
     String traceId = UUID.randomUUID().toString();
     
-    ProcessInstance pi = camunda.getRuntimeService().startProcessInstanceByKey(
+    ProcessInstance pi = camunda.getRuntimeService()
+        .startProcessInstanceByKey(
         "payment-rest", 
         traceId, 
         Variables.putValue("payload", retrievePaymentPayload));
@@ -35,9 +36,9 @@ public class PaymentRestController {
         .processInstanceId(pi.getId()) //
         .variableName("paymentTransactionId") //
         .singleResult().getValue();
-      return "{\"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
+      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
     } else {      
-      return "{\"traceId\": \"" + traceId + "\"}";
+      return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
     }
   }
 
