@@ -1,0 +1,10 @@
+{
+  "name": "example",
+  "version": "0.0.1",
+  "description": "A camunda external task / worker NodeJS example",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.61.0"
+  }
+}

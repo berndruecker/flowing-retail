@@ -25,10 +25,8 @@ function poll() {
           var tasks = JSON.parse(body);
           if (tasks.length==0) {
             process.stdout.write(".");            
-          } else {
-            console.log("Retrieved " + tasks.length + " tasks"); 
           }
-          for (index = 0; index < tasks.length; ++index) {            
+          for (index = 0; index < tasks.length; ++index) {
             execute(tasks[index]);
           }
           setTimeout(function() {

@@ -17,13 +17,23 @@ public class StripeFakeRestController {
 
   public static class CreateChargeResponse {
     public String transactionId;
+    public String errorCode;
   }
   
   @RequestMapping(path = "/charge", method = POST)
-  public CreateChargeResponse chargeCreditCard(@RequestBody CreateChargeRequest request) {
+  public CreateChargeResponse chargeCreditCard(@RequestBody CreateChargeRequest request) throws Exception {
     CreateChargeResponse response = new CreateChargeResponse();
     
-    System.out.println("CHARGE " + request.amount + " ON CREDIT CARD");
+    long waitTimeMillis = 0;
+//    long waitTimeMillis = Math.round( Math.random() * 60 * 1000 ); // up to 60 seconds  
+
+    System.out.println("CHARGE " + request.amount + " ON CREDIT CARD ... (takes " + waitTimeMillis/1000 + " seconds)");
+    
+    Thread.sleep(waitTimeMillis);
+    
+    if (Math.random() > 0.8d) {
+      response.errorCode = "credit card expired";
+    }
     
     response.transactionId = UUID.randomUUID().toString();
     return response;

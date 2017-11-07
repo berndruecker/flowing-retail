@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.9.0">
-  <bpmn:process id="payment-rest" name="Payment REST" isExecutable="true">
+  <bpmn:process id="payment6" isExecutable="true">
     <bpmn:extensionElements>
       <camunda:executionListener delegateExpression="#{notifySemaphorAdapter}" event="end" />
     </bpmn:extensionElements>
@@ -33,7 +33,7 @@
     <bpmn:startEvent id="StartEvent_1" name="Payment retrieval requested">
       <bpmn:outgoing>SequenceFlow_0si7w2m</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:endEvent id="EndEvent_0769is9" name="Payment received" camunda:asyncBefore="true">
+    <bpmn:endEvent id="EndEvent_0769is9" name="Payment received">
       <bpmn:incoming>SequenceFlow_064rfmt</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1irsftt</bpmn:incoming>
     </bpmn:endEvent>
@@ -58,7 +58,7 @@
   <bpmn:error id="Error_1qxsin7" name="Error_CreditCardError" />
   <bpmn:message id="Message_03z4dfb" name="Msg_CreditCardUpdated" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="payment-rest">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="payment6">
       <bpmndi:BPMNShape id="ServiceTask_10hm6pn_di" bpmnElement="ServiceTask_10hm6pn">
         <dc:Bounds x="400" y="49" width="100" height="80" />
       </bpmndi:BPMNShape>

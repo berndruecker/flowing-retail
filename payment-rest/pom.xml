@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.flowing.retail.java</groupId>
+	<artifactId>flowing-retail-java-kafka-or-rabbit-spring-boot-camunda-payment-rest</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+		<camunda.version>7.7.3-ee</camunda.version>
+		<!-- 
+		<camunda.version>7.7.0</camunda.version>
+		 -->
+		<camunda.spring.boot.version>2.2.0</camunda.spring.boot.version>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from camunda -->
+				<groupId>org.camunda.bpm</groupId>
+				<artifactId>camunda-bom</artifactId>
+				<version>${camunda.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.camunda.bpm.extension.springboot</groupId>
+				<artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
+				<version>${camunda.spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension.springboot</groupId>
+			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+			<!-- exclude this if you want to use Enterprise Cockpit 
+			-->
+			<exclusions>
+				<exclusion>
+					<groupId>org.camunda.bpm.webapp</groupId>
+					<artifactId>camunda-webapp-webjar</artifactId>
+				</exclusion>
+			</exclusions>			
+		</dependency>
+		<!-- and include Enterprise Cockpit, see our Consulting Examples
+		-->
+		<dependency>
+			<groupId>com.camunda.consulting.webapp</groupId>
+			<artifactId>camunda-webapp-customized-webjar</artifactId>
+			<version>7.7.2</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+		</dependency>
+<!-- 	<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix</artifactId>
+		</dependency>
+	 -->
+		<dependency>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-core</artifactId>
+			<version>1.5.12</version>
+		</dependency>	
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>camunda-bpm-nexus</id>
+			<name>Camunda BPM Maven Repository</name>
+			<url>https://app.camunda.com/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+</project>

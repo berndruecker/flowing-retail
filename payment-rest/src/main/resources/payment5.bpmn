@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.9.0">
+  <bpmn:process id="payment5" isExecutable="true">
+    <bpmn:extensionElements>
+      <camunda:executionListener delegateExpression="#{notifySemaphorAdapter}" event="end" />
+    </bpmn:extensionElements>
+    <bpmn:serviceTask id="ServiceTask_10hm6pn" name="Charge credit card" camunda:asyncBefore="true" camunda:delegateExpression="#{chargeCreditCardAdapter}">
+      <bpmn:extensionElements>
+        <camunda:failedJobRetryTimeCycle>R5PT10S</camunda:failedJobRetryTimeCycle>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0gx4352</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_064rfmt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0si7w2m" sourceRef="StartEvent_1" targetRef="Task_0e2306u" />
+    <bpmn:sequenceFlow id="SequenceFlow_064rfmt" sourceRef="ServiceTask_10hm6pn" targetRef="EndEvent_0769is9" />
+    <bpmn:sequenceFlow id="SequenceFlow_06n3v12" sourceRef="Task_0e2306u" targetRef="ExclusiveGateway_0esmlay" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0esmlay" name="Payment complete?">
+      <bpmn:incoming>SequenceFlow_06n3v12</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gx4352</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1irsftt</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0gx4352" sourceRef="ExclusiveGateway_0esmlay" targetRef="ServiceTask_10hm6pn">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{remainingAmount > 0}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1irsftt" sourceRef="ExclusiveGateway_0esmlay" targetRef="EndEvent_0769is9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{remainingAmount == 0}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:startEvent id="StartEvent_1" name="Payment retrieval requested">
+      <bpmn:outgoing>SequenceFlow_0si7w2m</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0769is9" name="Payment received">
+      <bpmn:incoming>SequenceFlow_064rfmt</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1irsftt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Task_0e2306u" name="Deduct existing customer credit" camunda:type="external" camunda:topic="customer-credit">
+      <bpmn:incoming>SequenceFlow_0si7w2m</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06n3v12</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:message id="Message_1k9v13u" name="Msg_DoPayment" />
+  <bpmn:error id="Error_1qxsin7" name="Error_CreditCardError" />
+  <bpmn:message id="Message_03z4dfb" name="Msg_CreditCardUpdated" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="payment5">
+      <bpmndi:BPMNShape id="ServiceTask_10hm6pn_di" bpmnElement="ServiceTask_10hm6pn">
+        <dc:Bounds x="400" y="49" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0si7w2m_di" bpmnElement="SequenceFlow_0si7w2m">
+        <di:waypoint xsi:type="dc:Point" x="73" y="89" />
+        <di:waypoint xsi:type="dc:Point" x="150" y="89" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="66.5" y="74" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_064rfmt_di" bpmnElement="SequenceFlow_064rfmt">
+        <di:waypoint xsi:type="dc:Point" x="500" y="89" />
+        <di:waypoint xsi:type="dc:Point" x="543" y="89" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="483" y="74" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06n3v12_di" bpmnElement="SequenceFlow_06n3v12">
+        <di:waypoint xsi:type="dc:Point" x="250" y="89" />
+        <di:waypoint xsi:type="dc:Point" x="302" y="89" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="276" y="68" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0esmlay_di" bpmnElement="ExclusiveGateway_0esmlay" isMarkerVisible="true">
+        <dc:Bounds x="302" y="64" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="301" y="118" width="52" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gx4352_di" bpmnElement="SequenceFlow_0gx4352">
+        <di:waypoint xsi:type="dc:Point" x="352" y="89" />
+        <di:waypoint xsi:type="dc:Point" x="400" y="89" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="376" y="68" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1irsftt_di" bpmnElement="SequenceFlow_1irsftt">
+        <di:waypoint xsi:type="dc:Point" x="327" y="64" />
+        <di:waypoint xsi:type="dc:Point" x="327" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="561" y="15" />
+        <di:waypoint xsi:type="dc:Point" x="561" y="71" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="450.5" y="-6" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_10ua66j_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="37" y="71" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="12" y="107" width="88" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1qpfh34_di" bpmnElement="EndEvent_0769is9">
+        <dc:Bounds x="543" y="71" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="552" y="107" width="45" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0d7egs1_di" bpmnElement="Task_0e2306u">
+        <dc:Bounds x="150" y="49" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
