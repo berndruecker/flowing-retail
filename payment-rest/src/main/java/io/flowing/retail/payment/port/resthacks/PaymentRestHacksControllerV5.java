@@ -40,38 +40,31 @@ public class PaymentRestHacksControllerV5 {
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
 
-    long remainingAmount = useExistingCustomerCredit(customerId, amount);
-
-    if (remainingAmount > 0) {
-
-      Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
-      
-      ProcessInstance pi = chargeCreditCard(traceId, customerId, remainingAmount);
-      
-      boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
-      NotifySemaphorAdapter.removeSemaphore(traceId);
-      
-      if (finished) {
-        HistoricVariableInstance historicVariableInstance = camunda.getHistoryService().createHistoricVariableInstanceQuery()
-            .processInstanceId(pi.getId()) //
-            .variableName("paymentTransactionId") //
-            .singleResult();
-          if (historicVariableInstance!=null) {
-            String paymentTransactionId = (String)historicVariableInstance.getValue(); 
-            return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
-          } else {
-            return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";        
-          }
-      } else {
-        response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
-      }
+    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
+    
+    ProcessInstance pi = retrievePayment(traceId, customerId, amount);
+    
+    boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
+    NotifySemaphorAdapter.removeSemaphore(traceId);
+    
+    if (finished) {
+      HistoricVariableInstance historicVariableInstance = camunda.getHistoryService().createHistoricVariableInstanceQuery()
+          .processInstanceId(pi.getId()) //
+          .variableName("paymentTransactionId") //
+          .singleResult();
+        if (historicVariableInstance!=null) {
+          String paymentTransactionId = (String)historicVariableInstance.getValue(); 
+          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
+        } else {
+          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";        
+        }
     } else {
-      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";
-    }
+      response.setStatus(HttpServletResponse.SC_ACCEPTED);
+      return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
+    }    
   }
 
-  public ProcessInstance chargeCreditCard(String traceId, String customerId, long remainingAmount) {
+  public ProcessInstance retrievePayment(String traceId, String customerId, long remainingAmount) {
     return camunda.getRuntimeService() //
         .startProcessInstanceByKey("payment5", traceId,//
             Variables.putValue("amount", remainingAmount));
@@ -85,11 +78,4 @@ public class PaymentRestHacksControllerV5 {
     public String transactionId;
   }
 
-  public long useExistingCustomerCredit(String customerId, long amount) {
-    long remainingAmount = 0;
-    if (Math.random() > 0.5d) {
-      remainingAmount = 15;
-    }
-    return remainingAmount;
-  }
 }
