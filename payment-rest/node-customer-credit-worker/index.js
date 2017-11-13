@@ -1,7 +1,8 @@
 var request = require('request');
 
-var baseUrl = process.env.ENGINE_URL || 'http://localhost:8092/rest/engine/default/';
-var workerId = "customerCreditWorker"
+var baseUrl = process.env.ENGINE_URL || 'http://localhost:8100/rest/engine/default/';
+var workerId = "worker123";
+var topicName = "customer-credit";
 
 poll();
 
@@ -15,7 +16,7 @@ function poll() {
         "usePriority":true,
         "topics":
             [{
-              "topicName": "customer-credit",
+              "topicName": "`+topicName+`",
               "lockDuration": 10000,
               "variables": ["payload"]
             }]
