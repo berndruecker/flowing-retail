@@ -39,6 +39,13 @@
 					</execution>
 				</executions>
 			</plugin>
+			 <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>              
+                <configuration>                         
+    				  <mainClass>io.flowing.retail.stripe.fake.StripeFakeApplication</mainClass>
+                </configuration>
+             </plugin>      			
 		</plugins>
 	</build>
 </project>

@@ -94,4 +94,15 @@
 			<url>https://app.camunda.com/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
+    <build>
+    	<plugins>
+			 <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>              
+                <configuration>                         
+    				  <mainClass>io.flowing.retail.payment.PaymentApplication</mainClass>
+                </configuration>
+             </plugin>      
+    	</plugins>
+    </build>
 </project>

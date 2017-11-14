@@ -40,5 +40,15 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
-
+    <build>
+    	<plugins>
+			 <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>              
+                <configuration>                         
+    				  <mainClass>io.flowing.retail.inventory.InventoryApplication</mainClass>
+                </configuration>
+             </plugin>      
+    	</plugins>
+    </build>
 </project>
