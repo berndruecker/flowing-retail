@@ -8,11 +8,14 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+
+		<camunda.version>7.8.0</camunda.version>
 		<!-- 
-		<camunda.version>7.7.3-ee</camunda.version>
-		 -->
-		<camunda.version>7.7.0</camunda.version>
-		<camunda.spring.boot.version>2.2.0</camunda.spring.boot.version>
+		Adjust if you want to use Enterprise Edition of Camunda:
+		<camunda.version>7.8.0-ee</camunda.version>
+		Make sure you also switch to the ee webapp dependency below
+		-->
+		<camunda.spring.boot.version>2.3.0</camunda.spring.boot.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -31,13 +34,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.camunda.bpm.extension.springboot</groupId>
-				<artifactId>camunda-bpm-spring-boot-starter-bom</artifactId>
-				<version>${camunda.spring.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -46,35 +42,25 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.camunda.bpm.extension.springboot</groupId>
+			<groupId>org.camunda.bpm.springboot</groupId>
 			<artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
+			<version>${camunda.spring.boot.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.camunda.bpm.extension.springboot</groupId>
+			<groupId>org.camunda.bpm.springboot</groupId>
 			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-			<!-- exclude this if you want to use Enterprise Cockpit 
-			<exclusions>
-				<exclusion>
-					<groupId>org.camunda.bpm.webapp</groupId>
-					<artifactId>camunda-webapp-webjar</artifactId>
-				</exclusion>
-			</exclusions>			
-			-->
+	        <!-- 
+		    	Adjust if you want to use Enterprise Edition of Camunda:
+	        	<artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
+	    		Make sure you also use an EE version of Camunda - see above
+	        -->
+			<version>${camunda.spring.boot.version}</version>
 		</dependency>
-		<!-- and include Enterprise Cockpit, see our Consulting Examples
-		<dependency>
-			<groupId>com.camunda.consulting.webapp</groupId>
-			<artifactId>camunda-webapp-customized-webjar</artifactId>
-			<version>7.7.2</version>
-			<scope>provided</scope>
-		</dependency>		
-		-->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
 		
-
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -83,11 +69,13 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpmime</artifactId>
 		</dependency>
-<!-- 	<dependency>
+
+		<!-- 
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-hystrix</artifactId>
 		</dependency>
-	 -->
+	 	-->
 		<dependency>
 			<groupId>com.netflix.hystrix</groupId>
 			<artifactId>hystrix-core</artifactId>
