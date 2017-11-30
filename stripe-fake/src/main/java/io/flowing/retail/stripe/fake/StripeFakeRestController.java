@@ -27,7 +27,7 @@ public class StripeFakeRestController {
     long waitTimeMillis = 0;
 //    long waitTimeMillis = Math.round( Math.random() * 60 * 1000 ); // up to 60 seconds  
 
-    System.out.println("CHARGE " + request.amount + " ON CREDIT CARD ... (takes " + waitTimeMillis/1000 + " seconds)");
+    System.out.println("CHARGE ON CREDIT CARD ... (takes " + waitTimeMillis/1000 + " seconds)"); // " + request.amount + "
     
     Thread.sleep(waitTimeMillis);
     
