@@ -1,0 +1,93 @@
+version: "2"
+
+services:
+  kafka:
+    image: "spotify/kafka:latest"
+    hostname: kafka
+    networks:
+      - flowing
+    ports:
+      - 2181:2181
+      - 9092:9092
+    environment:
+      ADVERTISED_HOST: kafka
+      ADVERTISED_PORT: 9092
+
+  checkout:
+    image: flowingretail/checkout
+    networks:
+      - flowing
+    ports:
+      - "8090:8090"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181
+
+  order:
+    image: flowingretail/order
+    networks:
+      - flowing
+    ports:
+      - "8091:8091"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181
+
+  payment:
+    image: flowingretail/payment
+    networks:
+      - flowing
+    ports:
+      - "8092:8092"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181      
+
+  inventory:
+    image: flowingretail/inventory
+    networks:
+      - flowing
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181  
+
+  shipping:
+    image: flowingretail/shipping
+    networks:
+      - flowing
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181        
+
+  monitor:
+    image: flowingretail/monitor
+    networks:
+      - flowing
+    ports:
+      - "8095:8095"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181   
+
+  docs:
+    image: flowingretail/docs
+    networks:
+      - flowing
+    ports:
+      - "8099:80"
+
+networks:
+  flowing:
+    driver: bridge

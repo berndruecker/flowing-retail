@@ -19,15 +19,17 @@ branches:
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build -t flowingio/checkout ./checkout/
-  - docker push flowingio/checkout
-  - docker build -t flowingio/order ./order/
-  - docker push flowingio/order
-  - docker build -t flowingio/payment ./payment/
-  - docker push flowingio/payment
-  - docker build -t flowingio/inventory ./inventory/
-  - docker push flowingio/inventory
-  - docker build -t flowingio/shipping ./shipping/
-  - docker push flowingio/shipping
-  - docker build -t flowingio/monitor ./monitor/
-  - docker push flowingio/monitor
+  - docker build -t flowingretail/checkout ./checkout/
+  - docker push flowingretail/checkout
+  - docker build -t flowingretail/order ./order/
+  - docker push flowingretail/order
+  - docker build -t flowingretail/payment ./payment/
+  - docker push flowingretail/payment
+  - docker build -t flowingretail/inventory ./inventory/
+  - docker push flowingretail/inventory
+  - docker build -t flowingretail/shipping ./shipping/
+  - docker push flowingretail/shipping
+  - docker build -t flowingretail/monitor ./monitor/
+  - docker push flowingretail/monitor
+  - docker build -t flowingretail/docs ./docs/
+  - docker push flowingretail/docs
