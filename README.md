@@ -62,7 +62,7 @@ You can either
 * Build (Maven) and start via Docker Compose
 * Build (Maven) and start manually (including Zookeeper, Kafka)
 
-## Pre-Build Docker images
+## Docker Compose with pre-build Docker images
 
 * Download [docker-dist/docker-compose.yml](docker-dist/docker-compose.yml) or clone the source code
 * Goto directory where you downloaded this file 
@@ -77,7 +77,23 @@ cd docker-dist
 docker-compose up
 ```
 
-## Docker Compose
+* After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
+* You can place an order via [http://localhost:8090](http://localhost:8090)
+* You can inspect insided of Order via [http://localhost:8091](http://localhost:8091)
+* You can inspect insides of Payment via [http://localhost:8092](http://localhost:8092)
+* You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
+
+If you like you can connect to Kafka from your local Docker host machine too. Because of so called advertised endpoints you have to map the Kafka container hostname to localhost. This is because the cluster manager of Kafka (Zookeeper) gives you his view of the Kafka cluster which containes of this hostname, even if you connected to localhost in the first place.
+
+For example, on Windows append this entry to ```C:\Windows\System32\drivers\etc\hosts```:
+```
+127.0.0.1 kafkaserver
+```
+
+On Linix edit the ```/etc/hosts``` accordingly.
+
+
+## Docker Compose with local build of Docker images
 
 * Download or clone the source code
 * Run a full maven build
@@ -108,7 +124,7 @@ For example, on Windows append this entry to ```C:\Windows\System32\drivers\etc\
 
 On Linix edit the ```/etc/hosts``` accordingly.
 
-## Manual start
+## Manual start (Kafka, mvn exec:java)
 
 * Download or clone the source code
 * Run a full maven build
@@ -134,6 +150,7 @@ kafka-topics.sh --list --zookeeper localhost:2181
     
 ```
 mvn -f checkout exec:java
+mvn -f order exec:java
 ...
 ```
 
