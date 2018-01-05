@@ -21,3 +21,13 @@ after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker build -t flowingio/checkout ./checkout/
   - docker push flowingio/checkout
+  - docker build -t flowingio/order ./order/
+  - docker push flowingio/order
+  - docker build -t flowingio/payment ./payment/
+  - docker push flowingio/payment
+  - docker build -t flowingio/inventory ./inventory/
+  - docker push flowingio/inventory
+  - docker build -t flowingio/shipping ./shipping/
+  - docker push flowingio/shipping
+  - docker build -t flowingio/monitor ./monitor/
+  - docker push flowingio/monitor

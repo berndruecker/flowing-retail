@@ -56,7 +56,12 @@ An important thought is, that this state machine (or workflow engine in this cas
 
 # Run the application
 
-## Local with Maven
+You can either
+
+* Start manually
+* Use Docker Compose
+
+## Manual start
 
 * Download or clone the source code
 * Run a full maven build
@@ -100,6 +105,12 @@ checkout/io.flowing.retail.java.CheckoutApplication
 ## Docker Compose
 
 * Download or clone the source code
+* Run a full maven build
+
+```
+mvn install
+```
+
 * Build Docker images and start them up
 
 ```
