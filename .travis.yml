@@ -1,0 +1,23 @@
+language: java
+
+sudo: true
+
+services:
+  - docker
+
+cache:
+  directories:
+    - $HOME/.m2
+jdk:
+  - oraclejdk8
+os:
+  - linux
+
+branches:
+  only:
+    - master
+
+after_success:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker build -t flowingio/checkout ./checkout/
+  - docker push flowingio/checkout
