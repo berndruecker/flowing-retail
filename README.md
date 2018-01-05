@@ -13,9 +13,7 @@ in the context of
 ## Links
 
 * Introduction blog post by Bernd Rücker: https://blog.bernd-ruecker.com/flowing-retail-demonstrating-aspects-of-microservices-events-and-their-flow-with-concrete-source-7f3abdd40e53
-* Slides from a talk at MuCon London: https://www.slideshare.net/BerndRuecker/mucon-london-2017-break-your-event-chains, recording available: https://skillsmatter.com/skillscasts/10718-break-your-event-chains
-* Slides from a talk at KanDDDinsky Berlin: https://www.slideshare.net/BerndRuecker/kandddinsky-let-your-domain-events-flow, recording available: https://www.youtube.com/watch?v=LKoaMbqZp9Y
-
+* InfoQ-Writeup "Events, Flows and Long-Running Services: A Modern Approach to Workflow Automation": https://www.infoq.com/articles/events-workflow-automation
 
 # Overview
 
@@ -58,6 +56,8 @@ An important thought is, that this state machine (or workflow engine in this cas
 
 # Run the application
 
+## Local with Maven
+
 * Download or clone the source code
 * Run a full maven build
 
@@ -97,3 +97,27 @@ checkout/io.flowing.retail.java.CheckoutApplication
 * You can inspect insides of Payment via [http://localhost:8092](http://localhost:8092)
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
 
+## Docker Compose
+
+* Download or clone the source code
+* Build Docker images and start them up
+
+```
+docker-compose build
+docker-compose up
+```
+
+* After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
+* You can place an order via [http://localhost:8090](http://localhost:8090)
+* You can inspect insided of Order via [http://localhost:8091](http://localhost:8091)
+* You can inspect insides of Payment via [http://localhost:8092](http://localhost:8092)
+* You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
+
+If you like you can connect to Kafka from your local Docker host machine too. Because of so called advertised endpoints you have to map the Kafka container hostname to localhost. This is because the cluster manager of Kafka (Zookeeper) gives you his view of the Kafka cluster which containes of this hostname, even if you connected to localhost in the first place.
+
+For example, on Windows append this entry to ```C:\Windows\System32\drivers\etc\hosts```:
+```
+127.0.0.1 kafkaserver
+```
+
+On Linix edit the ```/etc/hosts``` accordingly.
