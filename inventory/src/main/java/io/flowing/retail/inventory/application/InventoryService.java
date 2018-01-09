@@ -3,6 +3,7 @@ package io.flowing.retail.inventory.application;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.flowing.retail.inventory.domain.Item;
@@ -10,7 +11,10 @@ import io.flowing.retail.inventory.domain.PickOrder;
 
 @Component
 public class InventoryService {
-  
+
+  @Value("${flowing-retail.verbose}")
+  private boolean verbose;
+
   /**
    * reserve goods on stock for a defined period of time
    * 
@@ -38,8 +42,10 @@ public class InventoryService {
    * @return a unique pick ID 
    */
   public String pickItems(List<Item> items, String reason, String refId) {
-    PickOrder pickOrder = new PickOrder().setItems(items);    
-    System.out.println("# Items picked: " + pickOrder);      
+    PickOrder pickOrder = new PickOrder().setItems(items);
+    if (verbose) {
+      System.out.println("# Items picked: " + pickOrder);
+    }
     return pickOrder.getPickId();
   }
 

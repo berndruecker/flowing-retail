@@ -11,6 +11,11 @@ public class Order {
   protected String id = UUID.randomUUID().toString();
   protected Customer customer = new Customer(); 
   protected List<OrderItem> items = new ArrayList<OrderItem>();
+  private long createdTs;
+  private long orderPlacedRecievedTs;
+  private long retrievePaymentAdapterTs;
+  private long fetchGoodsAdapterTs;
+  private long shipGoodsAdapterTs;
 
   public void addItem(OrderItem i) {
     items.add(i);
@@ -37,8 +42,46 @@ public class Order {
     return items;
   }
 
+  public long getCreatedTs() {
+    return createdTs;
+  }
 
- 
+  public void setCreatedTs(long createdTs) {
+    this.createdTs = createdTs;
+  }
+
+  public long getOrderPlacedRecievedTs() {
+    return orderPlacedRecievedTs;
+  }
+
+  public void setOrderPlacedRecievedTs(long orderPlacedRecievedTs) {
+    this.orderPlacedRecievedTs = orderPlacedRecievedTs;
+  }
+
+  public long getRetrievePaymentAdapterTs() {
+    return retrievePaymentAdapterTs;
+  }
+
+  public void setRetrievePaymentAdapterTs(long retrievePaymentAdapterTs) {
+    this.retrievePaymentAdapterTs = retrievePaymentAdapterTs;
+  }
+
+  public long getFetchGoodsAdapterTs() {
+    return fetchGoodsAdapterTs;
+  }
+
+  public void setFetchGoodsAdapterTs(long fetchGoodsAdapterTs) {
+    this.fetchGoodsAdapterTs = fetchGoodsAdapterTs;
+  }
+
+  public long getShipGoodsAdapterTs() {
+    return shipGoodsAdapterTs;
+  }
+
+  public void setShipGoodsAdapterTs(long shipGoodsAdapterTs) {
+    this.shipGoodsAdapterTs = shipGoodsAdapterTs;
+  }
+
   @Override
   public String toString() {
     return "Order [id=" + id + ", items=" + items + "]";

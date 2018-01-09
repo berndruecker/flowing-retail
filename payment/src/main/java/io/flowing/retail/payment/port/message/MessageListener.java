@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.camunda.bpm.engine.ProcessEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
@@ -27,14 +28,19 @@ public class MessageListener {
   @Autowired
   private MessageSender messageSender;
 
-  @StreamListener(target = Sink.INPUT, 
+  @Value("${flowing-retail.verbose}")
+  private boolean verbose;
+
+  @StreamListener(target = Sink.INPUT,
       condition="payload.messageType.toString()=='RetrievePaymentCommand'")
   @Transactional
   public void retrievePaymentCommandReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
     Message<RetrievePaymentCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<RetrievePaymentCommandPayload>>(){});
-    RetrievePaymentCommandPayload retrievePaymentCommand = message.getPayload();    
-    
-    System.out.println("Retrieve payment: " + retrievePaymentCommand.getAmount() + " for " + retrievePaymentCommand.getRefId());
+    RetrievePaymentCommandPayload retrievePaymentCommand = message.getPayload();
+
+    if (verbose) {
+      System.out.println("Retrieve payment: " + retrievePaymentCommand.getAmount() + " for " + retrievePaymentCommand.getRefId());
+    }
     
     camunda.getRuntimeService().createMessageCorrelation(message.getMessageType()) //
       .processInstanceBusinessKey(message.getTraceId())

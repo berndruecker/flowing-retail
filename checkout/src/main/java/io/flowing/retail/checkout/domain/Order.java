@@ -8,6 +8,7 @@ public class Order {
   private String orderId;
   private Customer customer;
   private List<Item> items = new ArrayList<>();
+  private long createdTs;
   
   public void addItem(String articleId, int amount) {
     // keep only one item, but increase amount accordingly
@@ -31,7 +32,15 @@ public class Order {
     }
     return null;
   }
-  
+
+  public long getCreatedTs() {
+    return createdTs;
+  }
+
+  public void setCreatedTs(long createdTsMillis) {
+    this.createdTs = createdTsMillis;
+  }
+
   public String getOrderId() {
     return orderId;
   }

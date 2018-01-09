@@ -22,8 +22,10 @@ public class RetrievePaymentAdapter implements JavaDelegate {
   @Override
   public void execute(DelegateExecution context) throws Exception {
     Order order = orderRepository.getOrder( //
-        (String)context.getVariable("orderId")); 
-    String traceId = context.getProcessBusinessKey(); 
+        (String)context.getVariable("orderId"));
+    order.setRetrievePaymentAdapterTs(System.currentTimeMillis());
+    orderRepository.updateOrder(order);
+    String traceId = context.getProcessBusinessKey();
     
     messageSender.send( //
         new Message<RetrievePaymentCommandPayload>( //

@@ -26,6 +26,9 @@ public class ShipGoodsAdapter implements JavaDelegate {
     String pickId = (String)context.getVariable("pickId"); // TODO read from step before!
     String traceId = context.getProcessBusinessKey();
 
+    order.setShipGoodsAdapterTs(System.currentTimeMillis());
+    orderRepository.updateOrder(order);
+
     messageSender.send(new Message<ShipGoodsCommandPayload>( //
             "ShipGoodsCommand", //
             traceId, //

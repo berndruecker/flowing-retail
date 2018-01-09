@@ -25,6 +25,9 @@ public class FetchGoodsAdapter implements JavaDelegate {
         (String)context.getVariable("orderId")); 
     String traceId = context.getProcessBusinessKey();
 
+    order.setFetchGoodsAdapterTs(System.currentTimeMillis());
+    orderRepository.updateOrder(order);
+
     // publish
     messageSender.send(new Message<FetchGoodsCommandPayload>( //
             "FetchGoodsCommand", //
