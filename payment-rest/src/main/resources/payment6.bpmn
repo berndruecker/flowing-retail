@@ -6,7 +6,7 @@
     </bpmn:extensionElements>
     <bpmn:serviceTask id="ServiceTask_10hm6pn" name="Charge credit card" camunda:asyncBefore="true" camunda:delegateExpression="#{chargeCreditCardAdapter}">
       <bpmn:extensionElements>
-        <camunda:failedJobRetryTimeCycle>R5PT10S</camunda:failedJobRetryTimeCycle>
+        <camunda:failedJobRetryTimeCycle>R5/PT10S</camunda:failedJobRetryTimeCycle>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0gx4352</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_064rfmt</bpmn:outgoing>
@@ -16,8 +16,8 @@
       <bpmn:errorEventDefinition errorRef="Error_1qxsin7" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0si7w2m" sourceRef="StartEvent_1" targetRef="Task_0e2306u" />
-    <bpmn:sequenceFlow id="SequenceFlow_1me4ldb" sourceRef="BoundaryEvent_0s43v6m" targetRef="EndEvent_1no2aoc" />
-    <bpmn:sequenceFlow id="SequenceFlow_064rfmt" sourceRef="ServiceTask_10hm6pn" targetRef="EndEvent_0769is9" />
+    <bpmn:sequenceFlow id="SequenceFlow_1me4ldb" sourceRef="BoundaryEvent_0s43v6m" targetRef="EndEvent_PaymentFailed" />
+    <bpmn:sequenceFlow id="SequenceFlow_064rfmt" sourceRef="ServiceTask_10hm6pn" targetRef="EndEvent_PaymentReceived" />
     <bpmn:sequenceFlow id="SequenceFlow_06n3v12" sourceRef="Task_0e2306u" targetRef="ExclusiveGateway_0esmlay" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_0esmlay" name="Payment complete?">
       <bpmn:incoming>SequenceFlow_06n3v12</bpmn:incoming>
@@ -27,13 +27,13 @@
     <bpmn:sequenceFlow id="SequenceFlow_0gx4352" sourceRef="ExclusiveGateway_0esmlay" targetRef="ServiceTask_10hm6pn">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[#{remainingAmount > 0}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1irsftt" sourceRef="ExclusiveGateway_0esmlay" targetRef="EndEvent_0769is9">
+    <bpmn:sequenceFlow id="SequenceFlow_1irsftt" sourceRef="ExclusiveGateway_0esmlay" targetRef="EndEvent_PaymentReceived">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{remainingAmount == 0}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:startEvent id="StartEvent_1" name="Payment retrieval requested">
       <bpmn:outgoing>SequenceFlow_0si7w2m</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:endEvent id="EndEvent_0769is9" name="Payment received">
+    <bpmn:endEvent id="EndEvent_PaymentReceived" name="Payment received">
       <bpmn:incoming>SequenceFlow_064rfmt</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1irsftt</bpmn:incoming>
     </bpmn:endEvent>
@@ -45,10 +45,7 @@
       <bpmn:compensateEventDefinition />
     </bpmn:boundaryEvent>
     <bpmn:serviceTask id="Task_1xuole4" name="Restore customer credit" isForCompensation="true" camunda:type="external" camunda:topic="customer-credit-refund" />
-    <bpmn:endEvent id="EndEvent_1no2aoc" name="Payment failed">
-      <bpmn:extensionElements>
-        <camunda:executionListener class="io.flowing.retail.payment.flow.camunda.PaymentFailedAdapter" event="start" />
-      </bpmn:extensionElements>
+    <bpmn:endEvent id="EndEvent_PaymentFailed" name="Payment failed">
       <bpmn:incoming>SequenceFlow_1me4ldb</bpmn:incoming>
       <bpmn:compensateEventDefinition />
     </bpmn:endEvent>
@@ -125,10 +122,10 @@
           <dc:Bounds x="12" y="107" width="88" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1qpfh34_di" bpmnElement="EndEvent_0769is9">
+      <bpmndi:BPMNShape id="EndEvent_1qpfh34_di" bpmnElement="EndEvent_PaymentReceived">
         <dc:Bounds x="543" y="71" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="552" y="107" width="45" height="24" />
+          <dc:Bounds x="530" y="107" width="89" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0d7egs1_di" bpmnElement="Task_0e2306u">
@@ -148,10 +145,10 @@
       <bpmndi:BPMNShape id="ServiceTask_0jsdp9g_di" bpmnElement="Task_1xuole4">
         <dc:Bounds x="228" y="166" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1va550p_di" bpmnElement="EndEvent_1no2aoc">
+      <bpmndi:BPMNShape id="EndEvent_1va550p_di" bpmnElement="EndEvent_PaymentFailed">
         <dc:Bounds x="522" y="188" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="502" y="224" width="75" height="12" />
+          <dc:Bounds x="503" y="224" width="73" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

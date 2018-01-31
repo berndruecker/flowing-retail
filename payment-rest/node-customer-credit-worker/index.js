@@ -2,7 +2,8 @@ var request = require('request');
 
 var baseUrl = process.env.ENGINE_URL || 'http://localhost:8100/rest/engine/default/';
 var workerId = "worker123";
-var topicName = "customer-credit";
+var topicName1 = "customer-credit";
+var topicName2 = "customer-credit-refund";
 
 poll();
 
@@ -16,7 +17,11 @@ function poll() {
         "usePriority":true,
         "topics":
             [{
-              "topicName": "`+topicName+`",
+              "topicName": "`+topicName1+`",
+              "lockDuration": 10000,
+              "variables": ["payload"]
+            }, {
+              "topicName": "`+topicName2+`",
               "lockDuration": 10000,
               "variables": ["payload"]
             }]
@@ -38,13 +43,13 @@ function poll() {
 }
 
 function execute(externalTask) {
-  console.log('[Customer Credit] succeeded for #%s', externalTask.processInstanceId);
+  console.log('[%s] done for process instance %s', externalTask.topicName, externalTask.processInstanceId);
   complete(externalTask);
 }
 
 function complete(externalTask) {
   var remainingAmount = 0;
-  if (Math.random() > 0.5) {
+  if (Math.random() > 0.3) {
     remainingAmount = 15;   
   }
 

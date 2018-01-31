@@ -6,7 +6,7 @@
     </bpmn:extensionElements>
     <bpmn:serviceTask id="ServiceTask_10hm6pn" name="Charge credit card" camunda:asyncBefore="true" camunda:delegateExpression="#{chargeCreditCardAdapter}">
       <bpmn:extensionElements>
-        <camunda:failedJobRetryTimeCycle>R5PT10S</camunda:failedJobRetryTimeCycle>
+        <camunda:failedJobRetryTimeCycle>R5/PT10S</camunda:failedJobRetryTimeCycle>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0gx4352</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_064rfmt</bpmn:outgoing>

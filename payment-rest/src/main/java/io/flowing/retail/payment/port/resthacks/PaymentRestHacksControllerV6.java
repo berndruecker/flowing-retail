@@ -26,7 +26,8 @@ import org.springframework.web.client.RestTemplate;
 import io.flowing.retail.payment.port.rest.NotifySemaphorAdapter;
 
 /**
- * Step6: Use Camunda state machine for long-running retry, external task & compensation
+ * Step6: Use Camunda state machine for long-running retry, external task &
+ * compensation
  */
 @RestController
 public class PaymentRestHacksControllerV6 {
@@ -40,32 +41,39 @@ public class PaymentRestHacksControllerV6 {
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
 
-    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);    
-    ProcessInstance pi = chargeCreditCard(traceId, customerId, amount);    
+    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
+    ProcessInstance pi = chargeCreditCard(traceId, customerId, amount);
     boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
     NotifySemaphorAdapter.removeSemaphore(traceId);
-    
+
     if (finished) {
-      HistoricVariableInstance historicVariableInstance = camunda.getHistoryService().createHistoricVariableInstanceQuery()
-          .processInstanceId(pi.getId()) //
-          .variableName("paymentTransactionId") //
-          .singleResult();
-        if (historicVariableInstance!=null) {
-          String paymentTransactionId = (String)historicVariableInstance.getValue(); 
-          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
+      boolean failed = camunda.getHistoryService().createHistoricActivityInstanceQuery().processInstanceId(pi.getId()) //
+          .activityId("EndEvent_PaymentFailed") //
+          .count() > 0;
+      if (failed) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        return "{\"status\":\"failed\", \"traceId\": \"" + traceId + "\"}";
+      } else {
+        HistoricVariableInstance historicVariableInstance = camunda.getHistoryService().createHistoricVariableInstanceQuery().processInstanceId(pi.getId()) //
+            .variableName("paymentTransactionId") //
+            .singleResult();
+        if (historicVariableInstance != null) {
+          String paymentTransactionId = (String) historicVariableInstance.getValue();
+          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \"" + paymentTransactionId + "\"}";
         } else {
-          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";        
+          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";
         }
+      }
     } else {
       response.setStatus(HttpServletResponse.SC_ACCEPTED);
       return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
     }
-  
+
   }
 
   public ProcessInstance chargeCreditCard(String traceId, String customerId, long remainingAmount) {
     return camunda.getRuntimeService() //
-        .startProcessInstanceByKey("paymentV6", traceId,//
+        .startProcessInstanceByKey("paymentV6", traceId, //
             Variables.putValue("amount", remainingAmount));
   }
 

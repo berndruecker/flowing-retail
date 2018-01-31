@@ -1,5 +1,6 @@
 package io.flowing.retail.payment.port.rest;
 
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,11 @@ public class ChargeCreditCardAdapter implements JavaDelegate {
         request, //
         CreateChargeResponse.class);
     
-    // TODO Add error scenarios to StripeFake and then raise "Error_CreditCardError" here 
+    if (response.errorCode != null && response.errorCode.length() > 0) {
+      // raise error to be handled in BPMN model in case there was an error in credit card handling
+      ctx.setVariable("creditCardErrorCode", response.errorCode);
+      throw new BpmnError("Error_CreditCardError");
+    }
 
     ctx.setVariable("paymentTransactionId", response.transactionId);
   }
@@ -39,6 +44,7 @@ public class ChargeCreditCardAdapter implements JavaDelegate {
 
   public static class CreateChargeResponse {
     public String transactionId;
+    public String errorCode;
   }
 
   public RestTemplate getRest() {
