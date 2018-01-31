@@ -69,7 +69,7 @@ You can either
 For Camunda there is an enterprise edition available with [https://camunda.com/products/cockpit/#/features](additional features in Cockpit) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
 
 * Get a trial license if you don't have a license yet: https://camunda.com/download/enterprise/
-* Adjust Camunda version used in pom (order and payment use Camunda): ./order/pom.xml#L19, ./order/pom.xml#L69, ./payment/pom.xml#L13 and ./payment/pom.xml#L63
+* Adjust Camunda version used in pom (order and payment use Camunda): [./order/pom.xml#L19](./order/pom.xml#L19), [./order/pom.xml#L69](./order/pom.xml#L69), [./payment/pom.xml#L13](./payment/pom.xml#L13) and [./payment/pom.xml#L63](./payment/pom.xml#L63)
 * Note that this only works if you build the projects locally, not with the pre-build images
 
 Note that you do not need the enterprise edition to run the examples, the community edition will also do fine, you just cannot see and do that much in Camunda Cockpit.

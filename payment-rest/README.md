@@ -118,7 +118,7 @@ http://localhost:8100/api/payment/v1
 For Camunda there is an enterprise edition available with [https://camunda.com/products/cockpit/#/features](additional features in Cockpit) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
 
 * Get a trial license if you don't have a license yet: https://camunda.com/download/enterprise/
-* Adjust Camunda version used in pom: ./pom.xml#L12, ./pom.xml#L50
+* Adjust Camunda version used in pom: [./pom.xml#L12](./pom.xml#L12), [./pom.xml#L50](./pom.xml#L50)
 
 Note that you do not need the enterprise edition to run the examples, the community edition will also do fine, you just cannot see and do that much in Camunda Cockpit.
 
