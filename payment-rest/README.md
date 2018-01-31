@@ -10,7 +10,7 @@ Assume the credit card service goes nuts, meaning it still responds, but very sl
 
 ![V1](docs/v1.png)
 
-See src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java[PaymentRestHacksControllerV1.java].
+See [src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java](PaymentRestHacksControllerV1.java).
 
 ## Fail fast
 
@@ -18,7 +18,7 @@ The least you have to do is to apply a *fail fast* pattern like the *circuit bre
 
 ![V2](docs/v2.png)
 
-See src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV2.java#L41[PaymentRestHacksControllerV2.java].
+See [src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV2.java#L41](PaymentRestHacksControllerV2.java).
 
 ## Fail fast is not enough
 
@@ -28,7 +28,7 @@ But failing fast is not enough. Very often a retry after the credit card service
 
 In the example I use the [Camunda workflow engine](http://camunda.com/) to do the stateful retry reliably.
 
-See src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV3.java#L45[PaymentRestHacksControllerV3.java].
+See [src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV3.java#L45](PaymentRestHacksControllerV3.java).
 
 ## Keep synchronous responses
 
@@ -40,7 +40,7 @@ HTTP supports this by differntiating the return code (200 OK means all OK, 202 A
 
 ![Sync vs. async](docs/syncAsync.png)
 
-See src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV4.java#L83[PaymentRestHacksControllerV4.java].
+See [src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV4.java#L83](PaymentRestHacksControllerV4.java).
 
 
 
@@ -52,11 +52,11 @@ In this example I show one alternative which a lot of customers use very sucessf
 
 ![Microservices](docs/v5.png)
 
-See src/main/resources/payment5.bpmn[payment5.bpmn] for the workflow.
+See [src/main/resources/payment5.bpmn](payment5.bpmn) for the workflow.
 
-See node-customer-credit-worker/index.js[index.js] for a worker fetching work from Camunda in Node.js.
+See [node-customer-credit-worker/index.js](index.js) for a worker fetching work from Camunda in Node.js.
 
-See src/main/java/io/flowing/retail/payment/worker/CustomerCreditWorker.java[CustomerCreditWorker.java] for a worker in Java.
+See [src/main/java/io/flowing/retail/payment/worker/CustomerCreditWorker.java](CustomerCreditWorker.java) for a worker in Java.
 
 
 
@@ -66,13 +66,13 @@ The last part of the example adds compensation to the game. In distributed syste
 
 ![Microservices](docs/v6.png)
 
-See src/main/resources/payment5.bpmn[payment5.bpmn] for the workflow
+See [src/main/resources/payment5.bpmn](payment5.bpmn) for the workflow
 
 # How-to run
 
 First you have to startup the stripe fake server, as this handles the credit card payments.
 
-Note that you can easily change that to behave slow in ../stripe-fake/src/main/java/io/flowing/retail/stripe/fake/StripeFakeRestController.java#L28[StripeFakeRestController.java].
+Note that you can easily change that to behave slow in [../stripe-fake/src/main/java/io/flowing/retail/stripe/fake/StripeFakeRestController.java#L28](StripeFakeRestController.java).
 
 ```
 mvn -f ../stripe-fake/ exec:java
