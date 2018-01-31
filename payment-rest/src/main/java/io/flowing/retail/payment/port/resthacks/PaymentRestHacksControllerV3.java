@@ -42,9 +42,9 @@ public class PaymentRestHacksControllerV3 {
 
   @PostConstruct
   public void createFlowDefinition() {
-    EndEventBuilder flow = Bpmn.createExecutableProcess("payment") //
+    EndEventBuilder flow = Bpmn.createExecutableProcess("paymentV3") //
         .startEvent() //
-        .serviceTask().camundaDelegateExpression("#{stripeAdapter}") //
+        .serviceTask("stripe").camundaDelegateExpression("#{stripeAdapter}") //
           .camundaAsyncBefore().camundaFailedJobRetryTimeCycle("R3/PT1M") //        
         .endEvent();
     
@@ -91,7 +91,7 @@ public class PaymentRestHacksControllerV3 {
 
   public void chargeCreditCard(String customerId, long remainingAmount) {
     ProcessInstance pi = camunda.getRuntimeService() //
-        .startProcessInstanceByKey("payment", //
+        .startProcessInstanceByKey("paymentV3", //
             Variables.putValue("amount", remainingAmount));
   }
   

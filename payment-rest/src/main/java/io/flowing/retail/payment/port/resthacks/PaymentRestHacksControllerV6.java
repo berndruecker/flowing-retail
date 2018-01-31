@@ -65,7 +65,7 @@ public class PaymentRestHacksControllerV6 {
 
   public ProcessInstance chargeCreditCard(String traceId, String customerId, long remainingAmount) {
     return camunda.getRuntimeService() //
-        .startProcessInstanceByKey("payment6", traceId,//
+        .startProcessInstanceByKey("paymentV6", traceId,//
             Variables.putValue("amount", remainingAmount));
   }
 

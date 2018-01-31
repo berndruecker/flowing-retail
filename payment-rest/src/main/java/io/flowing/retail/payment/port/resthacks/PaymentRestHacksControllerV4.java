@@ -39,10 +39,10 @@ public class PaymentRestHacksControllerV4 {
 
   @PostConstruct
   public void createFlowDefinition() {
-    EndEventBuilder flow = Bpmn.createExecutableProcess("payment2") //
+    EndEventBuilder flow = Bpmn.createExecutableProcess("paymentV4") //
         .startEvent() //
-        .serviceTask().camundaDelegateExpression("#{stripeAdapter2}") //
-        .camundaAsyncBefore().camundaFailedJobRetryTimeCycle("R3/PT1M") //
+        .serviceTask("stripe").camundaDelegateExpression("#{stripeAdapter2}") //
+          .camundaAsyncBefore().camundaFailedJobRetryTimeCycle("R3/PT1M") //
         .endEvent().camundaExecutionListenerClass("start", NotifySemaphorAdapter.class);
 
     camunda.getRepositoryService().createDeployment() //
@@ -95,7 +95,7 @@ public class PaymentRestHacksControllerV4 {
 
   public ProcessInstance chargeCreditCard(String traceId, String customerId, long remainingAmount) {
     return camunda.getRuntimeService() //
-        .startProcessInstanceByKey("payment2", traceId,//
+        .startProcessInstanceByKey("paymentV4", traceId,//
             Variables.putValue("amount", remainingAmount));
   }
 

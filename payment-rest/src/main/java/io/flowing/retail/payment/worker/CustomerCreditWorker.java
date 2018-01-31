@@ -18,12 +18,12 @@ import org.camunda.bpm.engine.rest.dto.externaltask.LockedExternalTaskDto;
 
 /**
  * Worker to complete external task "Deduct existing customer credit"
- * used in Payment1
+ * used in PaymentV5 & PaymentV6
  *
  */
 public class CustomerCreditWorker {
 
-  private static final String BASE_URL = "http://localhost:8092/rest/engine/default/";
+  private static final String BASE_URL = "http://localhost:8100/rest/engine/default/";
   private static String WORKER_ID= "someWorker";
 
   public static void main(String[] args) throws InterruptedException {
@@ -75,7 +75,7 @@ public class CustomerCreditWorker {
           }});
           
           client
-            .target("http://localhost:8092/rest/engine/default/external-task")
+            .target("http://localhost:8100/rest/engine/default/external-task")
             .path(task.getId()) //
             .path("complete")
             .request(MediaType.APPLICATION_JSON) //
