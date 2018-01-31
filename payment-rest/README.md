@@ -14,7 +14,7 @@ See [PaymentRestHacksControllerV1.java](src/main/java/io/flowing/retail/payment/
 
 ## Fail fast
 
-The least you have to do is to apply a *fail fast* pattern like the *circuit breaker*. In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix). If a service responds to slow the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (I cannot charge credit cards).
+The least you have to do is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix). If a service responds to slow the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (I cannot charge credit cards).
 
 ![V2](docs/v2.png)
 
@@ -52,7 +52,7 @@ In this example I show one alternative which a lot of customers use very sucessf
 
 ![Microservices](docs/v5.png)
 
-See [payment5.bpmn](src/main/resources/payment5.bpmn) for the workflow model.
+See [payment5.bpmn](src/main/resources/payment5.bpmn) for the workflow model (hint: use the free [Camunda Modeler](https://camunda.com/download/modeler/) to show this model graphically).
 
 See [index.js](node-customer-credit-worker/index.js) for a worker fetching work from Camunda in Node.js.
 
@@ -66,7 +66,7 @@ The last part of the example adds compensation to the game. In distributed syste
 
 ![Microservices](docs/v6.png)
 
-See [payment5.bpmn](src/main/resources/payment5.bpmn) for the workflow
+See [payment&.bpmn](src/main/resources/payment6.bpmn) for the workflow
 
 # How-to run
 
@@ -78,13 +78,13 @@ Note that you can easily change that to behave slow in [StripeFakeRestController
 mvn -f ../stripe-fake/ exec:java
 ```
 
-Now you can run the payment service
+Now you can run the payment service itself
 
 ```
 mvn exec:java
 ```
 
-Now the payment service is available:
+Now the different versions of the payment service are available:
 
 * http://localhost:8100/api/payment/v1
 * ...
@@ -103,7 +103,7 @@ http://localhost:8100/api/payment/v1
 
 # Links
 
-* Fail fast is not enough. Blog post by Bernd Rücker: https://blog.bernd-ruecker.com/fail-fast-is-not-enough-why-distributed-systems-require-stateful-resilience-patterns-84645d6864d3
+* **Fail fast is not enough**. Blog post by Bernd Rücker: https://blog.bernd-ruecker.com/fail-fast-is-not-enough-why-distributed-systems-require-stateful-resilience-patterns-84645d6864d3
 
 ## Concrete technologies/frameworks used:
 

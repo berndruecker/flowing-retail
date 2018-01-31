@@ -10,6 +10,8 @@ in the context of
 * Event Driven Architecture (EDA)
 * Microservices (µS)
 
+**Note:** There is also an example demonstrating **stateful resilience patterns** when using REST communication. It contains an own readme for details: [payment-rest](payment-rest).
+
 ## Links
 
 * Introduction blog post by Bernd Rücker: https://blog.bernd-ruecker.com/flowing-retail-demonstrating-aspects-of-microservices-events-and-their-flow-with-concrete-source-7f3abdd40e53
