@@ -25,17 +25,10 @@ public class PaymentRestHacksControllerV1 {
   public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload
-    long amount = 15; // get somehow from retrievePaymentPayload 
+    long amount = 15; // get somehow from retrievePaymentPayload
 
-    long remainingAmount = 
-         useExistingCustomerCredit(customerId, amount);
-       
-    if (remainingAmount > 0) {       
-       chargeCreditCard(customerId, remainingAmount);
-       return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\"}";
-    } else {      
-      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";        
-    }
+    chargeCreditCard(customerId, amount);
+    return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\"}";
   }
 
   public String chargeCreditCard(String customerId, long remainingAmount) {
@@ -58,11 +51,4 @@ public class PaymentRestHacksControllerV1 {
     public String transactionId;
   }
 
-  public long useExistingCustomerCredit(String customerId, long amount) {
-    long remainingAmount = 0;
-    if (Math.random() > 0.5d) {
-      remainingAmount = 15;  
-    }
-    return remainingAmount;
-  }
 }

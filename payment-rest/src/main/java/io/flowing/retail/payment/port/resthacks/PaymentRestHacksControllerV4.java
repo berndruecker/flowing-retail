@@ -22,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+
 import io.flowing.retail.payment.port.rest.NotifySemaphorAdapter;
+import io.flowing.retail.payment.port.resthacks.PaymentRestHacksControllerV3.CreateChargeResponse;
 
 /**
  * Step4: Use Camunda state machine for long-running retry + best effort response
@@ -57,11 +61,15 @@ public class PaymentRestHacksControllerV4 {
       CreateChargeRequest request = new CreateChargeRequest();
       request.amount = (long) ctx.getVariable("amount");
 
-      CreateChargeResponse response = rest.postForObject( //
-          stripeChargeUrl, //
-          request, //
-          CreateChargeResponse.class);
-
+      CreateChargeResponse response = new HystrixCommand<CreateChargeResponse>(HystrixCommandGroupKey.Factory.asKey("stripe")) {
+        protected CreateChargeResponse run() throws Exception {
+          return rest.postForObject( //
+              stripeChargeUrl, //
+              request, //
+              CreateChargeResponse.class);
+        }
+      }.execute();
+      
       ctx.setVariable("paymentTransactionId", response.transactionId);
     }
   }
@@ -72,25 +80,16 @@ public class PaymentRestHacksControllerV4 {
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
 
-    long remainingAmount = useExistingCustomerCredit(customerId, amount);
+    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
+    chargeCreditCard(traceId, customerId, amount);
+    boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
+    NotifySemaphorAdapter.removeSemaphore(traceId);
 
-    if (remainingAmount > 0) {
-
-      Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
-      
-      chargeCreditCard(traceId, customerId, remainingAmount);
-      
-      boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
-      NotifySemaphorAdapter.removeSemaphore(traceId);
-      
-      if (finished) {
-        return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\"}";
-      } else {
-        response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
-      }
+    if (finished) {
+      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\"}";
     } else {
-      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";
+      response.setStatus(HttpServletResponse.SC_ACCEPTED);
+      return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
     }
   }
 
@@ -108,11 +107,4 @@ public class PaymentRestHacksControllerV4 {
     public String transactionId;
   }
 
-  public long useExistingCustomerCredit(String customerId, long amount) {
-    long remainingAmount = 0;
-    if (Math.random() > 0.5d) {
-      remainingAmount = 15;
-    }
-    return remainingAmount;
-  }
 }

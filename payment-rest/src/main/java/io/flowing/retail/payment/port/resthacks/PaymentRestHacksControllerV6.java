@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import io.flowing.retail.payment.port.rest.NotifySemaphorAdapter;
 
 /**
- * Step5: Use Camunda state machine for long-running retry, external task & compensation
+ * Step6: Use Camunda state machine for long-running retry, external task & compensation
  */
 @RestController
 public class PaymentRestHacksControllerV6 {
@@ -40,10 +40,8 @@ public class PaymentRestHacksControllerV6 {
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
 
-    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
-    
-    ProcessInstance pi = chargeCreditCard(traceId, customerId, amount);
-    
+    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);    
+    ProcessInstance pi = chargeCreditCard(traceId, customerId, amount);    
     boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
     NotifySemaphorAdapter.removeSemaphore(traceId);
     
