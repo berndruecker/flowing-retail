@@ -40,10 +40,8 @@ public class PaymentRestHacksControllerV5 {
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
 
-    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);
-    
-    ProcessInstance pi = retrievePayment(traceId, customerId, amount);
-    
+    Semaphore newSemaphore = NotifySemaphorAdapter.newSemaphore(traceId);    
+    ProcessInstance pi = retrievePayment(traceId, customerId, amount);    
     boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
     NotifySemaphorAdapter.removeSemaphore(traceId);
     
