@@ -16,6 +16,7 @@ import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.bpm.model.bpmn.Bpmn;
+import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.builder.EndEventBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -42,14 +43,14 @@ public class PaymentRestHacksControllerV3 {
 
   @PostConstruct
   public void createFlowDefinition() {
-    EndEventBuilder flow = Bpmn.createExecutableProcess("paymentV3") //
+    BpmnModelInstance flow = Bpmn.createExecutableProcess("paymentV3") //
         .startEvent() //
         .serviceTask("stripe").camundaDelegateExpression("#{stripeAdapter}") //
           .camundaAsyncBefore().camundaFailedJobRetryTimeCycle("R3/PT1M") //        
-        .endEvent();
+        .endEvent().done();
     
     camunda.getRepositoryService().createDeployment() //
-      .addModelInstance("payment.bpmn", flow.done()) //
+      .addModelInstance("payment.bpmn", flow) //
       .deploy();
   }
   
@@ -92,7 +93,7 @@ public class PaymentRestHacksControllerV3 {
   public void chargeCreditCard(String customerId, long remainingAmount) {
     ProcessInstance pi = camunda.getRuntimeService() //
         .startProcessInstanceByKey("paymentV3", //
-            Variables.putValue("amount", remainingAmount));
+            Variables.putValue("amount", remainingAmount));    
   }
   
   public static class CreateChargeRequest {

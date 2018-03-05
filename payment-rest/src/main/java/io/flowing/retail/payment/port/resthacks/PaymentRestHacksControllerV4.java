@@ -15,6 +15,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.bpm.model.bpmn.Bpmn;
+import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.builder.EndEventBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,14 +40,14 @@ public class PaymentRestHacksControllerV4 {
 
   @PostConstruct
   public void createFlowDefinition() {
-    EndEventBuilder flow = Bpmn.createExecutableProcess("paymentV4") //
+    BpmnModelInstance flow = Bpmn.createExecutableProcess("paymentV4") //
         .startEvent() //
         .serviceTask("stripe").camundaDelegateExpression("#{stripeAdapter2}") //
           .camundaAsyncBefore().camundaFailedJobRetryTimeCycle("R3/PT1M") //
-        .endEvent().camundaExecutionListenerClass("start", NotifySemaphorAdapter.class);
+        .endEvent().camundaExecutionListenerClass("start", NotifySemaphorAdapter.class).done();
 
     camunda.getRepositoryService().createDeployment() //
-        .addModelInstance("payment.bpmn", flow.done()) //
+        .addModelInstance("payment.bpmn", flow) //
         .deploy();
   }
 
