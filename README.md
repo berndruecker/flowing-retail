@@ -103,7 +103,7 @@ For example, on Windows append this entry to ```C:\Windows\System32\drivers\etc\
 127.0.0.1 kafkaserver
 ```
 
-On Linix edit the ```/etc/hosts``` accordingly.
+On Linux edit the ```/etc/hosts``` accordingly.
 
 
 ## Docker Compose with local build of Docker images
