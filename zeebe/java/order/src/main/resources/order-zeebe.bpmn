@@ -6,7 +6,7 @@
     </bpmn:startEvent>
     <bpmn:serviceTask id="ServiceTask_0qrnrfc" name="Retrieve payment">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="retrieve-payment" />
+        <zeebe:taskDefinition type="retrieve-payment-z" />
         <zeebe:ioMapping>
           <zeebe:input source="$.order.totalSum" target="$.amount" />
           <zeebe:input source="$.order.orderId" target="$.refId" />
@@ -19,7 +19,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0khqnmm" sourceRef="StartEvent_1" targetRef="ServiceTask_08g9u5d" />
     <bpmn:serviceTask id="ServiceTask_026x4p7" name="Fetch goods">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="fetch-goods" />
+        <zeebe:taskDefinition type="fetch-goods-z" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1xjl1oj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1bpuqsi</bpmn:outgoing>
@@ -27,7 +27,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1xjl1oj" sourceRef="ServiceTask_0qrnrfc" targetRef="ServiceTask_026x4p7" />
     <bpmn:serviceTask id="ServiceTask_1hyum3r" name="Ship goods">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ship-goods" />
+        <zeebe:taskDefinition type="ship-goods-z" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1bpuqsi</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0wm07rt</bpmn:outgoing>
@@ -39,7 +39,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0wm07rt" sourceRef="ServiceTask_1hyum3r" targetRef="EndEvent_02dgehc" />
     <bpmn:serviceTask id="ServiceTask_08g9u5d" name="Save order">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="save-order" />
+        <zeebe:taskDefinition type="save-order-z" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0khqnmm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1e3ow6n</bpmn:outgoing>

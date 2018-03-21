@@ -28,7 +28,7 @@ public class SaveOrderAdapter {
   @Autowired
   private OrderRepository orderRepository;
   
-  @ZeebeTaskListener(taskType = "save-order", lockTime=5*60*1000)
+  @ZeebeTaskListener(taskType = "save-order-z", lockTime=5*60*1000)
   public void retrievePayment(TasksClient client, TaskEvent taskEvent) throws Exception {
     // read data
     JsonObject payload = Json.createReader(new StringReader(taskEvent.getPayload())).readObject();    

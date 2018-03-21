@@ -1,4 +1,4 @@
-package io.flowing.retail.zeebe.order;
+package io.flowing.retail.zeebe.payment.port.zeebe;
 
 public class PaymentInput {
   

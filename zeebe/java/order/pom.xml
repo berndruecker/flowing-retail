@@ -49,7 +49,7 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>io.flowing.retail.zeebe.fake.FakeServicesApplication</mainClass>
+					<mainClass>io.flowing.retail.zeebe.order.OrderApplication</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>

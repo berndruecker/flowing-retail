@@ -1,4 +1,4 @@
-package io.flowing.retail.zeebe.order;
+package io.flowing.retail.zeebe.payment.port.zeebe;
 
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import io.zeebe.spring.client.annotation.ZeebeTaskListener;
 @Component
 public class PaymentAdapter {
   
-  @ZeebeTaskListener(taskType = "retrieve-payment", lockTime=5*60*1000)
+  @ZeebeTaskListener(taskType = "retrieve-payment-z", lockTime=5*60*1000)
   public void retrievePayment(TasksClient client, TaskEvent taskEvent) throws Exception {
     PaymentInput context = new ObjectMapper().readValue(taskEvent.getPayload(), PaymentInput.class);
     String traceId = context.getTraceId();    
