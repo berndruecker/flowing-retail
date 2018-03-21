@@ -8,19 +8,7 @@ The example respects learnings from **Domain Driven Design (DDD)**, Event Driven
 
 **Note:** The code was written in order to be explained. Hence I favored simplified code or copy & paste over production-ready code with generic solutions. **Don't consider the coding style best practice! It serves the purpose to have easily explainable code**.
 
-## Storyline
-
-Flowing retail simulates a very easy order fulfillment system. The business logic is separated into the following services (shown as [context map](https://www.infoq.com/articles/ddd-contextmapping)):
-
-![Microservices](docs/context-map.png)
-
-Some services are long running in nature, as e.g. the payment service ask customers to update expired credit cards. Hence a workflow engine is used to persist and control these long running interactions.
-
-An important thought is, that this state machine (or workflow engine in this case) is a library used **within** one service. If different services need a workflow engine they potentally run multiple engines. This way it is an autonomous team decision if they want to use some framework and which one:
-
-![Events and Commands](docs/workflow-in-service.png)
-
-## Alternatives and getting started
+## Architecture and implemenation alternatives
 
 The most fundamental choice is to select the **communication mechanism**:
 
@@ -37,6 +25,18 @@ and the **programming language**:
 
 * **Java**
 * **Go**
+
+## Storyline
+
+Flowing retail simulates a very easy order fulfillment system. The business logic is separated into the following services (shown as [context map](https://www.infoq.com/articles/ddd-contextmapping)):
+
+![Microservices](docs/context-map.png)
+
+Some services are long running in nature, as e.g. the payment service ask customers to update expired credit cards. Hence a workflow engine is used to persist and control these long running interactions.
+
+An important thought is, that this state machine (or workflow engine in this case) is a library used **within** one service. If different services need a workflow engine they potentally run multiple engines. This way it is an autonomous team decision if they want to use some framework and which one:
+
+![Events and Commands](docs/workflow-in-service.png)
 
 
 ## Links and background reading
