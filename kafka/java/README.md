@@ -13,7 +13,7 @@ For the **workflow engine** you can decide between:
 * Camunda (folder \*-camunda)
 * Zeebe (folder \*-zeebe)
 
-![Microservices](../../docs/kafka.png)
+![Microservices](../../docs/kafka-services.png)
 
 # Run the application
 
