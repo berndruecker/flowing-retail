@@ -5,7 +5,11 @@ This folder contains services that connect via REST. This is currently under dev
 ![](java/payment/docs/situation.png)
 
 
-## Concrete technologies/frameworks:
+## Code
+
+See [Sample service demonstrating stateful resilience patterns in a REST environment, Java/Camunda](java/payment/)
+
+Concrete technologies/frameworks:
 
 * Java 8
 * Spring Boot 1.5.x

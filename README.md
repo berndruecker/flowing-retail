@@ -14,6 +14,7 @@ The most fundamental choice is to select the **communication mechanism**:
 
 * **[Apache Kafka](kafka/)** as event bus (could be easily changed to messaging, e.g. RabbitMQ): [](docs/architecture.png)
 * **[REST](rest/)** communication between Services
+  * This example also shows how to do **stateful resilience patterns** like **stateful retries** leveraging a workflow engine
 * **[Zeebe](zeebe/)** broker doing work distribution
 
 Having chosen that your probably can choose the **workflow engine**:
