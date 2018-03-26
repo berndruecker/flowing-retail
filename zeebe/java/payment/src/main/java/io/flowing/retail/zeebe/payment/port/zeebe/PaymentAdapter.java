@@ -13,16 +13,16 @@ import io.zeebe.spring.client.annotation.ZeebeTaskListener;
 public class PaymentAdapter {
   
   @ZeebeTaskListener(taskType = "retrieve-payment-z", lockTime=5*60*1000)
-  public void retrievePayment(TasksClient client, TaskEvent taskEvent) throws Exception {
-    PaymentInput context = new ObjectMapper().readValue(taskEvent.getPayload(), PaymentInput.class);
-    String traceId = context.getTraceId();    
+  public void retrievePayment(TasksClient zeebe, TaskEvent taskEvent) throws Exception {
+    PaymentInput data = new ObjectMapper().readValue(taskEvent.getPayload(), PaymentInput.class);
+    String traceId = data.getTraceId();    
     
-    String refId = context.getRefId();
-    long amount = context.getAmount();
+    String refId = data.getRefId();
+    long amount = data.getAmount();
     
     System.out.println("retrieved payment " + amount + " for " + refId);
 
-    client.complete(taskEvent).execute();
+    zeebe.complete(taskEvent).execute();
   }
 
 }

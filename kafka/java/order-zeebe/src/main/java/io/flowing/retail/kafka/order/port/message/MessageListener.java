@@ -38,10 +38,11 @@ public class MessageListener {
   @StreamListener(target = Sink.INPUT, condition = "payload.messageType.toString()=='OrderPlacedEvent'")
   @Transactional
   public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
+    // read data
     Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>() {});
+    Order order = message.getPayload();
     
     // persist domain entity
-    Order order = message.getPayload();
     repository.persistOrder(order);
 
     // prepare data for workflow

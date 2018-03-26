@@ -1,9 +1,8 @@
-package io.flowing.retail.zeebe.order.port.zeebe;
+package io.flowing.retail.checkout.domain;
 
 import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WorkflowDataContext<T> {
@@ -15,14 +14,6 @@ public class WorkflowDataContext<T> {
   public static <R> WorkflowDataContext<R> fromJson(String json, Class<R> classtype) {
     try {
       return (WorkflowDataContext<R>) new ObjectMapper().readValue(json, classtype);
-    } catch (Exception e) {
-      throw new RuntimeException("Could not deserialize context from JSON: " + e.getMessage(), e);
-    }
-  } 
-  @SuppressWarnings("unchecked")
-  public static <R> WorkflowDataContext<R> fromJson(String json, TypeReference typeReference) {
-    try {
-      return (WorkflowDataContext<R>) new ObjectMapper().readValue(json, typeReference);
     } catch (Exception e) {
       throw new RuntimeException("Could not deserialize context from JSON: " + e.getMessage(), e);
     }
@@ -50,7 +41,5 @@ public class WorkflowDataContext<T> {
     this.payload = payload;
     return this;
   }
-
- 
   
 }

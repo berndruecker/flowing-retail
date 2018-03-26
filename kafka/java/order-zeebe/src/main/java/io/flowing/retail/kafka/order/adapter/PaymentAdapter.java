@@ -25,7 +25,7 @@ public class PaymentAdapter {
   private OrderRepository orderRepository;  
 
   @ZeebeTaskListener(taskType = "retrieve-payment", lockTime=5*60*1000)
-  public void sendRetrievePaymentCommand(TasksClient client, TaskEvent taskEvent) throws Exception {
+  public void sendRetrievePaymentCommand(TasksClient zeebe, TaskEvent taskEvent) throws Exception {
     OrderFlowContext context = OrderFlowContext.fromJson(taskEvent.getPayload());
        
     Order order = orderRepository.getOrder(context.getOrderId());   

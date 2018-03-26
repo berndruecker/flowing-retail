@@ -29,7 +29,7 @@ public class SaveOrderAdapter {
   private OrderRepository orderRepository;
   
   @ZeebeTaskListener(taskType = "save-order-z", lockTime=5*60*1000)
-  public void retrievePayment(TasksClient client, TaskEvent taskEvent) throws Exception {
+  public void retrievePayment(TasksClient zeebe, TaskEvent taskEvent) throws Exception {
     // read data
     JsonObject payload = Json.createReader(new StringReader(taskEvent.getPayload())).readObject();    
     String traceId = payload.getString("traceId");  
@@ -51,7 +51,7 @@ public class SaveOrderAdapter {
     
     // done
     System.out.println("persisted order " + order.getId());
-    client.complete(taskEvent).payload(payloadNew).execute();
+    zeebe.complete(taskEvent).payload(payloadNew).execute();
   }
 
 }

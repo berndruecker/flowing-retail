@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.flowing.retail.checkout.domain.Customer;
 import io.flowing.retail.checkout.domain.Order;
+import io.flowing.retail.checkout.domain.WorkflowDataContext;
 import io.flowing.retail.checkout.port.zeebe.MessageSender;
-import io.flowing.retail.checkout.port.zeebe.WorkflowDataContext;
 
 @RestController
 public class ShopRestController {
