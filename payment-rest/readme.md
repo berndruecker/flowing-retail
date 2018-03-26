@@ -1,0 +1,1 @@
+# This example has permanently moved to [../rest](../rest)
