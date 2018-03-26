@@ -4,7 +4,16 @@ This sample (micro-)service can retrieve payments and therefor needs to be calle
 
 ![REST callstack](docs/situation.png)
 
-This simple call-chain is great to demonstrate various important resilience patterns. 
+This simple call-chain is great to demonstrate various important resilience patterns.
+
+Concrete technologies/frameworks:
+
+* Java 8
+* Spring Boot 1.5.x
+* Hystrix
+* Camunda
+
+## Storyline
 
 Assume the credit card service goes nuts, meaning it still responds, but very slow. Having no pattern in place this is the worst thing that can happen - as now the payment service will call the credit card service and block until he gets a response. As this take a long time all threads from the payment service are hold hostile and the payment service will eventually time out for its clients. Tiny failures somewhere in your system might blow up your whole system:
 
@@ -46,7 +55,7 @@ See [PaymentRestHacksControllerV4.java](src/main/java/io/flowing/retail/payment/
 
 ## Asynchronous work distribution without messaging
 
-An alternative to synchronously call an upstream service is to communicate asynchronously. The default would be messaging. 
+An alternative to synchronously call an upstream service is to communicate asynchronously. The default would be messaging.
 
 In this example I show one alternative which a lot of customers use very sucessfully: Using the workflow engine as work distribution, behaving like a queue. Therefor I leveraged a concept called [External Tasks](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/).
 
@@ -121,4 +130,3 @@ For Camunda there is an enterprise edition available with [https://camunda.com/p
 * Adjust Camunda version used in pom: [./pom.xml#L12](./pom.xml#L12), [./pom.xml#L50](./pom.xml#L50)
 
 Note that you do not need the enterprise edition to run the examples, the community edition will also do fine, you just cannot see and do that much in Camunda Cockpit.
-

@@ -39,8 +39,13 @@ An important thought is, that this state machine (or workflow engine in this cas
 
 ![Events and Commands](docs/workflow-in-service.png)
 
+Depending on the means of communication (e.g. messaging vs. blocking synchronous REST calls) you also have to tackle quite basic communication problems, e.g. by stateful retries. This is shown in the [REST example](rest/):
+
+![V1](rest/java/payment/docs/v1.png)
+
 
 ## Links and background reading
 
-* Introduction blog post by Bernd Rücker: https://blog.bernd-ruecker.com/flowing-retail-demonstrating-aspects-of-microservices-events-and-their-flow-with-concrete-source-7f3abdd40e53
+* Introduction blog post: https://blog.bernd-ruecker.com/flowing-retail-demonstrating-aspects-of-microservices-events-and-their-flow-with-concrete-source-7f3abdd40e53
 * InfoQ-Writeup "Events, Flows and Long-Running Services: A Modern Approach to Workflow Automation": https://www.infoq.com/articles/events-workflow-automation
+* InfoWorld article "3 common pitfalls of microservices integration—and how to avoid them": https://www.infoworld.com/article/3254777/application-development/3-common-pitfalls-of-microservices-integrationand-how-to-avoid-them.html
