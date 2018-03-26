@@ -2,6 +2,9 @@ language: java
 
 sudo: true
 
+before_script: cd kafka/java
+script: mvn clean package
+
 services:
   - docker
 
@@ -19,17 +22,17 @@ branches:
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build -t flowingretail/checkout ./checkout/
+  - docker build -t flowingretail/checkout ./kafka/java/checkout/
   - docker push flowingretail/checkout
-  - docker build -t flowingretail/order ./order/
+  - docker build -t flowingretail/order ./kafka/java/order-camunda/
   - docker push flowingretail/order
-  - docker build -t flowingretail/payment ./payment/
+  - docker build -t flowingretail/payment ./kafka/java/payment/
   - docker push flowingretail/payment
-  - docker build -t flowingretail/inventory ./inventory/
+  - docker build -t flowingretail/inventory ./kafka/java/inventory/
   - docker push flowingretail/inventory
-  - docker build -t flowingretail/shipping ./shipping/
+  - docker build -t flowingretail/shipping ./kafka/java/shipping/
   - docker push flowingretail/shipping
-  - docker build -t flowingretail/monitor ./monitor/
+  - docker build -t flowingretail/monitor ./kafka/java/monitor/
   - docker push flowingretail/monitor
-  - docker build -t flowingretail/docs ./docs/
+  - docker build -t flowingretail/docs ./kafka/java/docs/
   - docker push flowingretail/docs
