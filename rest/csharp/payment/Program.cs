@@ -28,7 +28,9 @@ namespace FlowingRetailPayment
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                //.UseKestrel()
                 .UseStartup<Startup>()
+                .UseUrls("http://localhost:8100")
                 .Build();
     }
 }
