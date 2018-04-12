@@ -26,7 +26,7 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181
 
   order:
-    build: ./order
+    build: ./order-camunda
     networks:
       - flowing
     ports:
@@ -38,7 +38,7 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181
 
   payment:
-    build: ./payment
+    build: ./payment-camunda
     networks:
       - flowing
     ports:
@@ -82,7 +82,7 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181   
 
   docs:
-    build: ./docs
+    build: ../../docs
     networks:
       - flowing
     ports:
