@@ -12,8 +12,8 @@ This simple call-chain is great to demonstrate various important resilience patt
 
 There are two technology choices available for the code demos:
 
-* [**Java**, Spring, Hystrix, Camunda](java/payment)
-* [.NET Core, **C#**, Polly, Camunda](csharp/payment)
+* [**Java**](java/payment) + Spring, Hystrix, Camunda
+* [**C#**](csharp/payment) + Polly, Camunda
 
 
 # Storyline
