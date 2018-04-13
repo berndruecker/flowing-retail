@@ -2,11 +2,11 @@
 
 This example demonstrates stateful resilience patterns in a REST environment. A payment (micro-)service can retrieve payments if called via REST. It requires an upstream REST service to charge credit cards.
 
-![REST callstack](../../../docs/resilience-patterns/docs/situation.png)
+![REST callstack](../../../docs/resilience-patterns/situation.png)
 
 This simple call-chain is great to demonstrate various important resilience patterns.
 
-**See [introduction](../../README.md) for the storyline / patterns behind**
+**See [introduction](../../) for the storyline / patterns behind**
 
 # Concrete technologies/frameworks in this folder:
 

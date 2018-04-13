@@ -2,11 +2,11 @@
 
 This example demonstrates stateful resilience patterns in a REST environment. A payment (micro-)service can retrieve payments if called via REST. It requires an upstream REST service to charge credit cards.
 
-![REST callstack](../../../docs/resilience-patterns/docs/situation.png)
+![REST callstack](../../../docs/resilience-patterns/situation.png)
 
 This simple call-chain is great to demonstrate various important resilience patterns.
 
-**See [introduction](../../README.md) for the storyline / patterns behind**
+**See [introduction](../../) for the storyline / patterns behind**
 
 # Concrete technologies/frameworks in this folder:
 
@@ -17,8 +17,6 @@ This simple call-chain is great to demonstrate various important resilience patt
 
 # How-to run
 
-This example uses this [Camunda Client Sample for C#](https://github.com/berndruecker/camunda-dot-net-showcase/tree/master/CamundaClient) to avoid low level [Camunda REST API](https://docs.camunda.org/manual/latest/reference/rest/) handling. 
-
 The first step is to run Camunda itself. You have two options:
 
 * Donwload, unzip and run, see: https://camunda.com/download/
@@ -28,11 +26,10 @@ docker run -d -p 8080:8080 camunda/camunda-bpm-platform:latest
 ```
 See also [Use Camunda without touching Java and get an easy-to-use REST-based orchestration and workflow engine](https://blog.bernd-ruecker.com/use-camunda-without-touching-java-and-get-an-easy-to-use-rest-based-orchestration-and-workflow-7bdf25ac198e) for more details on this.
 
+**Hint:** This project uses the unsupported [Camunda Client Sample for C#](https://github.com/berndruecker/camunda-dot-net-showcase/tree/master/CamundaClient) available as [NuGet Package: BerndRuecker.Sample.CamundaClient](https://www.nuget.org/packages/BerndRuecker.Sample.CamundaClient/0.0.1). This clients does the low level [Camunda REST API](https://docs.camunda.org/manual/latest/reference/rest/) handling and provides a proper C# API. However, it is just a sample developed for a showcase and not supported in any way.
 
 In order to run the flowing-retail/rest example:
-
 * Create a new solution in Visual Studio
-* Add the [Camunda Client Sample for C#](https://github.com/berndruecker/camunda-dot-net-showcase/tree/master/CamundaClient)
 * Add the [FlowingRetailPayment](FlowingRetailPayment.csproj) project (this folder)
 * Fix the dependency of [FlowingRetailPayment](FlowingRetailPayment.csproj) to [Camunda Client Sample for C#](https://github.com/berndruecker/camunda-dot-net-showcase/tree/master/CamundaClient)
 * Add the [StripeFake](../stripe-fake/StripeFake.csproj) project 
