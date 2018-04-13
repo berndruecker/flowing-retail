@@ -1,33 +1,31 @@
 # Flowing Retail / REST
 
-This folder contains services that connect via REST.
-
-Currently this is reduced to:
+This folder contains services that connect via REST. Currently this is reduced to showcasing resilience patterns.
 
 # Sample service demonstrating stateful resilience patterns in a REST environment
 
 This sample (micro-)service can retrieve payments and therefor needs to be called via REST. It requires an upstream REST service to charge credit cards.
 
-![REST callstack](docs/situation.png)
+![REST callstack](../docs/resilience-patterns/situation.png)
 
 This simple call-chain is great to demonstrate various important resilience patterns.
 
 There are two technology choices available for the code demos:
 
-* [Java, Spring, Hystrix, Camunda](java/payment)
-* [.NET Core, C#, Polly, Camunda](csharp/payment)
+* [**Java**, Spring, Hystrix, Camunda](java/payment)
+* [.NET Core, **C#**, Polly, Camunda](csharp/payment)
 
 
 # Storyline
 
-* See **Fail fast is not enough**: https://blog.bernd-ruecker.com/fail-fast-is-not-enough-84645d6864d3
+See **Fail fast is not enough**: https://blog.bernd-ruecker.com/fail-fast-is-not-enough-84645d6864d3
 
 Assume the credit card service goes nuts, meaning it still responds, but very slow. Having no pattern in place this is the worst thing that can happen - as now the payment service will call the credit card service and block until he gets a response. As this take a long time all threads from the payment service are hold hostile and the payment service will eventually time out for its clients. Tiny failures somewhere in your system might blow up your whole system:
 
 ![V1](../docs/resilience-patterns/v1.png)
 
-* Java: [PaymentRestHacksControllerV1.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java).
-* C#: [PaymentControllerV1](csharp/payment/Controllers/PaymentController.cs#L16).
+* Java: [PaymentRestHacksControllerV1.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java)
+* C#: [PaymentControllerV1](csharp/payment/Controllers/PaymentController.cs#L16)
 
 ## Fail fast
 
@@ -36,7 +34,7 @@ The least you have to do is to apply a **fail fast** pattern like [**circuit bre
 ![V2](../docs/resilience-patterns/v2.png)
 
 * Java: [PaymentRestHacksControllerV2.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV2.java#L41)
-* C#: [PaymentControllerV2](csharp/payment/Controllers/PaymentController.cs#L74).
+* C#: [PaymentControllerV2](csharp/payment/Controllers/PaymentController.cs#L74)
 
 ## Fail fast is not enough
 
@@ -107,7 +105,7 @@ You have to startup both services:
 
 This varies:
 * [How to run in Java](java/payment)
-* [How to run in .NET](java/csharp)
+* [How to run in .NET](csharp/payment)
 
 Now the different versions of the payment service are available:
 

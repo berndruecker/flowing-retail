@@ -8,6 +8,10 @@ The example respects learnings from **Domain Driven Design (DDD)**, Event Driven
 
 **Note:** The code was written in order to be explained. Hence I favored simplified code or copy & paste over production-ready code with generic solutions. **Don't consider the coding style best practice! It serves the purpose to have easily explainable code**.
 
+Flowing retail simulates a very easy order fulfillment system:
+
+![Events and Commands](docs/workflow-in-service.png)
+
 ## Architecture and implemenation alternatives
 
 The most fundamental choice is to select the **communication mechanism**:
@@ -29,19 +33,25 @@ and the **programming language**:
 
 ## Storyline
 
-Flowing retail simulates a very easy order fulfillment system. The business logic is separated into the following services (shown as [context map](https://www.infoq.com/articles/ddd-contextmapping)):
+Flowing retail simulates a very easy order fulfillment system. The business logic is separated into the services shown above (shown as [context map](https://www.infoq.com/articles/ddd-contextmapping)).
 
-![Microservices](docs/context-map.png)
+### Long running services and orchestration
 
-Some services are long running in nature, as e.g. the payment service ask customers to update expired credit cards. Hence a workflow engine is used to persist and control these long running interactions.
+Some services are **long running** in nature, as e.g. the payment service ask customers to update expired credit cards. Hence a workflow engine is used to persist and control these long running interactions.
+
+### Workflows live within service boundaries
 
 An important thought is, that this state machine (or workflow engine in this case) is a library used **within** one service. If different services need a workflow engine they potentally run multiple engines. This way it is an autonomous team decision if they want to use some framework and which one:
 
 ![Events and Commands](docs/workflow-in-service.png)
 
-Depending on the means of communication (e.g. messaging vs. blocking synchronous REST calls) you also have to tackle quite basic communication problems, e.g. by stateful retries. This is shown in the [REST example](rest/):
+### Resilience patterns for synchronous communication
 
-![V1](rest/java/payment/docs/v1.png)
+Depending on the means of communication (e.g. messaging vs. blocking synchronous REST calls) you also have to tackle quite basic communication problems, e.g. by stateful retries.
+
+![V1](docs/resilience-patterns/v1.png)
+
+### See [REST example](rest/).
 
 
 ## Links and background reading
