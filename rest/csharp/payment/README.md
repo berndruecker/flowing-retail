@@ -2,11 +2,11 @@
 
 This example demonstrates stateful resilience patterns in a REST environment. A payment (micro-)service can retrieve payments if called via REST. It requires an upstream REST service to charge credit cards.
 
-![REST callstack](../../docsresilience-patterns/situation.png)
+![REST callstack](../../../docs/resilience-patterns/docs/situation.png)
 
 This simple call-chain is great to demonstrate various important resilience patterns.
 
-# See [introduction](../../README.md) for the storyline / patterns behind
+**See [introduction](../../README.md) for the storyline / patterns behind**
 
 # Concrete technologies/frameworks in this folder:
 
@@ -58,7 +58,7 @@ http://localhost:8100/api/payment/v1
 
 ## Hint on using Camunda Enterprise Edition
 
-For Camunda there is an enterprise edition available with [https://camunda.com/products/cockpit/#/features](additional features in Cockpit) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
+For Camunda there is an enterprise edition available with [additional features in Cockpit)(https://camunda.com/products/cockpit/#/features]) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
 
 * Download and get a trial license if you don't have a license yet: https://camunda.com/download/enterprise/
 
