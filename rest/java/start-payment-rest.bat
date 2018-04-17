@@ -1,1 +1,1 @@
-mvn exec:java -f payment-rest/
+mvn exec:java -f payment/
