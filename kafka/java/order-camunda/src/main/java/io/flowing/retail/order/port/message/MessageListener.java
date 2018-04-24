@@ -48,7 +48,7 @@ public class MessageListener {
     System.out.println("New order placed, start flow. " + order);
     
     // persist domain entity
-    repository.persistOrder(order);    
+    repository.save(order);    
     
     // and kick of a new flow instance
     camunda.getRuntimeService().createMessageCorrelation(message.getMessageType())

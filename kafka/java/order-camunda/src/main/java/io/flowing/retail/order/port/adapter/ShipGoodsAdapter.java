@@ -21,7 +21,7 @@ public class ShipGoodsAdapter implements JavaDelegate {
 
   @Override
   public void execute(DelegateExecution context) throws Exception {
-    Order order = orderRepository.getOrder( //
+    Order order = orderRepository.findOne( //
         (String)context.getVariable("orderId")); 
     String pickId = (String)context.getVariable("pickId"); // TODO read from step before!
     String traceId = context.getProcessBusinessKey();

@@ -21,7 +21,7 @@ public class FetchGoodsAdapter implements JavaDelegate {
 
   @Override
   public void execute(DelegateExecution context) throws Exception {
-    Order order = orderRepository.getOrder( //
+    Order order = orderRepository.findOne( //
         (String)context.getVariable("orderId")); 
     String traceId = context.getProcessBusinessKey();
 

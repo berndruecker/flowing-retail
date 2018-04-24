@@ -26,7 +26,7 @@ public class FetchGoodsPubSubAdapter extends PublishSubscribeAdapter {
 
   @Override
   public void execute(ActivityExecution context) throws Exception {
-    Order order = orderRepository.getOrder( //
+    Order order = orderRepository.findOne( //
         (String)context.getVariable("orderId")); 
     String traceId = context.getProcessBusinessKey();
 
