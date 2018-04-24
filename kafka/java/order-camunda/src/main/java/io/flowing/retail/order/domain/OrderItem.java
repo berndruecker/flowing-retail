@@ -14,7 +14,7 @@ public class OrderItem {
   @Id
   @GeneratedValue(generator = "uuid2")
   @GenericGenerator(name = "uuid2", strategy = "uuid2")
-  private String id = UUID.randomUUID().toString();
+  private String id;
   
   private String articleId;
   private int amount;
