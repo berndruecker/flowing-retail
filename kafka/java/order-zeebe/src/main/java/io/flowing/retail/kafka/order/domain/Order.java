@@ -4,22 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
-
+@Entity(name="OrderEntity")
 public class Order {
 
+  @Id
+  @GeneratedValue(generator = "uuid2")
+  @GenericGenerator(name = "uuid2", strategy = "uuid2")
   protected String id = UUID.randomUUID().toString();
-  protected Customer customer = new Customer(); 
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER  )
+  protected Customer customer = new Customer();
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER  )
   protected List<OrderItem> items = new ArrayList<OrderItem>();
 
   public void addItem(OrderItem i) {
     items.add(i);
   }
   
-  @JsonIgnore
   public int getTotalSum() {
     int sum = 0;
     for (OrderItem orderItem : items) {

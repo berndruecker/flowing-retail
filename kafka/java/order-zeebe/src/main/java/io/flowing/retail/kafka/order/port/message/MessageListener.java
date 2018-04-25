@@ -43,7 +43,7 @@ public class MessageListener {
     Order order = message.getPayload();
     
     // persist domain entity
-    repository.persistOrder(order);
+    repository.save(order);
 
     // prepare data for workflow
     OrderFlowContext context = new OrderFlowContext();

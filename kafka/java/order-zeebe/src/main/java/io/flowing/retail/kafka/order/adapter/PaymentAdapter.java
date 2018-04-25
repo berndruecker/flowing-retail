@@ -28,7 +28,7 @@ public class PaymentAdapter {
   public void sendRetrievePaymentCommand(TasksClient zeebe, TaskEvent taskEvent) throws Exception {
     OrderFlowContext context = OrderFlowContext.fromJson(taskEvent.getPayload());
        
-    Order order = orderRepository.getOrder(context.getOrderId());   
+    Order order = orderRepository.findOne(context.getOrderId());   
             
     messageSender.send( //
         new Message<RetrievePaymentCommandPayload>( //
