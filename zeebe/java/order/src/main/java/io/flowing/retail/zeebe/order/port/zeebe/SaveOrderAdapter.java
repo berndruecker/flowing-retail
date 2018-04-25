@@ -36,7 +36,7 @@ public class SaveOrderAdapter {
     Order order = new ObjectMapper().readValue(payload.getJsonObject("order").toString(), Order.class);
     
     // do something with it
-    orderRepository.persistOrder(order);
+    orderRepository.save(order);
     
     // TODO: Probably improve Json handling, currently mixing javax.json and jackson. Why is JSON handling in Java such a pain? Why?
     JsonReader jsonReader = Json.createReader(new StringReader(new ObjectMapper().writeValueAsString(order)));
