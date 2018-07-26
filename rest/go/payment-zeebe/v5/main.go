@@ -13,7 +13,8 @@ import (
     "github.com/zeebe-io/zbc-go/zbc"
     "github.com/zeebe-io/zbc-go/zbc/common"
     "github.com/zeebe-io/zbc-go/zbc/models/zbsubscriptions"
-    "github.com/zeebe-io/zbc-go/zbc/services/zbsubscribe"    
+    "github.com/zeebe-io/zbc-go/zbc/services/zbsubscribe"
+    "math/rand"    
 )
 
 const ZeebeBrokerAddr = "0.0.0.0:51015"
@@ -133,7 +134,11 @@ func handleDeductCustomerCredit(client zbsubscribe.ZeebeAPI, event *zbsubscripti
     log.Println(" Substracting  from customer account") // " + strconv.Itoa( (*payload)["amount"].(int) ) + "
     
     // Hardcoded remaining amount, TODO: replace with randomized value
-    (*payload)["remainingAmount"] = 5
+    if (rand.Intn(10) > 3) {
+        (*payload)["remainingAmount"] = 5
+    } else {
+        (*payload)["remainingAmount"] = 0
+    }
     event.UpdatePayload(payload)
 
     client.CompleteJob(event)
