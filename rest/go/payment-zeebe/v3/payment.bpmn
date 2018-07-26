@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.1.0">
-  <bpmn:process id="payment" isExecutable="true">
+  <bpmn:process id="paymentV3" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_1ks77t9</bpmn:outgoing>
     </bpmn:startEvent>
@@ -18,7 +18,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1kvhx7f" sourceRef="ServiceTask_0n4ha8u" targetRef="EndEvent_0i0gww6" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="payment">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="paymentV3">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="161" y="111" width="36" height="36" />
         <bpmndi:BPMNLabel>

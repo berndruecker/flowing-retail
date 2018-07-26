@@ -47,6 +47,11 @@ func initZeebe() {
     if err != nil { log.Fatal(err) }
     subscription1.StartAsync()    
 
+    // register job handler for 'deduct-customer-credit' and subscribe
+    subscription2, err := zbClient.JobSubscription("default-topic", "SomeWorker", "deduct-customer-credit",  1000, 32, handleDeductCustomerCredit)
+    if err != nil { log.Fatal(err) }
+    subscription2.StartAsync()    
+        
     // deploy workflow model if requested
     if (contains(os.Args, "deploy")) {
         deployment, err := zbClient.CreateWorkflowFromFile("default-topic", zbcommon.BpmnXml, "payment.bpmn")
@@ -61,6 +66,9 @@ func initZeebe() {
         <-osCh
         err := subscription1.Close()
         if err != nil { log.Fatal(err) }
+
+        err2 := subscription2.Close()
+        if err2 != nil { log.Fatal(err2) }
 
         fmt.Println("Subscriptions closed.")
         os.Exit(0)
@@ -81,7 +89,7 @@ func chargeCreditCard(someDataAsJson string, w http.ResponseWriter) error {
     payload := make(map[string]interface{})
 	json.Unmarshal([]byte(someDataAsJson), &payload)
 
-    instance := zbc.NewWorkflowInstance("paymentV3", -1, payload)
+    instance := zbc.NewWorkflowInstance("paymentV5", -1, payload)
     workflowInstance, err := zbClient.CreateWorkflowInstance("default-topic", instance)
 
     if (err != nil) { 
@@ -116,6 +124,20 @@ func doHttpCall(someDataAsJson string) (resp *http.Response, err error) {
     return http.Post("http://localhost:8099/charge", "application/json", strings.NewReader(someDataAsJson))
 }
 
+func handleDeductCustomerCredit(client zbsubscribe.ZeebeAPI, event *zbsubscriptions.SubscriptionEvent) {
+    job, err := event.GetJob()
+    if err != nil { log.Fatal(err) }	
+    payload, err := job.GetPayload()
+    if err != nil { log.Fatal(err) }	
+
+    log.Println(" Substracting  from customer account") // " + strconv.Itoa( (*payload)["amount"].(int) ) + "
+    
+    // Hardcoded remaining amount, TODO: replace with randomized value
+    (*payload)["remainingAmount"] = 5
+    event.UpdatePayload(payload)
+
+    client.CompleteJob(event)
+}
 
 /* Helper to check if "deploy" was given as argument */
 func contains(arr []string, e string) bool {
