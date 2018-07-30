@@ -10,36 +10,48 @@ import (
     "fmt"
     "os"
     "os/signal"
+    "flag"
+    "math/rand"
+
     "github.com/zeebe-io/zbc-go/zbc"
     "github.com/zeebe-io/zbc-go/zbc/common"
     "github.com/zeebe-io/zbc-go/zbc/models/zbsubscriptions"
     "github.com/zeebe-io/zbc-go/zbc/services/zbsubscribe"
-    "math/rand"    
 )
 
-const ZeebeBrokerAddr = "0.0.0.0:51015"
-const port = "9001"
-var zbClient *zbc.Client;
+const (
+    zeebeBrokerAddr = "0.0.0.0:51015"
+    port = "8100"
+)
+var (
+    zbClient *zbc.Client
+    doDeployWorkflowModel = false
+) 
 
 func init() {
-    initRestApi()
+    initParameters()
     initZeebe()
 }
 
-func main() {    
-    // Start HTTP server
-    log.Fatal(
-        http.ListenAndServe(":" + port, nil))
+func main() {
+    startHttpServer()
 }
 
-func initRestApi() {
+func initParameters() {
+    doDeployWorkflowModelPtr := flag.Bool("deploy", false, "-deploy")
+    flag.Parse()
+    doDeployWorkflowModel = *doDeployWorkflowModelPtr
+}
+
+func startHttpServer() {
     // setup REST endpoint (yay - this is not really REST - I know - but sufficient for this example)
     http.HandleFunc("/payment", handleHttpRequest)
+    log.Fatal(http.ListenAndServe(":" + port, nil))
 }
 
 func initZeebe() {
 	// connect to Zeebe Broker
-    newClient, err := zbc.NewClient(ZeebeBrokerAddr)
+    newClient, err := zbc.NewClient(zeebeBrokerAddr)
     if err != nil { log.Fatal( err ) }
     zbClient = newClient
 
@@ -52,28 +64,15 @@ func initZeebe() {
     subscription2, err := zbClient.JobSubscription("default-topic", "SomeWorker", "deduct-customer-credit",  1000, 32, handleDeductCustomerCredit)
     if err != nil { log.Fatal(err) }
     subscription2.StartAsync()    
-        
+
+    handleInterrupt(subscription1, subscription2)
+
     // deploy workflow model if requested
-    if (contains(os.Args, "deploy")) {
+    if (doDeployWorkflowModel) {
         deployment, err := zbClient.CreateWorkflowFromFile("default-topic", zbcommon.BpmnXml, "payment.bpmn")
         if err != nil { log.Fatal(err) }
         fmt.Println("deployed workflow model: ", deployment)
     }
-
-    // disconnect nicely 
-    osCh := make(chan os.Signal, 1)
-    signal.Notify(osCh, os.Interrupt)
-    go func() {
-        <-osCh
-        err := subscription1.Close()
-        if err != nil { log.Fatal(err) }
-
-        err2 := subscription2.Close()
-        if err2 != nil { log.Fatal(err2) }
-
-        fmt.Println("Subscriptions closed.")
-        os.Exit(0)
-    }()
 }
 
 func handleHttpRequest(w http.ResponseWriter, r *http.Request) {    
@@ -81,12 +80,15 @@ func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
     jsonStr := string(bodyBytes)
     fmt.Println("Retrieving payment request" + jsonStr)
 
-    chargeCreditCard(jsonStr, w)
-
-    w.WriteHeader(http.StatusOK)
+    err := chargeCreditCard(jsonStr)
+    if (err != nil) {
+        w.WriteHeader(500)     
+    } else {
+        w.WriteHeader(http.StatusOK)
+    }
 }
 
-func chargeCreditCard(someDataAsJson string, w http.ResponseWriter) error {
+func chargeCreditCard(someDataAsJson string) error {
     payload := make(map[string]interface{})
 	json.Unmarshal([]byte(someDataAsJson), &payload)
 
@@ -94,10 +96,10 @@ func chargeCreditCard(someDataAsJson string, w http.ResponseWriter) error {
     workflowInstance, err := zbClient.CreateWorkflowInstance("default-topic", instance)
 
     if (err != nil) { 
-        fmt.Fprintf(w, "Bam, error: " + err.Error())
+        fmt.Println("Error: " + err.Error())
         return err;
     } else {
-        fmt.Fprintf(w, "Yeah, started: " + workflowInstance.String())
+        fmt.Println("Started: " + workflowInstance.String())
         return nil;
     }
 }
@@ -129,27 +131,34 @@ func handleDeductCustomerCredit(client zbsubscribe.ZeebeAPI, event *zbsubscripti
     job, err := event.GetJob()
     if err != nil { log.Fatal(err) }	
     payload, err := job.GetPayload()
-    if err != nil { log.Fatal(err) }	
+    if err != nil { log.Fatal(err) }
 
-    log.Println(" Substracting  from customer account") // " + strconv.Itoa( (*payload)["amount"].(int) ) + "
-    
     // Hardcoded remaining amount, TODO: replace with randomized value
     if (rand.Intn(10) > 3) {
         (*payload)["remainingAmount"] = 5
-    } else {
+        log.Println("[worker::deduct-customer-credit] Substracting from customer account - with remaining amount") 
+        } else {
         (*payload)["remainingAmount"] = 0
+        log.Println("[worker::deduct-customer-credit] Substracting from customer account - no remaining amount")
     }
     event.UpdatePayload(payload)
 
     client.CompleteJob(event)
 }
 
-/* Helper to check if "deploy" was given as argument */
-func contains(arr []string, e string) bool {
-    for _, a := range arr {
-        if a == e {
-            return true
-        }
-    }
-    return false
+/*
+	Helpers
+*/
+func handleInterrupt(subscriptions ...*zbsubscribe.JobSubscription) {
+	osCh := make(chan os.Signal, 1)
+	signal.Notify(osCh, os.Interrupt)
+	go func() {
+		<-osCh
+		for _, sub := range subscriptions {
+			sub.Close()
+		}
+
+		fmt.Println("subscription closed")
+		os.Exit(0)
+	}()
 }

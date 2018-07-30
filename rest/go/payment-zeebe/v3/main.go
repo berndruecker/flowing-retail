@@ -10,35 +10,47 @@ import (
     "fmt"
     "os"
     "os/signal"
+    "flag"
+
     "github.com/zeebe-io/zbc-go/zbc"
     "github.com/zeebe-io/zbc-go/zbc/common"
     "github.com/zeebe-io/zbc-go/zbc/models/zbsubscriptions"
-    "github.com/zeebe-io/zbc-go/zbc/services/zbsubscribe"    
+    "github.com/zeebe-io/zbc-go/zbc/services/zbsubscribe"
 )
 
-const ZeebeBrokerAddr = "0.0.0.0:51015"
-const port = "9001"
-var zbClient *zbc.Client;
+const (
+    zeebeBrokerAddr = "0.0.0.0:51015"
+    port = "8100"
+)
+var (
+    zbClient *zbc.Client
+    doDeployWorkflowModel = false
+) 
 
 func init() {
-    initRestApi()
+    initParameters()
     initZeebe()
 }
 
-func main() {    
-    // Start HTTP server
-    log.Fatal(
-        http.ListenAndServe(":" + port, nil))
+func main() {
+    startHttpServer()
 }
 
-func initRestApi() {
+func initParameters() {
+    doDeployWorkflowModelPtr := flag.Bool("deploy", false, "-deploy")
+    flag.Parse()
+    doDeployWorkflowModel = *doDeployWorkflowModelPtr
+}
+
+func startHttpServer() {
     // setup REST endpoint (yay - this is not really REST - I know - but sufficient for this example)
     http.HandleFunc("/payment", handleHttpRequest)
+    log.Fatal(http.ListenAndServe(":" + port, nil))
 }
 
 func initZeebe() {
 	// connect to Zeebe Broker
-    newClient, err := zbc.NewClient(ZeebeBrokerAddr)
+    newClient, err := zbc.NewClient(zeebeBrokerAddr)
     if err != nil { log.Fatal( err ) }
     zbClient = newClient
 
@@ -47,24 +59,14 @@ func initZeebe() {
     if err != nil { log.Fatal(err) }
     subscription1.StartAsync()    
 
+    handleInterrupt(subscription1)
+
     // deploy workflow model if requested
-    if (contains(os.Args, "deploy")) {
+    if (doDeployWorkflowModel) {
         deployment, err := zbClient.CreateWorkflowFromFile("default-topic", zbcommon.BpmnXml, "payment.bpmn")
         if err != nil { log.Fatal(err) }
         fmt.Println("deployed workflow model: ", deployment)
     }
-
-    // disconnect nicely 
-    osCh := make(chan os.Signal, 1)
-    signal.Notify(osCh, os.Interrupt)
-    go func() {
-        <-osCh
-        err := subscription1.Close()
-        if err != nil { log.Fatal(err) }
-
-        fmt.Println("Subscriptions closed.")
-        os.Exit(0)
-    }()
 }
 
 func handleHttpRequest(w http.ResponseWriter, r *http.Request) {    
@@ -72,23 +74,26 @@ func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
     jsonStr := string(bodyBytes)
     fmt.Println("Retrieving payment request" + jsonStr)
 
-    chargeCreditCard(jsonStr, w)
-
-    w.WriteHeader(http.StatusOK)
+    err := chargeCreditCard(jsonStr)
+    if (err != nil) {
+        w.WriteHeader(500)     
+    } else {
+        w.WriteHeader(http.StatusOK)
+    }
 }
 
-func chargeCreditCard(someDataAsJson string, w http.ResponseWriter) error {
+func chargeCreditCard(someDataAsJson string) error {
     payload := make(map[string]interface{})
 	json.Unmarshal([]byte(someDataAsJson), &payload)
 
-    instance := zbc.NewWorkflowInstance("paymentV3", -1, payload)
+    instance := zbc.NewWorkflowInstance("paymentV5", -1, payload)
     workflowInstance, err := zbClient.CreateWorkflowInstance("default-topic", instance)
 
     if (err != nil) { 
-        fmt.Fprintf(w, "Bam, error: " + err.Error())
+        fmt.Println("Error: " + err.Error())
         return err;
     } else {
-        fmt.Fprintf(w, "Yeah, started: " + workflowInstance.String())
+        fmt.Println("Started: " + workflowInstance.String())
         return nil;
     }
 }
@@ -116,13 +121,19 @@ func doHttpCall(someDataAsJson string) (resp *http.Response, err error) {
     return http.Post("http://localhost:8099/charge", "application/json", strings.NewReader(someDataAsJson))
 }
 
+/*
+	Helpers
+*/
+func handleInterrupt(subscriptions ...*zbsubscribe.JobSubscription) {
+	osCh := make(chan os.Signal, 1)
+	signal.Notify(osCh, os.Interrupt)
+	go func() {
+		<-osCh
+		for _, sub := range subscriptions {
+			sub.Close()
+		}
 
-/* Helper to check if "deploy" was given as argument */
-func contains(arr []string, e string) bool {
-    for _, a := range arr {
-        if a == e {
-            return true
-        }
-    }
-    return false
+		fmt.Println("subscription closed")
+		os.Exit(0)
+	}()
 }
