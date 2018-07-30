@@ -10,10 +10,14 @@ This sample (micro-)service can retrieve payments and therefor needs to be calle
 
 This simple call-chain is great to demonstrate various important resilience patterns.
 
-There are two technology choices available for the code demos:
+There are the following technology choices available for the code demos:
 
 * [**Java**](java/payment) + Spring, Hystrix, Camunda
 * [**C#**](csharp/payment) + Polly, Camunda
+
+There is a stripped down version available for:
+
+* [**GoLang**](go/payment-zeebe), Zeebe
 
 
 # Storyline
