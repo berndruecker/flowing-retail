@@ -39,10 +39,10 @@ public class MessageListener {
    *  would do (see e.g. https://dturanski.wordpress.com/2017/03/26/spring-cloud-stream-for-event-driven-architectures/)
    */
   @StreamListener(target = Sink.INPUT, 
-      condition="payload.messageType.toString()=='OrderPlacedEvent'")
+      condition="(headers['messageType']?:'')=='OrderPlacedEvent'")
   @Transactional
-  public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-    Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>(){});
+  public void orderPlacedReceived(Message<Order> message) throws JsonParseException, JsonMappingException, IOException {
+    // Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>(){});
     Order order = message.getPayload();
     
     System.out.println("New order placed, start flow. " + order);
@@ -65,7 +65,7 @@ public class MessageListener {
    * It might make more sense to handle each and every message type individually.
    */
   @StreamListener(target = Sink.INPUT, 
-      condition="payload.messageType.toString().endsWith('Event')")
+      condition="(headers['messageType']?:'').endsWith('Event')")
   @Transactional
   public void messageReceived(String messageJson) throws Exception {
     Message<JsonNode> message = new ObjectMapper().readValue( //
@@ -86,10 +86,7 @@ public class MessageListener {
             "PAYLOAD_" + message.getMessageType(), // 
             SpinValues.jsonValue(message.getPayload().toString()).create())//
         .correlateWithResult();
-    } else {
-      // ignoring event, not interested
-      System.out.println("Order context ignores event '" + message.getMessageType() + "'");
-    }
+    } 
     
   }  
 

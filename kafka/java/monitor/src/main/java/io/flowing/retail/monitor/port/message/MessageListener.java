@@ -1,7 +1,5 @@
 package io.flowing.retail.monitor.port.message;
 
-import java.io.StringWriter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -16,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.flowing.retail.monitor.domain.PastEvent;
 import io.flowing.retail.monitor.port.persistence.LogRepository;
-import kafka.utils.Json;
 
 @Component
 @EnableBinding(Sink.class)

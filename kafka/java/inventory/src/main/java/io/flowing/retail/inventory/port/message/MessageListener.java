@@ -28,7 +28,7 @@ public class MessageListener {
   private InventoryService inventoryService;
 
   @StreamListener(target = Sink.INPUT, 
-      condition="payload.messageType.toString()=='FetchGoodsCommand'")
+      condition="(headers['messageType']?:'')=='FetchGoodsCommand'")
   @Transactional
   public void retrievePaymentCommandReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
     Message<FetchGoodsCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<FetchGoodsCommandPayload>>(){});

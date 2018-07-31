@@ -23,7 +23,7 @@ public class MessageListener {
   private ShippingService shippingService;
 
   @StreamListener(target = Sink.INPUT, 
-      condition="payload.messageType.toString()=='ShipGoodsCommand'")
+      condition="(headers['messageType']?:'')=='ShipGoodsCommand'")
   @Transactional
   public void shipGoodsCommandReceived(String messageJson) throws Exception {
     Message<ShipGoodsCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<ShipGoodsCommandPayload>>(){});

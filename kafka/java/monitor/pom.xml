@@ -7,8 +7,8 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.boot.version>1.5.2.RELEASE</spring.boot.version>
-		<spring-cloud-stream.version>Chelsea.SR2</spring-cloud-stream.version>
+		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+		<spring-cloud-stream.version>Elmhurst.RELEASE</spring-cloud-stream.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -51,9 +51,7 @@
 	    	<!-- automatically resolve the version of any WebJar assets -->
 	        <groupId>org.webjars</groupId>
 	        <artifactId>webjars-locator</artifactId>
-	        <!--
-	        <version>0.32</version>
-	    -->
+	        <version>0.34</version>
 	    </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
