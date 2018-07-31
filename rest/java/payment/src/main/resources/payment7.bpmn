@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
-  <bpmn:process id="paymentV6" isExecutable="true">
+  <bpmn:process id="paymentV7" isExecutable="true">
     <bpmn:extensionElements>
       <camunda:executionListener delegateExpression="#{notifySemaphorAdapter}" event="end" />
     </bpmn:extensionElements>
@@ -49,13 +49,38 @@
       <bpmn:incoming>SequenceFlow_1me4ldb</bpmn:incoming>
       <bpmn:compensateEventDefinition />
     </bpmn:endEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_18hxr8v" name="No retries&#10;left" attachedToRef="ServiceTask_10hm6pn">
+      <bpmn:outgoing>SequenceFlow_0pha023</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1fw5x87" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0pha023" sourceRef="BoundaryEvent_18hxr8v" targetRef="IntermediateThrowEvent_1ivrqbn" />
+    <bpmn:sequenceFlow id="SequenceFlow_1yw73x2" sourceRef="Task_0isbmj6" targetRef="EndEvent_0onkz3i" />
+    <bpmn:serviceTask id="Task_0isbmj6" name="Cleanup credit card charge" camunda:expression="#{true}">
+      <bpmn:documentation>NOOP in this demo</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1yzuhqt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yw73x2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_0onkz3i" name="Payment failed">
+      <bpmn:incoming>SequenceFlow_1yw73x2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1yzuhqt" sourceRef="IntermediateThrowEvent_1ivrqbn" targetRef="Task_0isbmj6" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1ivrqbn">
+      <bpmn:incoming>SequenceFlow_0pha023</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yzuhqt</bpmn:outgoing>
+      <bpmn:compensateEventDefinition />
+    </bpmn:intermediateThrowEvent>
     <bpmn:association id="Association_01scjre" associationDirection="One" sourceRef="BoundaryEvent_0ptmqni" targetRef="Task_1xuole4" />
+    <bpmn:textAnnotation id="TextAnnotation_1wwf2ix">
+      <bpmn:text>do this first, so customer does not have to wait for the faulty service to come up again</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1mq9z2l" sourceRef="IntermediateThrowEvent_1ivrqbn" targetRef="TextAnnotation_1wwf2ix" />
   </bpmn:process>
   <bpmn:message id="Message_1k9v13u" name="Msg_DoPayment" />
   <bpmn:error id="Error_1qxsin7" name="Error_CreditCardError" />
   <bpmn:message id="Message_03z4dfb" name="Msg_CreditCardUpdated" />
+  <bpmn:error id="Error_1fw5x87" name="Error_NoRetries" errorCode="Error_NoRetries" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="paymentV6">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="paymentV7">
       <bpmndi:BPMNShape id="ServiceTask_10hm6pn_di" bpmnElement="ServiceTask_10hm6pn">
         <dc:Bounds x="400" y="49" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -148,9 +173,46 @@
       <bpmndi:BPMNShape id="EndEvent_1va550p_di" bpmnElement="EndEvent_PaymentFailed">
         <dc:Bounds x="522" y="188" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="503" y="224" width="73" height="12" />
+          <dc:Bounds x="503" y="231" width="73" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0rvwtmr_di" bpmnElement="BoundaryEvent_18hxr8v">
+        <dc:Bounds x="403" y="111" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="368" y="148" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pha023_di" bpmnElement="SequenceFlow_0pha023">
+        <di:waypoint x="421" y="147" />
+        <di:waypoint x="421" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yw73x2_di" bpmnElement="SequenceFlow_1yw73x2">
+        <di:waypoint x="590" y="298" />
+        <di:waypoint x="645" y="298" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0jokj01_di" bpmnElement="Task_0isbmj6">
+        <dc:Bounds x="490" y="258" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_16tvkfw_di" bpmnElement="EndEvent_0onkz3i">
+        <dc:Bounds x="645" y="280" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="627" y="323" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yzuhqt_di" bpmnElement="SequenceFlow_1yzuhqt">
+        <di:waypoint x="439" y="298" />
+        <di:waypoint x="490" y="298" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_03szyg9_di" bpmnElement="IntermediateThrowEvent_1ivrqbn">
+        <dc:Bounds x="403" y="280" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1wwf2ix_di" bpmnElement="TextAnnotation_1wwf2ix">
+        <dc:Bounds x="346" y="352" width="208" height="62" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1mq9z2l_di" bpmnElement="Association_1mq9z2l">
+        <di:waypoint x="427" y="315" />
+        <di:waypoint x="440" y="352" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

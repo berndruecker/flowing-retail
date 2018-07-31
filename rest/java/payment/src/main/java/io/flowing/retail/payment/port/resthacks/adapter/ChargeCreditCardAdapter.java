@@ -1,4 +1,4 @@
-package io.flowing.retail.payment.port.rest;
+package io.flowing.retail.payment.port.resthacks.adapter;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -20,6 +20,7 @@ public class ChargeCreditCardAdapter implements JavaDelegate {
    */
   private String stripeChargeUrl = "http://localhost:8099/charge";
 
+  @FailingOnLastRetry
   public void execute(DelegateExecution ctx) throws Exception {
     CreateChargeRequest request = new CreateChargeRequest();
     request.amount = (int) ctx.getVariable("remainingAmount");

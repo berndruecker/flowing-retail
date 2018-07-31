@@ -1,4 +1,4 @@
-package io.flowing.retail.payment.port.rest;
+package io.flowing.retail.payment.port.resthacks.adapter;
 
 import java.util.HashMap;
 import java.util.Map;

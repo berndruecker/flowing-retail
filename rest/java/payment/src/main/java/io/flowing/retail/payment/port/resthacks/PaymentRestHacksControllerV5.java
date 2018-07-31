@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import io.flowing.retail.payment.port.rest.NotifySemaphorAdapter;
+import io.flowing.retail.payment.port.resthacks.adapter.NotifySemaphorAdapter;
 
 /**
  * Step5: Use Camunda state machine for long-running retry, external task & compensation
