@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.61.0"
+    "camunda-external-task-client-js": "^1.0.0",
+    "request": "^2.87.0"
   }
 }
