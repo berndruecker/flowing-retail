@@ -31,3 +31,4 @@ camunda-db.mv.db
 /payment/*.db
 /order/*.db
 *.db
+debug
