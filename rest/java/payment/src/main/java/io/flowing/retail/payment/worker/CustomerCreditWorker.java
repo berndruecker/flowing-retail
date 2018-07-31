@@ -1,96 +1,42 @@
 package io.flowing.retail.payment.worker;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collections;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-
-import org.camunda.bpm.engine.rest.dto.VariableValueDto;
-import org.camunda.bpm.engine.rest.dto.externaltask.CompleteExternalTaskDto;
-import org.camunda.bpm.engine.rest.dto.externaltask.FetchExternalTasksDto;
-import org.camunda.bpm.engine.rest.dto.externaltask.FetchExternalTasksDto.FetchExternalTaskTopicDto;
-import org.camunda.bpm.engine.rest.dto.externaltask.LockedExternalTaskDto;
+import org.camunda.bpm.client.ExternalTaskClient;
 
 /**
- * Worker to complete external task "Deduct existing customer credit"
- * used in PaymentV5 & PaymentV6
+ * Worker to complete external task "Deduct existing customer credit" used in
+ * PaymentV5, PaymentV6 and PaymentV7
  *
  */
 public class CustomerCreditWorker {
 
   private static final String BASE_URL = "http://localhost:8100/rest/engine/default/";
-  private static String WORKER_ID= "someWorker";
 
   public static void main(String[] args) throws InterruptedException {
-    Client client = ClientBuilder.newClient();
+    // bootstrap the client
+    ExternalTaskClient client = ExternalTaskClient.create().baseUrl(BASE_URL).build();
 
-    FetchExternalTasksDto fetchExternalTasksDto = new FetchExternalTasksDto();
-    fetchExternalTasksDto.setWorkerId(WORKER_ID);
-    fetchExternalTasksDto.setMaxTasks(10);
+    // subscribe to the topic
+    client.subscribe("customer-credit") //
+      .lockDuration(5000) //
+      .handler((externalTask, externalTaskService) -> {
 
-    FetchExternalTaskTopicDto topic1 = new FetchExternalTasksDto.FetchExternalTaskTopicDto();
-    topic1.setTopicName("customer-credit");
-    topic1.setLockDuration(5000);    
-    topic1.setVariables(new ArrayList<String>() {{
-      add("payload");
-    }});
+      // retrieve a variable from the Workflow Engine
+      long amount = externalTask.getVariable("amount");
 
-    FetchExternalTaskTopicDto topic2 = new FetchExternalTasksDto.FetchExternalTaskTopicDto();
-    topic2.setTopicName("customer-credit-refund");
-    topic2.setLockDuration(5000);    
-    topic2.setVariables(new ArrayList<String>() {{
-      add("payload");
-    }});
+      // complete the external task
+      externalTaskService.complete(externalTask, Collections.singletonMap("remainingAmount", 15));
 
-    fetchExternalTasksDto.setTopics(new ArrayList<FetchExternalTasksDto.FetchExternalTaskTopicDto>() {{
-      add(topic1);
-      add(topic2);
-    }});
+      System.out.println("deducted " + amount + " from customer credit");
+    }).open();
 
-    boolean running=true;
-    while (running) {
-      List<LockedExternalTaskDto> tasks = client
-          .target(BASE_URL + "external-task/fetchAndLock")
-          .request(MediaType.APPLICATION_JSON) //
-          .post(
-              Entity.entity(fetchExternalTasksDto, MediaType.APPLICATION_JSON), //
-              new GenericType<List<LockedExternalTaskDto>>() {});
-      
-      System.out.print(".");
-      for (LockedExternalTaskDto task : tasks) {
-        if ("customer-credit".equals( task.getTopicName() )) {          
-          VariableValueDto remainingAmount = new VariableValueDto();
-          remainingAmount.setType("integer");
-          remainingAmount.setValue(15);
-          
-          CompleteExternalTaskDto completeTaskDto = new CompleteExternalTaskDto();
-          completeTaskDto.setWorkerId(WORKER_ID);
-          completeTaskDto.setVariables(new HashMap<String, VariableValueDto>() {{
-            put("remainingAmount", remainingAmount);
-          }});
-          
-          client
-            .target("http://localhost:8100/rest/engine/default/external-task")
-            .path(task.getId()) //
-            .path("complete")
-            .request(MediaType.APPLICATION_JSON) //
-            .post(
-                Entity.entity(completeTaskDto, MediaType.APPLICATION_JSON));
-          System.out.println("deducted from customer credit");          
-        }
-        else if ("customer-credit-refund".equals( task.getTopicName() )) {
-          System.out.println("refunded to customer credit");
-        }
-      }
-      
-      Thread.sleep(5000);
-    }
+    client.subscribe("customer-credit-refund") //
+      .lockDuration(5000) // 
+      .handler((externalTask, externalTaskService) -> {
+      externalTaskService.complete(externalTask);
+      System.out.println("refunded to customer credit");
+    }).open();
 
-  
   }
 }
