@@ -26,7 +26,7 @@ public class ShipGoodsAdapter {
   public void sendRetrievePaymentCommand(TasksClient client, TaskEvent taskEvent) throws Exception {
     OrderFlowContext context = OrderFlowContext.fromJson(taskEvent.getPayload());
 
-    Order order = orderRepository.findOne(context.getOrderId()); 
+    Order order = orderRepository.findById(context.getOrderId()).get(); 
 
     messageSender.send(new Message<ShipGoodsCommandPayload>( //
             "ShipGoodsCommand", //

@@ -35,7 +35,7 @@ public class MessageListener {
 	@Autowired
 	private ZeebeClient zeebe;
 
-  @StreamListener(target = Sink.INPUT, condition = "payload.messageType.toString()=='OrderPlacedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='OrderPlacedEvent'")
   @Transactional
   public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
     // read data
@@ -58,7 +58,7 @@ public class MessageListener {
         .execute();
   }
 
-  @StreamListener(target = Sink.INPUT, condition = "payload.messageType.toString()=='PaymentReceivedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='PaymentReceivedEvent'")
   @Transactional
   public void paymentReceived(String messageJson) throws Exception {
     Message<PaymentReceivedEventPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<PaymentReceivedEventPayload>>() {});
@@ -69,7 +69,7 @@ public class MessageListener {
     System.out.println("Completed " + taskEvent );
   }
 
-  @StreamListener(target = Sink.INPUT, condition = "payload.messageType.toString()=='GoodsFetchedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='GoodsFetchedEvent'")
   @Transactional
   public void goodsFetchedReceived(String messageJson) throws Exception {
     Message<GoodsFetchedEventPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<GoodsFetchedEventPayload>>() {});
@@ -83,7 +83,7 @@ public class MessageListener {
   }
 
 
-  @StreamListener(target = Sink.INPUT, condition = "payload.messageType.toString()=='GoodsShippedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='GoodsShippedEvent'")
   @Transactional
   public void goodsShippedReceived(String messageJson) throws Exception {
     Message<GoodsShippedEventPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<GoodsShippedEventPayload>>() {});
