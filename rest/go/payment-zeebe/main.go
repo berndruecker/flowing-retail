@@ -13,16 +13,16 @@ const (
 )
 
 func main() {
-	startHttpServer()
+	startHTTPServer()
 }
 
-func startHttpServer() {
+func startHTTPServer() {
 	// setup REST endpoint (yay - this is not really REST - I know - but sufficient for this example)
-	http.HandleFunc("/payment", handleHttpRequest)
+	http.HandleFunc("/payment", handleHTTPRequest)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
+func handleHTTPRequest(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, _ := ioutil.ReadAll(r.Body)
 	jsonStr := string(bodyBytes)
 	fmt.Println("Retrieving payment request" + jsonStr)
@@ -35,17 +35,16 @@ func handleHttpRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func chargeCreditCard(someDataAsJson string) error {
-	_, err := doHttpCall(someDataAsJson)
+func chargeCreditCard(someDataAsJSON string) error {
+	_, err := doHTTPCall(someDataAsJSON)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return err
-	} else {
-		return nil
 	}
+	return nil
 }
 
-func doHttpCall(someDataAsJson string) (resp *http.Response, err error) {
-	fmt.Println("Doing http call", someDataAsJson)
-	return http.Post("http://localhost:8099/charge", "application/json", strings.NewReader(someDataAsJson))
+func doHTTPCall(someDataAsJSON string) (resp *http.Response, err error) {
+	fmt.Println("Doing http call", someDataAsJSON)
+	return http.Post("http://localhost:8099/charge", "application/json", strings.NewReader(someDataAsJSON))
 }
