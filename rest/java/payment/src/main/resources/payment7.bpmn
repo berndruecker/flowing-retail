@@ -4,7 +4,7 @@
     <bpmn:extensionElements>
       <camunda:executionListener delegateExpression="#{notifySemaphorAdapter}" event="end" />
     </bpmn:extensionElements>
-    <bpmn:serviceTask id="ServiceTask_10hm6pn" name="Charge&#10;credit card" camunda:asyncBefore="true" camunda:delegateExpression="#{chargeCreditCardAdapter}">
+    <bpmn:serviceTask id="ServiceTask_10hm6pn" name="Charge&#10;credit card" camunda:asyncBefore="true" camunda:delegateExpression="#{chargeCreditCardDegradingAdapter}">
       <bpmn:extensionElements>
         <camunda:failedJobRetryTimeCycle>R5/PT10S</camunda:failedJobRetryTimeCycle>
       </bpmn:extensionElements>

@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 @ConfigurationProperties
-public class ChargeCreditCardAdapter implements JavaDelegate {
+public class ChargeCreditCardDegradingAdapter implements JavaDelegate {
 
   @Autowired
   private RestTemplate rest;
