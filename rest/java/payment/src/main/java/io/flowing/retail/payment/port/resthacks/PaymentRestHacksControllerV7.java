@@ -76,13 +76,5 @@ public class PaymentRestHacksControllerV7 {
         .startProcessInstanceByKey("paymentV7", traceId, //
             Variables.putValue("amount", remainingAmount));
   }
-
-  public static class CreateChargeRequest {
-    public long amount;
-  }
-
-  public static class CreateChargeResponse {
-    public String transactionId;
-  }
-
+  
 }

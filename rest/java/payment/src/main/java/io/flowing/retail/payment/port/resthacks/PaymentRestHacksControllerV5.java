@@ -68,12 +68,4 @@ public class PaymentRestHacksControllerV5 {
             Variables.putValue("amount", remainingAmount));
   }
 
-  public static class CreateChargeRequest {
-    public long amount;
-  }
-
-  public static class CreateChargeResponse {
-    public String transactionId;
-  }
-
 }
