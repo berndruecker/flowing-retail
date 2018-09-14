@@ -22,17 +22,23 @@ branches:
 
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  - docker build -t flowingretail/checkout ./kafka/java/checkout/
-  - docker push flowingretail/checkout
-  - docker build -t flowingretail/order ./kafka/java/order-camunda/
-  - docker push flowingretail/order
-  - docker build -t flowingretail/payment ./kafka/java/payment/
-  - docker push flowingretail/payment
-  - docker build -t flowingretail/inventory ./kafka/java/inventory/
-  - docker push flowingretail/inventory
-  - docker build -t flowingretail/shipping ./kafka/java/shipping/
-  - docker push flowingretail/shipping
-  - docker build -t flowingretail/monitor ./kafka/java/monitor/
-  - docker push flowingretail/monitor
+  - docker build -t flowingretail/kafka-java-checkout ./kafka/java/checkout/
+  - docker push flowingretail/kafka-java-checkout
+  - docker build -t flowingretail/kafka-java-order-camunda ./kafka/java/order-camunda/
+  - docker push flowingretail/kafka-java-order-camunda
+  - docker build -t flowingretail/kafka-java-payment ./kafka/java/payment-camunda/
+  - docker push flowingretail/kafka-java-payment
+  - docker build -t flowingretail/kafka-java-inventory ./kafka/java/inventory/
+  - docker push flowingretail/kafka-java-inventory
+  - docker build -t flowingretail/kafka-java-shipping ./kafka/java/shipping/
+  - docker push flowingretail/kafka-java-shipping
+  - docker build -t flowingretail/kafka-java-monitor ./kafka/java/monitor/
+  - docker push flowingretail/kafka-java-monitor
+  - docker build -t flowingretail/kafka-java-choreography-inventory ./kafka/java/choreography-alternative/inventory/
+  - docker push flowingretail/kafka-java-choreography-inventory
+  - docker build -t flowingretail/kafka-java-choreography-payment ./kafka/java/choreography-alternative/payment/
+  - docker push flowingretail/kafka-java-choreography-payment
+  - docker build -t flowingretail/kafka-java-choreography-shipping ./kafka/java/choreography-alternative/shipping/
+  - docker push flowingretail/kafka-java-choreography-shipping
   - docker build -t flowingretail/docs ./kafka/java/docs/
   - docker push flowingretail/docs
