@@ -92,12 +92,13 @@
 			</plugin>
 		</plugins>
 	</build>
-	<!-- 
 	<repositories>
 		<repository>
-			<id>camunda-snapshots</id>
-			<url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-snapshots/</url>
+			<id>zeebe-snapshots</id>
+			<url>https://app.camunda.com/nexus/content/repositories/zeebe-io-snapshots/</url>
+			<snapshots>
+	            <enabled>true</enabled>
+	        </snapshots>			
 		</repository>
 	</repositories>
-	 -->
 </project>
