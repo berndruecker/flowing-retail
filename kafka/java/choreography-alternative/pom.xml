@@ -13,13 +13,12 @@
 	</properties>
 
 	<modules>
-		<module>checkout</module>
-		<!--
-		<module>zeebe-monitor</module>
-		-->
 		<module>payment</module>
 		<module>inventory</module>
 		<module>shipping</module>
+		<!--
+		<module>zeebe-monitor</module>
+		-->
 	</modules>
 
 	<build>
