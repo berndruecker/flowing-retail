@@ -94,8 +94,8 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>zeebe-snapshots</id>
-			<url>https://app.camunda.com/nexus/content/repositories/zeebe-io-snapshots/</url>
+			<id>zeebe-alphas</id>
+			<url>https://app.camunda.com/nexus/content/repositories/zeebe-io/</url>
 			<snapshots>
 	            <enabled>true</enabled>
 	        </snapshots>			
