@@ -2,8 +2,10 @@ language: java
 
 sudo: true
 
-before_script: cd kafka/java
-script: mvn clean package
+script: 
+  - cd kafka/java
+  - mvn clean package
+  - cd ../..
 
 services:
   - docker
