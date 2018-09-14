@@ -1,9 +1,14 @@
 package io.flowing.retail.kafka.order.adapter;
 
+import java.time.Duration;
+import java.util.Collections;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.flowing.retail.kafka.order.adapter.payload.FetchGoodsCommandPayload;
 import io.flowing.retail.kafka.order.domain.Order;
@@ -11,24 +16,47 @@ import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.flowing.retail.kafka.order.port.message.Message;
 import io.flowing.retail.kafka.order.port.message.MessageSender;
 import io.flowing.retail.kafka.order.port.persistence.OrderRepository;
-import io.zeebe.client.TasksClient;
-import io.zeebe.client.event.TaskEvent;
-import io.zeebe.spring.client.annotation.ZeebeTaskListener;
+import io.zeebe.gateway.ZeebeClient;
+import io.zeebe.gateway.api.clients.JobClient;
+import io.zeebe.gateway.api.events.JobEvent;
+import io.zeebe.gateway.api.subscription.JobHandler;
+import io.zeebe.gateway.api.subscription.JobWorker;
 
 @Component
-public class FetchGoodsAdapter {
+public class FetchGoodsAdapter implements JobHandler {
   
   @Autowired
-  private MessageSender messageSender;  
+  private MessageSender messageSender; 
+  
+  @Autowired
+  private OrderRepository orderRepository;
 
   @Autowired
-  private OrderRepository orderRepository;  
+  private ZeebeClient zeebe;
 
-  @ZeebeTaskListener(taskType = "fetch-goods", lockTime=5*60*1000)
-  public void sendFetchGoodsCommand(TasksClient client, TaskEvent taskEvent) throws Exception {
-    OrderFlowContext context = OrderFlowContext.fromJson(taskEvent.getPayload());
+  private JobWorker subscription;
+  
+  @PostConstruct
+  public void subscribe() {
+    subscription = zeebe.topicClient().jobClient().newWorker()
+      .jobType("fetch-goods")
+      .handler(this)
+      .timeout(Duration.ofMinutes(1))
+      .open();      
+  }
 
-    Order order = orderRepository.findById( context.getOrderId() ).get(); 
+  @PreDestroy
+  public void closeSubscription() {
+    subscription.close();      
+  }
+
+  @Override
+  public void handle(JobClient client, JobEvent event) {
+    OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+    Order order = orderRepository.findById( context.getOrderId() ).get();
+    
+    // generate an UUID for this communication
+    String correlationId = UUID.randomUUID().toString();
         
     messageSender.send(new Message<FetchGoodsCommandPayload>( //
             "FetchGoodsCommand", //
@@ -36,7 +64,11 @@ public class FetchGoodsAdapter {
             new FetchGoodsCommandPayload() //
               .setRefId(order.getId()) //
               .setItems(order.getItems())) //
-        .setCorrelationId(ZeebeWorkarounds.getCorrelationId(taskEvent)));
+        .setCorrelationId(correlationId));
+    
+    client.newCompleteCommand(event) //
+      .payload(Collections.singletonMap("CorrelationId_FetchGoods", correlationId)) //
+      .send().join();
   }
   
 }

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.flowing.retail</groupId>
-	<artifactId>flowing-retail-kafka</artifactId>
+	<artifactId>flowing-retail-kafka-choreography</artifactId>
 	<packaging>pom</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
@@ -14,15 +14,12 @@
 
 	<modules>
 		<module>checkout</module>
-		<module>order-camunda</module>
-		<module>order-zeebe</module>
-		<module>payment-camunda</module>
+		<!--
+		<module>zeebe-monitor</module>
+		-->
+		<module>payment</module>
 		<module>inventory</module>
 		<module>shipping</module>
-
-		<module>choreography-alternative</module>
-
-		<module>monitor</module>
 	</modules>
 
 	<build>

@@ -1,7 +1,5 @@
 package io.flowing.retail.kafka.order.port.message;
 
-import static io.flowing.retail.kafka.order.adapter.ZeebeWorkarounds.createCompleteTaskCommandByCorrelationId;
-
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +20,8 @@ import io.flowing.retail.kafka.order.adapter.payload.PaymentReceivedEventPayload
 import io.flowing.retail.kafka.order.domain.Order;
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.flowing.retail.kafka.order.port.persistence.OrderRepository;
-import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.event.TaskEvent;
+import io.zeebe.gateway.ZeebeClient;
+import io.zeebe.gateway.api.events.MessageEvent;
 
 @Component
 @EnableBinding(Sink.class)
@@ -52,10 +50,11 @@ public class MessageListener {
 
     // and kick of a new flow instance
     System.out.println("New order placed, start flow. " + context.asJson());
-    zeebe.workflows().create("default-topic") //
+    zeebe.topicClient().workflowClient().newCreateInstanceCommand() //
         .bpmnProcessId("order-kafka") //
+        .latestVersion() // 
         .payload(context.asJson()) //
-        .execute();
+        .send().join();
   }
 
   @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='PaymentReceivedEvent'")
@@ -65,8 +64,12 @@ public class MessageListener {
 
     PaymentReceivedEventPayload event = message.getPayload(); // TODO: Read something from it? 
 
-    TaskEvent taskEvent = createCompleteTaskCommandByCorrelationId(zeebe, message.getCorrelationId()).execute();
-    System.out.println("Completed " + taskEvent );
+    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+      .messageName("PaymentReceivedEvent")
+      .correlationKey(message.getCorrelationId())
+      .send().join();
+    
+    System.out.println("Correlated " + messageEvent );
   }
 
   @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='GoodsFetchedEvent'")
@@ -76,10 +79,13 @@ public class MessageListener {
 
     String pickId = message.getPayload().getPickId();     
 
-    TaskEvent taskEvent = createCompleteTaskCommandByCorrelationId(zeebe, message.getCorrelationId()) //
+    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+        .messageName("PaymentReceivedEvent")
+        .correlationKey(message.getCorrelationId())
         .payload("{\"pickId\":\"" + pickId + "\"}") //
-      .execute();
-    System.out.println("Completed " + taskEvent );
+        .send().join();
+
+    System.out.println("Correlated " + messageEvent );
   }
 
 
@@ -90,9 +96,12 @@ public class MessageListener {
 
     String shipmentId = message.getPayload().getShipmentId();     
 
-    TaskEvent taskEvent = createCompleteTaskCommandByCorrelationId(zeebe, message.getCorrelationId()) //
-      .payload("{\"shipmentId\":\"" + shipmentId + "\"}") //
-      .execute();
-    System.out.println("Completed " + taskEvent );
+    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+        .messageName("PaymentReceivedEvent")
+        .correlationKey(message.getCorrelationId())
+        .payload("{\"shipmentId\":\"" + shipmentId + "\"}") //
+        .send().join();
+
+    System.out.println("Correlated " + messageEvent );
   }
 }

@@ -1,5 +1,10 @@
 package io.flowing.retail.kafka.order.adapter;
 
+import java.time.Duration;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -7,29 +12,52 @@ import io.flowing.retail.kafka.order.adapter.payload.OrderCompletedEventPayload;
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.flowing.retail.kafka.order.port.message.Message;
 import io.flowing.retail.kafka.order.port.message.MessageSender;
-import io.zeebe.client.TasksClient;
-import io.zeebe.client.event.TaskEvent;
-import io.zeebe.spring.client.annotation.ZeebeTaskListener;
+import io.zeebe.gateway.ZeebeClient;
+import io.zeebe.gateway.api.clients.JobClient;
+import io.zeebe.gateway.api.events.JobEvent;
+import io.zeebe.gateway.api.subscription.JobHandler;
+import io.zeebe.gateway.api.subscription.JobWorker;
 
 @Component
-public class OrderCompletedAdapter {
+public class OrderCompletedAdapter implements JobHandler {
   
   @Autowired
   private MessageSender messageSender;  
 
-  @ZeebeTaskListener(taskType = "order-completed", lockTime=5*60*1000)
-  public void sendOrderCompletedEvent(TasksClient client, TaskEvent taskEvent) throws Exception {
-    OrderFlowContext context = OrderFlowContext.fromJson(taskEvent.getPayload());
+
+  @Autowired
+  private ZeebeClient zeebe;
+
+  private JobWorker subscription;
+  
+  @PostConstruct
+  public void subscribe() {
+    subscription = zeebe.topicClient().jobClient().newWorker()
+      .jobType("fetch-goods")
+      .handler(this)
+      .timeout(Duration.ofMinutes(1))
+      .open();      
+  }
+
+  @PreDestroy
+  public void closeSubscription() {
+    subscription.close();      
+  }
+
+  @Override
+  public void handle(JobClient client, JobEvent event) {
+    OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
        
     messageSender.send( //
         new Message<OrderCompletedEventPayload>( //
             "OrderCompletedEvent", //
             context.getTraceId(), //
             new OrderCompletedEventPayload() //
-              .setOrderId(context.getOrderId()))
-        .setCorrelationId(ZeebeWorkarounds.getCorrelationId(taskEvent)));
+              .setOrderId(context.getOrderId())));
     
-    client.complete(taskEvent).execute();
+    //TODO: Reintorduce traceId?     .setCorrelationId(event.get)));
+    
+    client.newCompleteCommand(event).send().join();
   }
 
   

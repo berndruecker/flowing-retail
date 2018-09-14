@@ -3,7 +3,7 @@
 
 set mypath=%cd%
 
-cd c:\flowing.io\Kafka\kafka_2.11-1.0.1\bin\windows\
+cd C:\DEV\flowing\Kafka\kafka_2.11-1.0.1\bin\windows\
 Start zookeeper-server-start ../../config/zookeeper.properties
 Start kafka-server-start ../../config/server.properties
 

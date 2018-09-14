@@ -11,7 +11,7 @@
 		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
 		<spring-cloud-stream.version>Elmhurst.RELEASE</spring-cloud-stream.version>
 
-		<zeebe.version>0.7.0</zeebe.version>
+		<zeebe.version>0.12.0-alpha3</zeebe.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -49,14 +49,16 @@
 		</dependency>
 		<dependency>
 			<groupId>io.zeebe</groupId>
-			<artifactId>zeebe-client-java</artifactId>
+			<artifactId>zeebe-gateway</artifactId>
 			<version>${zeebe.version}</version>
 		</dependency>
+		<!-- 
 		<dependency>
-			<groupId>io.zeebe.spring</groupId>
-			<artifactId>spring-zeebe</artifactId>
-			<version>0.2.0</version>
+		  <groupId>io.zeebe.spring</groupId>
+		  <artifactId>spring-zeebe</artifactId>
+		  <version>0.3.0-SNAPSHOT</version>
 		</dependency>
+		 -->
 		
 		<!-- Persistence for order entity itself -->
   		<dependency>
@@ -90,4 +92,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<!-- 
+	<repositories>
+		<repository>
+			<id>camunda-snapshots</id>
+			<url>https://app.camunda.com/nexus/content/repositories/camunda-bpm-snapshots/</url>
+		</repository>
+	</repositories>
+	 -->
 </project>
