@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_1sjy4ad" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:process id="order-tracking" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="OrderPlaced">
+      <bpmn:outgoing>SequenceFlow_1bwihkm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1bwihkm" sourceRef="StartEvent_1" targetRef="IntermediateThrowEvent_1omdzdl" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1omdzdl" name="PaymentReceived">
+      <bpmn:incoming>SequenceFlow_1bwihkm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lnmr56</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1xdphvh" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1lnmr56" sourceRef="IntermediateThrowEvent_1omdzdl" targetRef="IntermediateThrowEvent_1vya2ng" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1vya2ng" name="GoodsFetched">
+      <bpmn:incoming>SequenceFlow_1lnmr56</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0af4oic</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_00ysveb" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0af4oic" sourceRef="IntermediateThrowEvent_1vya2ng" targetRef="IntermediateThrowEvent_10yvcyw" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_10yvcyw" name="GoodsShipped">
+      <bpmn:incoming>SequenceFlow_0af4oic</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vgu3ox</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0dtvius" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="EndEvent_1q5ps5f" name="OrderCompleted">
+      <bpmn:incoming>SequenceFlow_1vgu3ox</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1vgu3ox" sourceRef="IntermediateThrowEvent_10yvcyw" targetRef="EndEvent_1q5ps5f" />
+  </bpmn:process>
+  <bpmn:message id="Message_1xdphvh" name="PaymentReceivedEvent">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="$.traceId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_00ysveb" name="GoodsFetchedEvent">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="$.traceId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0dtvius" name="GoodsShippedEvent">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="$.traceId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="order-tracking">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="157" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="145" y="145" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bwihkm_di" bpmnElement="SequenceFlow_1bwihkm">
+        <di:waypoint x="193" y="120" />
+        <di:waypoint x="241" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1x4tz0m_di" bpmnElement="IntermediateThrowEvent_1omdzdl">
+        <dc:Bounds x="241" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="214" y="145" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lnmr56_di" bpmnElement="SequenceFlow_1lnmr56">
+        <di:waypoint x="277" y="120" />
+        <di:waypoint x="333" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_16z9ily_di" bpmnElement="IntermediateThrowEvent_1vya2ng">
+        <dc:Bounds x="333" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="315" y="145" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0af4oic_di" bpmnElement="SequenceFlow_0af4oic">
+        <di:waypoint x="369" y="120" />
+        <di:waypoint x="419" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1xk5z72_di" bpmnElement="IntermediateThrowEvent_10yvcyw">
+        <dc:Bounds x="419" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="401" y="145" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1q5ps5f_di" bpmnElement="EndEvent_1q5ps5f">
+        <dc:Bounds x="510" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="488" y="145" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vgu3ox_di" bpmnElement="SequenceFlow_1vgu3ox">
+        <di:waypoint x="455" y="120" />
+        <di:waypoint x="510" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
