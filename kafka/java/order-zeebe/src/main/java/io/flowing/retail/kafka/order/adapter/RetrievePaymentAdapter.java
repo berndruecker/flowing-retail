@@ -23,7 +23,7 @@ import io.zeebe.gateway.api.subscription.JobHandler;
 import io.zeebe.gateway.api.subscription.JobWorker;
 
 @Component
-public class PaymentAdapter implements JobHandler {
+public class RetrievePaymentAdapter implements JobHandler {
   
   @Autowired
   private MessageSender messageSender;
@@ -54,7 +54,6 @@ public class PaymentAdapter implements JobHandler {
   public void handle(JobClient client, JobEvent event) {
     OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
     
-//    BROKE BECAUSE NO ORDER IS FOUND:
     Order order = orderRepository.findById(context.getOrderId()).get();   
             
     // generate an UUID for this communication
