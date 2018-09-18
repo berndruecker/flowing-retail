@@ -1,20 +1,31 @@
 version: "2"
 
+# Kafka like https://docs.confluent.io/current/installation/docker/docs/installation/single-node-client.html
 services:
-  kafka:
-    image: "spotify/kafka:latest"
-    hostname: kafka
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:latest"
+    hostname: zookeeper
     networks:
       - flowing
     ports:
       - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: "confluentinc/cp-kafka:latest"
+    hostname: kafka
+    networks:
+      - flowing
+    ports:
       - 9092:9092
     environment:
-      ADVERTISED_HOST: kafka
-      ADVERTISED_PORT: 9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   checkout:
-    image: flowingretail/checkout
+    image: flowingretail/kafka-java-checkout
     networks:
       - flowing
     ports:
@@ -25,20 +36,8 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181
 
-  order:
-    image: flowingretail/order
-    networks:
-      - flowing
-    ports:
-      - "8091:8091"
-    depends_on:
-      - kafka
-    environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181
-
   payment:
-    image: flowingretail/payment
+    image: flowingretail/kafka-java-choreography-payment
     networks:
       - flowing
     ports:
@@ -50,7 +49,7 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181      
 
   inventory:
-    image: flowingretail/inventory
+    image: flowingretail/kafka-java-choreography-inventory
     networks:
       - flowing
     depends_on:
@@ -60,7 +59,7 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181  
 
   shipping:
-    image: flowingretail/shipping
+    image: flowingretail/kafka-java-choreography-shipping
     networks:
       - flowing
     depends_on:
@@ -70,7 +69,7 @@ services:
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=kafka:2181        
 
   monitor:
-    image: flowingretail/monitor
+    image: flowingretail/kafka-java-monitor
     networks:
       - flowing
     ports:
