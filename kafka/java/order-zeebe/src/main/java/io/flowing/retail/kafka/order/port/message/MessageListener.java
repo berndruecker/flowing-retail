@@ -65,7 +65,7 @@ public class MessageListener {
     PaymentReceivedEventPayload event = message.getPayload(); // TODO: Read something from it? 
 
     MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
-      .messageName("PaymentReceivedEvent")
+      .messageName(message.getMessageType())
       .correlationKey(message.getCorrelationId())
       .send().join();
     
@@ -80,7 +80,7 @@ public class MessageListener {
     String pickId = message.getPayload().getPickId();     
 
     MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
-        .messageName("PaymentReceivedEvent")
+        .messageName(message.getMessageType())
         .correlationKey(message.getCorrelationId())
         .payload("{\"pickId\":\"" + pickId + "\"}") //
         .send().join();
@@ -97,7 +97,7 @@ public class MessageListener {
     String shipmentId = message.getPayload().getShipmentId();     
 
     MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
-        .messageName("PaymentReceivedEvent")
+        .messageName(message.getMessageType())
         .correlationKey(message.getCorrelationId())
         .payload("{\"shipmentId\":\"" + shipmentId + "\"}") //
         .send().join();
