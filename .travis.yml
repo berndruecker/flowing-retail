@@ -28,7 +28,9 @@ after_success:
   - docker push flowingretail/kafka-java-checkout
   - docker build -t flowingretail/kafka-java-order-camunda ./kafka/java/order-camunda/
   - docker push flowingretail/kafka-java-order-camunda
-  - docker build -t flowingretail/kafka-java-payment ./kafka/java/payment-camunda/
+  - docker build -t flowingretail/kafka-java-payment-camunda ./kafka/java/payment-camunda/
+  - docker push flowingretail/kafka-java-payment-camunda
+  - docker build -t flowingretail/kafka-java-payment ./kafka/java/payment/
   - docker push flowingretail/kafka-java-payment
   - docker build -t flowingretail/kafka-java-inventory ./kafka/java/inventory/
   - docker push flowingretail/kafka-java-inventory

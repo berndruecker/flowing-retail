@@ -16,6 +16,7 @@
 		<module>checkout</module>
 		<module>order-camunda</module>
 		<module>order-zeebe</module>
+		<module>payment</module>
 		<module>payment-camunda</module>
 		<module>inventory</module>
 		<module>shipping</module>
