@@ -1,6 +1,7 @@
 package io.flowing.retail.kafka.order.port.message;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -67,6 +68,7 @@ public class MessageListener {
     MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
       .messageName(message.getMessageType())
       .correlationKey(message.getCorrelationId())
+      .payload("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}")
       .send().join();
     
     System.out.println("Correlated " + messageEvent );
