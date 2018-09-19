@@ -7,6 +7,7 @@
     <bpmn:serviceTask id="ServiceTask_0qrnrfc" name="Send command:&#10;retrieve payment">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="retrieve-payment" />
+        <zeebe:ioMapping outputBehavior="merge" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0khqnmm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0zuhiso</bpmn:outgoing>
@@ -15,9 +16,7 @@
     <bpmn:serviceTask id="ServiceTask_026x4p7" name="Send command:&#10;fetch goods">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="fetch-goods" />
-        <zeebe:ioMapping>
-          <zeebe:output source="$.pickId" target="$.pickId" />
-        </zeebe:ioMapping>
+        <zeebe:ioMapping outputBehavior="merge" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1x9y2zj</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1bpuqsi</bpmn:outgoing>
@@ -25,9 +24,7 @@
     <bpmn:serviceTask id="ServiceTask_1hyum3r" name="Send command:&#10;ship goods">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="ship-goods" />
-        <zeebe:ioMapping>
-          <zeebe:output source="$.shipmentId" target="$.shipmentId" />
-        </zeebe:ioMapping>
+        <zeebe:ioMapping outputBehavior="merge" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_10hre92</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0wm07rt</bpmn:outgoing>
@@ -40,6 +37,7 @@
     <bpmn:serviceTask id="ServiceTask_13y5061" name="Send event:&#10;order delivered">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="order-completed" />
+        <zeebe:ioMapping outputBehavior="merge" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0wpb9fc</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0qxnvk9</bpmn:outgoing>
