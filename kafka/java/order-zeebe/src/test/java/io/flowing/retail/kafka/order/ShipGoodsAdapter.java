@@ -45,7 +45,7 @@ public class ShipGoodsAdapter implements JobHandler {
     String correlationId = UUID.randomUUID().toString();
 
     MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
-            .messageName("ShippedGoodsEvent")
+            .messageName("GoodsShippedEvent")
             .correlationKey(correlationId)
             .payload("{\"shipmentId\":\"635\"}") //
             .send().join();

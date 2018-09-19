@@ -17,6 +17,7 @@ public class SmokeTestZeebe {
 		zeebe = zeebe();
 		new RetrievePaymentAdapter().subscribe(zeebe);
 		new FetchGoodsAdapter().subscribe(zeebe);
+		new ShipGoodsAdapter().subscribe(zeebe);
 		
 	    OrderFlowContext context = new OrderFlowContext();
 	    context.setOrderId("test");

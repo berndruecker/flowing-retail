@@ -1,10 +1,13 @@
 package io.flowing.retail.kafka.order.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
+@JsonInclude(Include.NON_NULL)
 public class OrderFlowContext {
 
   private String traceId;

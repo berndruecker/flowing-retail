@@ -75,7 +75,7 @@
   </bpmn:message>
   <bpmn:message id="Message_07p0clb" name="GoodsShippedEvent">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="$.CorrelationId_GoodsShipped" />
+      <zeebe:subscription correlationKey="$.CorrelationId_ShipGoods" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
