@@ -5,6 +5,8 @@ TITLE Kafka Connect
 set mypath=%cd%
 cd %kafka%\bin\windows\
 
-connect-standalone ../../config/connect-standalone.properties C:/DEV/zeebe/develop/Kafka/kafka_2.11-1.0.1/config/zeebe-connector.properties C:/DEV/zeebe/develop/Kafka/kafka_2.11-1.0.1/config/zeebe-connector2.properties
+xcopy %flowing%\kafka\java\choreography-alternative\zeebe-track\kafka-connect\*.jar %kafka-data%\plugins\ /E /I /Y
+
+connect-standalone %kafka%/config/connect-standalone.properties %flowing%/kafka/java/choreography-alternative/zeebe-track/kafka-connect/zeebe-connector-sink.properties
 
 cd %mypath%	

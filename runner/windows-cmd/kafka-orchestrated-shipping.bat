@@ -1,2 +1,2 @@
 TITLE Shipping
-mvn exec:java -f shipping/
+mvn package exec:java -f shipping/
