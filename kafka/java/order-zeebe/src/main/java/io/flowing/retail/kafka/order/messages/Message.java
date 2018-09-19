@@ -1,4 +1,4 @@
-package io.flowing.retail.kafka.order.port.message;
+package io.flowing.retail.kafka.order.messages;
 
 import java.util.Date;
 import java.util.UUID;

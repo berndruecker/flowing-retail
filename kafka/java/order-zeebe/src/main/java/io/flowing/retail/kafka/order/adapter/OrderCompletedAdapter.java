@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import io.flowing.retail.kafka.order.adapter.payload.OrderCompletedEventPayload;
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
-import io.flowing.retail.kafka.order.port.message.Message;
-import io.flowing.retail.kafka.order.port.message.MessageSender;
+import io.flowing.retail.kafka.order.messages.Message;
+import io.flowing.retail.kafka.order.messages.MessageSender;
 import io.zeebe.gateway.ZeebeClient;
 import io.zeebe.gateway.api.clients.JobClient;
 import io.zeebe.gateway.api.events.JobEvent;

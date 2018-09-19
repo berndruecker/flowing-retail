@@ -1,4 +1,4 @@
-package io.flowing.retail.kafka.order.port.message;
+package io.flowing.retail.kafka.order.messages;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import io.flowing.retail.kafka.order.adapter.payload.GoodsShippedEventPayload;
 import io.flowing.retail.kafka.order.adapter.payload.PaymentReceivedEventPayload;
 import io.flowing.retail.kafka.order.domain.Order;
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
-import io.flowing.retail.kafka.order.port.persistence.OrderRepository;
+import io.flowing.retail.kafka.order.persistence.OrderRepository;
 import io.zeebe.gateway.ZeebeClient;
 import io.zeebe.gateway.api.events.MessageEvent;
 

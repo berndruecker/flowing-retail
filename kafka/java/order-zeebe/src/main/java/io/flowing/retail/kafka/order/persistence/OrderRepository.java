@@ -1,4 +1,4 @@
-package io.flowing.retail.kafka.order.port.persistence;
+package io.flowing.retail.kafka.order.persistence;
 
 import org.springframework.data.repository.CrudRepository;
 
