@@ -33,7 +33,7 @@ public class OrderCompletedAdapter implements JobHandler {
   @PostConstruct
   public void subscribe() {
     subscription = zeebe.topicClient().jobClient().newWorker()
-      .jobType("fetch-goods")
+      .jobType("order-completed")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
       .open();      
