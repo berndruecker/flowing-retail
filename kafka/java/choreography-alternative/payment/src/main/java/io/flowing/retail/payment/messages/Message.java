@@ -1,4 +1,4 @@
-package io.flowing.retail.payment.port.message;
+package io.flowing.retail.payment.messages;
 
 import java.util.Date;
 import java.util.UUID;

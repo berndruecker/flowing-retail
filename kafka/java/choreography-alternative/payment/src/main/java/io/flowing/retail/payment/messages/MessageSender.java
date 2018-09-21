@@ -1,4 +1,4 @@
-package io.flowing.retail.payment.port.message;
+package io.flowing.retail.payment.messages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
