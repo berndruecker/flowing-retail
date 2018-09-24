@@ -25,7 +25,7 @@ public class SmokeTestZeebe {
 
 	    // and kick of a new flow instance
 	    System.out.println("New order placed, start flow. " + context.asJson());
-	    zeebe.topicClient().workflowClient().newCreateInstanceCommand() //
+	    zeebe.workflowClient().newCreateInstanceCommand() //
 	        .bpmnProcessId("order-kafka") //
 	        .latestVersion() // 
 	        .payload(context.asJson()) //
@@ -39,7 +39,7 @@ public class SmokeTestZeebe {
 	    ZeebeClient zeebeClient = ZeebeClient.newClient();    
 	    
 	    // Trigger deployment
-	    zeebeClient.topicClient().workflowClient().newDeployCommand() //
+	    zeebeClient.workflowClient().newDeployCommand() //
 	      .addResourceFromClasspath("order-kafka.bpmn") //
 	      .send().join();
 	    

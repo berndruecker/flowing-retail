@@ -38,7 +38,7 @@ public class FetchGoodsAdapter implements JobHandler {
   
   @PostConstruct
   public void subscribe() {
-    subscription = zeebe.topicClient().jobClient().newWorker()
+    subscription = zeebe.jobClient().newWorker()
       .jobType("fetch-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))

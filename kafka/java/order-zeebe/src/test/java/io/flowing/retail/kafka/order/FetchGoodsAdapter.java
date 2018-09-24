@@ -31,7 +31,7 @@ public class FetchGoodsAdapter implements JobHandler {
 
 	public void subscribe(ZeebeClient zeebe) {
 		this.zeebe = zeebe;
-    zeebe.topicClient().jobClient().newWorker()
+    zeebe.jobClient().newWorker()
       .jobType("fetch-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
@@ -51,7 +51,7 @@ public class FetchGoodsAdapter implements JobHandler {
       .payload(Collections.singletonMap("CorrelationId_FetchGoods", correlationId)) //
       .send().join();
     
-    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
             .messageName("GoodsFetchedEvent")
             .correlationKey(correlationId)
             .payload("{\"pickId\":\"99\"}") //

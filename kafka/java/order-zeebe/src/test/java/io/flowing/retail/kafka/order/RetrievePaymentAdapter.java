@@ -31,7 +31,7 @@ public class RetrievePaymentAdapter implements JobHandler {
 
 	public void subscribe(ZeebeClient zeebe) {
 		this.zeebe = zeebe;
-		zeebe.topicClient().jobClient().newWorker() //
+		zeebe.jobClient().newWorker() //
 				.jobType("retrieve-payment") //
 				.handler(this) //
 				.timeout(Duration.ofMinutes(1)) //
@@ -48,7 +48,7 @@ public class RetrievePaymentAdapter implements JobHandler {
 				.payload(Collections.singletonMap("CorrelationId_RetrievePayment", correlationId)) //
 				.send().join();		
 		
-		MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+		MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
 				.messageName("PaymentReceivedEvent") //
 				.correlationKey(RetrievePaymentAdapter.correlationId) //
 				.payload("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}") //

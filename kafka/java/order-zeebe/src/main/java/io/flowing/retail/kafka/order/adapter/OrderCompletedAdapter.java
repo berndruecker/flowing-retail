@@ -32,7 +32,7 @@ public class OrderCompletedAdapter implements JobHandler {
   
   @PostConstruct
   public void subscribe() {
-    subscription = zeebe.topicClient().jobClient().newWorker()
+    subscription = zeebe.jobClient().newWorker()
       .jobType("order-completed")
       .handler(this)
       .timeout(Duration.ofMinutes(1))

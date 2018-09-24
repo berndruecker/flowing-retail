@@ -51,7 +51,7 @@ public class MessageListener {
 
     // and kick of a new flow instance
     System.out.println("New order placed, start flow. " + context.asJson());
-    zeebe.topicClient().workflowClient().newCreateInstanceCommand() //
+    zeebe.workflowClient().newCreateInstanceCommand() //
         .bpmnProcessId("order-kafka") //
         .latestVersion() // 
         .payload(context.asJson()) //
@@ -65,7 +65,7 @@ public class MessageListener {
 
     PaymentReceivedEventPayload event = message.getPayload(); // TODO: Read something from it? 
 
-    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
       .messageName(message.getMessageType())
       .correlationKey(message.getCorrelationId())
       .payload("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}")
@@ -81,7 +81,7 @@ public class MessageListener {
 
     String pickId = message.getPayload().getPickId();     
 
-    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
         .messageName(message.getMessageType())
         .correlationKey(message.getCorrelationId())
         .payload("{\"pickId\":\"" + pickId + "\"}") //
@@ -98,7 +98,7 @@ public class MessageListener {
 
     String shipmentId = message.getPayload().getShipmentId();     
 
-    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
         .messageName(message.getMessageType())
         .correlationKey(message.getCorrelationId())
         .payload("{\"shipmentId\":\"" + shipmentId + "\"}") //

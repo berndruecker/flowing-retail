@@ -30,7 +30,7 @@ public class ShipGoodsAdapter implements JobHandler {
 
 	public void subscribe(ZeebeClient zeebe) {
 		this.zeebe = zeebe;
-     zeebe.topicClient().jobClient().newWorker()
+     zeebe.jobClient().newWorker()
       .jobType("ship-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
@@ -44,7 +44,7 @@ public class ShipGoodsAdapter implements JobHandler {
     // generate an UUID for this communication
     String correlationId = UUID.randomUUID().toString();
 
-    MessageEvent messageEvent = zeebe.topicClient().workflowClient().newPublishMessageCommand() //
+    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
             .messageName("GoodsShippedEvent")
             .correlationKey(correlationId)
             .payload("{\"shipmentId\":\"635\"}") //
