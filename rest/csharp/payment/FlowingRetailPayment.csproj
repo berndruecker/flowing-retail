@@ -13,13 +13,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Models\PaymentV3.bpmn" />
-    <None Remove="Models\PaymentV4.bpmn" />
-    <None Remove="Models\PaymentV6.bpmn" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <None Remove="Models\PaymentV3.bpmn" />
+    <None Remove="Models\PaymentV4.bpmn" />
+    <None Remove="Models\PaymentV6.bpmn" />
   </ItemGroup>
 
   <ItemGroup>
