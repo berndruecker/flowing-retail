@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlowingRetailPayment", "payment\FlowingRetailPayment.csproj", "{D316A8E0-09CB-4D66-B635-94860C3EB798}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StripeFake", "stripe-fake\StripeFake.csproj", "{ACA89FE7-C6D2-4F28-930C-D3C1C5749543}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D316A8E0-09CB-4D66-B635-94860C3EB798}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D316A8E0-09CB-4D66-B635-94860C3EB798}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D316A8E0-09CB-4D66-B635-94860C3EB798}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D316A8E0-09CB-4D66-B635-94860C3EB798}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACA89FE7-C6D2-4F28-930C-D3C1C5749543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACA89FE7-C6D2-4F28-930C-D3C1C5749543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACA89FE7-C6D2-4F28-930C-D3C1C5749543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACA89FE7-C6D2-4F28-930C-D3C1C5749543}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9029BC77-C936-4800-A9BF-2DC2A3B8B51B}
+	EndGlobalSection
+EndGlobal
