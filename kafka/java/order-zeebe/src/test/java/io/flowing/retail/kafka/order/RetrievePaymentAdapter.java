@@ -10,9 +10,9 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.flowing.retail.kafka.order.adapter.payload.RetrievePaymentCommandPayload;
 import io.flowing.retail.kafka.order.domain.Order;
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
+import io.flowing.retail.kafka.order.flow.payload.RetrievePaymentCommandPayload;
 import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;

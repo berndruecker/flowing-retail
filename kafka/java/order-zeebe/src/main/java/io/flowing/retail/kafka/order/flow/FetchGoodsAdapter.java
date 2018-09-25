@@ -1,4 +1,4 @@
-package io.flowing.retail.kafka.order;
+package io.flowing.retail.kafka.order.flow;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -19,46 +19,56 @@ import io.flowing.retail.kafka.order.persistence.OrderRepository;
 import io.zeebe.gateway.ZeebeClient;
 import io.zeebe.gateway.api.clients.JobClient;
 import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.events.MessageEvent;
 import io.zeebe.gateway.api.subscription.JobHandler;
 import io.zeebe.gateway.api.subscription.JobWorker;
 
 @Component
 public class FetchGoodsAdapter implements JobHandler {
   
-	public static String correlationId;
-	private ZeebeClient zeebe;
+  @Autowired
+  private MessageSender messageSender; 
+  
+  @Autowired
+  private OrderRepository orderRepository;
 
-	public void subscribe(ZeebeClient zeebe) {
-		this.zeebe = zeebe;
-    zeebe.jobClient().newWorker()
+  @Autowired
+  private ZeebeClient zeebe;
+
+  private JobWorker subscription;
+  
+  @PostConstruct
+  public void subscribe() {
+    subscription = zeebe.jobClient().newWorker()
       .jobType("fetch-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
       .open();      
   }
 
+  @PreDestroy
+  public void closeSubscription() {
+    subscription.close();      
+  }
+
   @Override
   public void handle(JobClient client, JobEvent event) {
     OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+    Order order = orderRepository.findById( context.getOrderId() ).get();
     
     // generate an UUID for this communication
     String correlationId = UUID.randomUUID().toString();
         
-
-        
+    messageSender.send(new Message<FetchGoodsCommandPayload>( //
+            "FetchGoodsCommand", //
+            context.getTraceId(), //
+            new FetchGoodsCommandPayload() //
+              .setRefId(order.getId()) //
+              .setItems(order.getItems())) //
+        .setCorrelationId(correlationId));
+    
     client.newCompleteCommand(event) //
       .payload(Collections.singletonMap("CorrelationId_FetchGoods", correlationId)) //
       .send().join();
-    
-    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
-            .messageName("GoodsFetchedEvent")
-            .correlationKey(correlationId)
-            .payload("{\"pickId\":\"99\"}") //
-            .send().join();
-
-        System.out.println("Correlated " + messageEvent );
-    
   }
   
 }

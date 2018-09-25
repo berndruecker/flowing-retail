@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import io.flowing.retail.order.port.adapter.FetchGoodsAdapter;
-import io.flowing.retail.order.port.adapter.OrderCompletedAdapter;
-import io.flowing.retail.order.port.adapter.RetrievePaymentAdapter;
-import io.flowing.retail.order.port.adapter.ShipGoodsAdapter;
+import io.flowing.retail.order.flow.FetchGoodsAdapter;
+import io.flowing.retail.order.flow.OrderCompletedAdapter;
+import io.flowing.retail.order.flow.RetrievePaymentAdapter;
+import io.flowing.retail.order.flow.ShipGoodsAdapter;
 
 @Configuration
 public class OrderFulfillmentFlowDefinition {

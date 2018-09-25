@@ -15,11 +15,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.flowing.retail.kafka.order.adapter.payload.GoodsFetchedEventPayload;
-import io.flowing.retail.kafka.order.adapter.payload.GoodsShippedEventPayload;
-import io.flowing.retail.kafka.order.adapter.payload.PaymentReceivedEventPayload;
 import io.flowing.retail.kafka.order.domain.Order;
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
+import io.flowing.retail.kafka.order.flow.payload.GoodsFetchedEventPayload;
+import io.flowing.retail.kafka.order.flow.payload.GoodsShippedEventPayload;
+import io.flowing.retail.kafka.order.flow.payload.PaymentReceivedEventPayload;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;
 import io.zeebe.gateway.ZeebeClient;
 import io.zeebe.gateway.api.events.MessageEvent;

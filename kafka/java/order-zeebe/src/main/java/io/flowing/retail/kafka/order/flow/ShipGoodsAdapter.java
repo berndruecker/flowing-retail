@@ -1,4 +1,4 @@
-package io.flowing.retail.kafka.order;
+package io.flowing.retail.kafka.order.flow;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -19,39 +19,57 @@ import io.flowing.retail.kafka.order.persistence.OrderRepository;
 import io.zeebe.gateway.ZeebeClient;
 import io.zeebe.gateway.api.clients.JobClient;
 import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.events.MessageEvent;
 import io.zeebe.gateway.api.subscription.JobHandler;
 import io.zeebe.gateway.api.subscription.JobWorker;
 
 @Component
 public class ShipGoodsAdapter implements JobHandler {
   
-	private ZeebeClient zeebe;
+  @Autowired
+  private MessageSender messageSender;  
 
-	public void subscribe(ZeebeClient zeebe) {
-		this.zeebe = zeebe;
-     zeebe.jobClient().newWorker()
+  @Autowired
+  private OrderRepository orderRepository;  
+  
+  
+
+  @Autowired
+  private ZeebeClient zeebe;
+
+  private JobWorker subscription;
+  
+  @PostConstruct
+  public void subscribe() {
+    subscription = zeebe.jobClient().newWorker()
       .jobType("ship-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
       .open();      
   }
 
+  @PreDestroy
+  public void closeSubscription() {
+    subscription.close();      
+  }
+
   @Override
   public void handle(JobClient client, JobEvent event) {
     OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+    Order order = orderRepository.findById(context.getOrderId()).get(); 
     
     // generate an UUID for this communication
     String correlationId = UUID.randomUUID().toString();
 
-    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
-            .messageName("GoodsShippedEvent")
-            .correlationKey(correlationId)
-            .payload("{\"shipmentId\":\"635\"}") //
-            .send().join();
-
-        System.out.println("Correlated " + messageEvent );   
-        
+    messageSender.send(new Message<ShipGoodsCommandPayload>( //
+            "ShipGoodsCommand", //
+            context.getTraceId(), //
+            new ShipGoodsCommandPayload() //
+              .setRefId(order.getId())
+              .setPickId(context.getPickId()) //
+              .setRecipientName(order.getCustomer().getName()) //
+              .setRecipientAddress(order.getCustomer().getAddress())) //
+        .setCorrelationId(correlationId));
+    
     client.newCompleteCommand(event) //
         .payload(Collections.singletonMap("CorrelationId_ShipGoods", correlationId)) //
         .send().join();

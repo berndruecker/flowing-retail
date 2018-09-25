@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.flowing.retail.monitor.domain.PastEvent;
-import io.flowing.retail.monitor.port.persistence.LogRepository;
+import io.flowing.retail.monitor.persistence.LogRepository;
 
 @RestController
 public class MonitorRestController {
