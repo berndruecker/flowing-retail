@@ -2,8 +2,14 @@ package io.flowing.retail.payment.rest;
 
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,38 +33,45 @@ import io.zeebe.model.bpmn.Bpmn;
 import io.zeebe.model.bpmn.BpmnModelInstance;
 
 /**
- * Step3: Use Zeebe state machine for long-running retry
+ * Step$: Use Zeebe state machine for long-running retry;
+ * but try to get a synchronous response
  */
 @RestController
-public class PaymentRestHacksControllerV3 {
+public class PaymentRestHacksControllerV4 {
 
   @Autowired
   private ZeebeClient zeebe;
   
   @Autowired
-  private ChargeCreditCardHandler handler;
+  private ChargeCreditCardHandler chargeCreditCardHandlerV4;
 
-  private JobWorker worker;
+  private List<JobWorker> workers = new ArrayList<JobWorker>();
 
   @PostConstruct
   public void createFlowDefinition() {
-    BpmnModelInstance flow = Bpmn.createExecutableProcess("paymentV3") //
+    BpmnModelInstance flow = Bpmn.createExecutableProcess("paymentV4") //
         .startEvent() //
-        .serviceTask("stripe").zeebeTaskType("charge-creditcard-v3") //
+        .serviceTask("stripe").zeebeTaskType("charge-creditcard-v4") //
           .zeebeTaskRetries(2) //        
+        .serviceTask("response").zeebeTaskType("payment-response-v4") //
+          // TODO: Still missing in current Zeebe: Ability to use expression language here to start dedicated "Response Queue" for Client
         .endEvent().done();
     
-    worker = zeebe.jobClient().newWorker()
-      .jobType("charge-creditcard-v3") // 
-      .handler(handler) // 
-      .open();
-    
+    workers.add( zeebe.jobClient().newWorker()
+      .jobType("charge-creditcard-v4") // 
+      .handler(chargeCreditCardHandlerV4) // 
+      .open());
+    workers.add( zeebe.jobClient().newWorker()
+      .jobType("payment-response-v4") // 
+      .handler(new NotifySemaphorHandler()) // 
+      .open());
+  
     zeebe.workflowClient().newDeployCommand() // 
       .addWorkflowModel(flow, "payment.bpmn") //
       .send().join();
   }
   
-  @Component
+  @Component("chargeCreditCardHandlerV4")
   public static class ChargeCreditCardHandler implements JobHandler {
 
     @Autowired
@@ -86,25 +99,64 @@ public class PaymentRestHacksControllerV3 {
 
   }
 
-  @RequestMapping(path = "/api/payment/v3", method = PUT)
+  @RequestMapping(path = "/api/payment/v4", method = PUT)
   public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
 
-    chargeCreditCard(customerId, amount);
-    
-    response.setStatus(HttpServletResponse.SC_ACCEPTED);    
-    return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
+    Semaphore newSemaphore = NotifySemaphorHandler.newSemaphore(traceId);
+    chargeCreditCard(traceId, customerId, amount);
+    boolean finished = newSemaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
+    NotifySemaphorHandler.removeSemaphore(traceId);
+
+    if (finished) {
+      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\"}";
+    } else {
+      response.setStatus(HttpServletResponse.SC_ACCEPTED);
+      return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
+    }
   }
 
-  public void chargeCreditCard(String customerId, long remainingAmount) {
+  public void chargeCreditCard(String traceId, String customerId, long remainingAmount) {
+    HashMap<String, Object> variables = new HashMap<>();
+    variables.put("amount", remainingAmount);
+    variables.put("traceId", traceId);
+    
     zeebe.workflowClient().newCreateInstanceCommand() //
-      .bpmnProcessId("paymentV3")
+      .bpmnProcessId("paymentV4")
       .latestVersion()
-      .payload(Collections.singletonMap("amount", remainingAmount))
+      .payload(variables)
       .send().join();
   }
+  
+  public static class NotifySemaphorHandler implements JobHandler {
+    
+    public static Map<String, Semaphore> semaphors = new HashMap<>();
+
+    @Override
+    public void handle(JobClient client, JobEvent job) {
+      String traceId = (String) job.getPayloadAsMap().get("traceId");
+      Semaphore s = semaphors.get(traceId);
+      if (s!=null) {
+        s.release();
+        semaphors.remove(traceId);
+      }
+      client.newCompleteCommand(job).send().join();
+    }
+
+    public static Semaphore newSemaphore(String traceId) {
+      Semaphore sema = new Semaphore(0);
+      semaphors.put(traceId, sema);
+      return sema;
+    }
+
+    public static void removeSemaphore(String traceId) {
+      semaphors.remove(traceId);
+    }
+
+  }
+
   
   public static class CreateChargeRequest {
     public int amount;
@@ -116,7 +168,7 @@ public class PaymentRestHacksControllerV3 {
 
   @PreDestroy
   public void closeSubscription() {
-    worker.close();
+    workers.forEach((worker) -> worker.close());
   }
 
 }
