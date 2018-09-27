@@ -4,8 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Meetup is a free responsive single page bootstrap template by designerdada.com">
-  <meta name="author" content="Akash Bhadange">
+  <meta name="author" content="Bernd Ruecker">
   <title>Flowing retail example</title>
 
   <!-- Bootstrap -->
@@ -42,7 +41,7 @@
           <div class="col-md-7">
             <h1>Flowing retail - order fullfilment example in a microservice world</h1>
             <h4>Using Apache Kafka, Spring Boot and Camunda</h4>
-            <a href="https://github.com/flowing/flowing-retail" class="">See source code on Github</a>
+            <a href="https://github.com/berndruecker/flowing-retail" class="">See source code on Github</a>
           </div>
         </div>
         <!-- End: Header -->
@@ -61,14 +60,14 @@
           </div>
           <div class="col-md-4 col-sm-6 feature">
             <img src="img/order.png" class="speaker-img">
-            <h3>Order</h3>
-            <p>The order microservice orchestrates the overall flow. You can access the local Camunda Cockpit in order to get an overview...</p>
+            <h3>Order Camunda</h3>
+            <p>In case you use Camunda for orchestrating the order flow you can access the Camunda Cockpit for this service to get an overview...</p>
             <p><a href="http://localhost:8091/app/cockpit/default/">http://localhost:8091/</a></p>
           </div>
           <div class="col-md-4 col-sm-6 feature">
             <img src="img/payment.png" class="speaker-img">
-            <h3>Payment</h3>
-            <p>The payment microservice is responsible to get the money from the customer. It uses a local flow to solve long running problems. You can access Camunda Cockpit to get an overview...</p>
+            <h3>Payment Camunda</h3>
+            <p>The payment microservice is responsible to get the money from the customer. There is one version using Camunda to solve problems around long running flows. If you use this you can access Camunda Cockpit to get an overview...</p>
             <p><a href="http://localhost:8092/app/cockpit/default/">http://localhost:8092/</a></p>
           </div>
           <div class="col-md-4 col-sm-6 feature">
@@ -77,28 +76,12 @@
             <p>You want to see what is going on in your microservice world? Checkout this simple monitor showing you all events &amp; commands sent around, and some BPMN view of the overall end-to-end business capability...</p>
             <p><a href="http://localhost:8095/">http://localhost:8095/</a></p>
           </div>
-          <!--
           <div class="col-md-4 col-sm-6 feature">
-            <img src="img/speaker-5.png" class="speaker-img">
-            <h3>Andy Budd</h3>
-            <p>Harry is a freelance designer, developer, writer, speaker and front-end architect from the UK, previously working as Senior UI Developer for Sky. He Tweets at...</p>
-            <ul class="speaker-social">
-              <li><a href="#"><span class="ti-facebook"></span></a></li>
-              <li><a href="#"><span class="ti-twitter-alt"></span></a></li>
-              <li><a href="#"><span class="ti-linkedin"></span></a></li>
-            </ul>
-          </div>
-          <div class="col-md-4 col-sm-6 feature">
-            <img src="img/speaker-6.png" class="speaker-img">
-            <h3>Christian Lauke</h3>
-            <p>Harry is a freelance designer, developer, writer, speaker and front-end architect from the UK, previously working as Senior UI Developer for Sky. He Tweets at...</p>
-            <ul class="speaker-social">
-              <li><a href="#"><span class="ti-facebook"></span></a></li>
-              <li><a href="#"><span class="ti-twitter-alt"></span></a></li>
-              <li><a href="#"><span class="ti-linkedin"></span></a></li>
-            </ul>
-          </div>
-          -->
+            <img src="img/monitor.png" class="speaker-img">
+            <h3>Zeebe Simple Monitor</h3>
+            <p>In case you use Zeebe for orchestration this simple monitor gives you some insides on what is going on...</p>
+            <p><a href="http://localhost:8096/">http://localhost:8096/</a></p>
+          </div>          
         </div>
         <!-- End: Speakers -->
       </div>
@@ -111,37 +94,11 @@
       <div class="container-fluid footer">        
         <div class="row footer-credit">
           <div class="col-md-6 col-sm-6">
-            <p>&copy; 2017, <a href="http://flowing.io">flowing.io</a>.</p>
-          </div>
-          <div class="col-md-6 col-sm-6"> 
-          <!--
-            <ul class="footer-menu">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms &amp; Condition</a></li>
-            </ul>
-            -->
+            <p>&copy; 2017, <a href="http://berndruecker.io">Build with passion by berndruecker</a>.</p>
           </div>
         </div>
       </div>
       <!-- End: Footer -->
 
-      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-      <script src="js/jquery.min.js"></script>
-      <!-- Include all compiled plugins (below), or include individual files as needed -->
-      <script src="js/bootstrap.min.js"></script>
-      <script src="js/jquery.easing.min.js"></script>
-      <script src="js/scrolling-nav.js"></script>
-      <script src="js/validator.js"></script>
-      <!-- Google Analytics -->
-      <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-29231762-2', 'auto');
-      ga('send', 'pageview');
-      </script>
     </body>
     </html>
