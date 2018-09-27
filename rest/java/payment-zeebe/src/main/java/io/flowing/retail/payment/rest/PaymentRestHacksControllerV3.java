@@ -48,14 +48,14 @@ public class PaymentRestHacksControllerV3 {
           .zeebeTaskRetries(2) //        
         .endEvent().done();
     
-    worker = zeebe.jobClient().newWorker()
-      .jobType("charge-creditcard-v3") // 
-      .handler(handler) // 
-      .open();
-    
     zeebe.workflowClient().newDeployCommand() // 
       .addWorkflowModel(flow, "payment.bpmn") //
       .send().join();
+
+    worker = zeebe.jobClient().newWorker()
+        .jobType("charge-creditcard-v3") // 
+        .handler(handler) // 
+        .open();  
   }
   
   @Component
