@@ -44,5 +44,7 @@ after_success:
   - docker push flowingretail/kafka-java-choreography-payment
   - docker build -t flowingretail/kafka-java-choreography-shipping ./kafka/java/choreography-alternative/shipping/
   - docker push flowingretail/kafka-java-choreography-shipping
+  - docker build -t flowingretail/kafka-java-choreography-zeebe-track ./kafka/java/choreography-alternative/zeebe-track/
+  - docker push flowingretail/kafka-java-choreography-zeebe-track
   - docker build -t flowingretail/docs ./docs/
   - docker push flowingretail/docs
