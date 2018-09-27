@@ -27,8 +27,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
-    <PackageReference Include="Polly" Version="5.8.0" />
-    <PackageReference Include="BerndRuecker.Sample.CamundaClient" Version="0.0.1" />
+    <PackageReference Include="Polly" Version="6.1.0" />
+    <PackageReference Include="BerndRuecker.Sample.CamundaClient" Version="0.0.6" />
   </ItemGroup>
 
   <ItemGroup>

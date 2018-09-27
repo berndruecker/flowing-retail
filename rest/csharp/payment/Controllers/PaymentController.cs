@@ -177,16 +177,19 @@ namespace FlowingRetailPayment.Controllers
             semaphore.Wait(); // aqcuire and release later if everything is done
             semaphors.Add(traceId, semaphore);
             ChargeCreditCard(traceId, customerId, amount);
+            ExternalTaskWorker semaphoreWorker = startSempahoreWorker(traceId);
 
             var result = new Dictionary<String, String>();
             result.Add("traceId", traceId);
             if (semaphore.Wait(TimeSpan.FromMilliseconds(500)))
             {
+                semaphoreWorker.StopWork();
                 result.Add("status", "completed");
                 return Ok(result); // HTTP 200
             }
             else
             {
+                semaphoreWorker.StopWork();
                 result.Add("status", "pending");
                 return Accepted(result); // HTTP 202
             }
@@ -212,7 +215,27 @@ namespace FlowingRetailPayment.Controllers
                 String transactionId = circuitBreakerPolicy.Execute<String>(
                     () => RestApiClient.InvokeRestApi(customerId, amount, TimeSpan.FromSeconds(1)).transactionId);
                 resultVariables.Add("transactionId", transactionId);
+            }
+        }
 
+        public ExternalTaskWorker startSempahoreWorker(String traceId)
+        {
+            ExternalTaskWorkerInfo taskWorkerInfo = new ExternalTaskWorkerInfo
+            {
+                TopicName = "paymentResponseV4-" + traceId,
+                TaskAdapter = new NotifySemaphoreAdapter()
+            };
+            ExternalTaskWorker worker = new CamundaClient.Worker.ExternalTaskWorker( //
+                Program.Camunda.ExternalTaskService, //
+                taskWorkerInfo);
+            worker.StartWork();
+            return worker;
+        }
+
+        class NotifySemaphoreAdapter : IExternalTaskAdapter
+        {
+            public void Execute(ExternalTask externalTask, ref Dictionary<string, object> resultVariables)
+            {
                 string traceId = (string)externalTask.Variables["traceId"].Value;
                 if (semaphors.ContainsKey(traceId))
                 {
