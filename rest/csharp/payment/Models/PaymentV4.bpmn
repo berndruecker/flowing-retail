@@ -17,11 +17,7 @@
       <bpmn:outgoing>SequenceFlow_148vl5g</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_13opb5z" sourceRef="Task_1p6bik3" targetRef="EndEvent_08rsway" />
-    <bpmn:sendTask id="Task_1p6bik3" name="Trigger synchronous response" camunda:type="external" camunda:topic="paymentResponseV4-#{traceId}">
-      <bpmn:incoming>SequenceFlow_148vl5g</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_13opb5z</bpmn:outgoing>
-    </bpmn:sendTask>
-    <bpmn:boundaryEvent id="BoundaryEvent_0becqgo" name="1 second" attachedToRef="Task_1p6bik3">
+    <bpmn:boundaryEvent id="BoundaryEvent_0becqgo" name="1 second (no synchronous response sent)" attachedToRef="Task_1p6bik3">
       <bpmn:outgoing>SequenceFlow_0m43z80</bpmn:outgoing>
       <bpmn:timerEventDefinition>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1S</bpmn:timeDuration>
@@ -35,6 +31,10 @@
     <bpmn:sendTask id="Task_14wvz1c" name="Send asynchronous response" camunda:type="external" camunda:topic="send-async">
       <bpmn:incoming>SequenceFlow_0m43z80</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kff6g4</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="Task_1p6bik3" name="Trigger synchronous response" camunda:type="external" camunda:topic="paymentResponseV4-#{traceId}">
+      <bpmn:incoming>SequenceFlow_148vl5g</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13opb5z</bpmn:outgoing>
     </bpmn:sendTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -69,13 +69,10 @@
         <di:waypoint x="528" y="120" />
         <di:waypoint x="589" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="SendTask_09204ah_di" bpmnElement="Task_1p6bik3">
-        <dc:Bounds x="428" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_1mh6jqc_di" bpmnElement="BoundaryEvent_0becqgo">
         <dc:Bounds x="482" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="520" y="168" width="45" height="14" />
+          <dc:Bounds x="528" y="148" width="74" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0m43z80_di" bpmnElement="SequenceFlow_0m43z80">
@@ -92,6 +89,9 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SendTask_0eg6drn_di" bpmnElement="Task_14wvz1c">
         <dc:Bounds x="557" y="195" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SendTask_1hxw1t4_di" bpmnElement="Task_1p6bik3">
+        <dc:Bounds x="428" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
