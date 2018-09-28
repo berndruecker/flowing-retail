@@ -1,4 +1,4 @@
-package io.flowing.retail.zeebe.order.port.persistence;
+package io.flowing.retail.zeebe.order.persistence;
 
 import org.springframework.data.repository.CrudRepository;
 

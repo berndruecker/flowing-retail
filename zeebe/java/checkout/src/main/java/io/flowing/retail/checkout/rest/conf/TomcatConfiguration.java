@@ -1,4 +1,4 @@
-package io.flowing.retail.checkout.port.web.conf;
+package io.flowing.retail.checkout.rest.conf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;

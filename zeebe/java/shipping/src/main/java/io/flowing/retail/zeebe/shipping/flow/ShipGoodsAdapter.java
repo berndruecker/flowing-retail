@@ -1,4 +1,4 @@
-package io.flowing.retail.zeebe.inventory.port.zeebe;
+package io.flowing.retail.zeebe.shipping.flow;
 
 import java.time.Duration;
 
@@ -16,7 +16,7 @@ import io.zeebe.gateway.api.subscription.JobWorker;
 
 
 @Component
-public class FetchGoodsAdapter implements JobHandler {
+public class ShipGoodsAdapter implements JobHandler {
   
   @Autowired
   private ZeebeClient zeebe;
@@ -26,21 +26,20 @@ public class FetchGoodsAdapter implements JobHandler {
   @PostConstruct
   public void subscribe() {
     subscription = zeebe.jobClient().newWorker()
-      .jobType("fetch-goods-z")
+      .jobType("ship-goods-z")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
       .open();      
+  }
+
+  @Override
+  public void handle(JobClient client, JobEvent job) {
+    System.out.println("ship goods");
+    client.newCompleteCommand(job).send().join();
   }
 
   @PreDestroy
   public void closeSubscription() {
     subscription.close();      
   }
-  
-  @Override
-  public void handle(JobClient client, JobEvent job) {    
-    System.out.println("fetch goods");
-    client.newCompleteCommand(job).send().join();
-  }
-
 }

@@ -7,8 +7,8 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.boot.version>2.0.0.RELEASE</spring.boot.version>
-		<zeebe.version>0.7.0</zeebe.version>
+	    <spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+	    <zeebe.version>0.12.0-alpha4</zeebe.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -28,13 +28,8 @@
 		</dependency>
 		<dependency>
 			<groupId>io.zeebe</groupId>
-			<artifactId>zeebe-client-java</artifactId>
+			<artifactId>zeebe-gateway</artifactId>
 			<version>${zeebe.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.zeebe.spring</groupId>
-			<artifactId>spring-zeebe</artifactId>
-			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish</groupId>
