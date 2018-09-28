@@ -39,8 +39,6 @@ services:
     image: flowingretail/kafka-java-choreography-payment
     networks:
       - flowing
-    ports:
-      - "8092:8092"
     depends_on:
       - kafka
     environment:
@@ -87,7 +85,7 @@ services:
       - "8099:80"
 
   zeebe:
-    image: flowingretail/zeebe:latest
+    image: camunda/zeebe:0.12.0-alpha4
     hostname: zeebe
     networks:
       - flowing
