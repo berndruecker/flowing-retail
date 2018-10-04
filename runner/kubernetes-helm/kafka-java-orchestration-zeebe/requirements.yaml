@@ -1,0 +1,14 @@
+dependencies:
+- name: flowing-retail-kafka-java-orchestrated-payment
+  version: 0.1.0
+  repository: file://./charts/kafka-java-orchestrated-payment
+- name: flowing-retail-kafka-java-orchestrated-inventory
+  version: 0.1.0
+  repository: file://./charts/kafka-java-orchestrated-inventory
+- name: flowing-retail-kafka-java-orchestrated-shipping
+  version: 0.1.0
+  repository: file://./charts/kafka-java-orchestrated-shipping
+- name: flowing-retail-kafka-java-orchestrated-order
+  version: 0.1.0
+  repository: file://./charts/kafka-java-orchestrated-order
+
