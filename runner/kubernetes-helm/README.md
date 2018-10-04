@@ -1,5 +1,7 @@
 # Flowing Retail Kubernetes HElm Charts
 
+# UNDER DEVELOPMENT - DON#T USE THIS UNTIL YOU KNOW WHAT YOU ARE DOING
+
 * Install kubectl
 
 * On GKE create a cluster - Kafka runs 3 nodes and we need some microservices, so go for 6 nodes:
