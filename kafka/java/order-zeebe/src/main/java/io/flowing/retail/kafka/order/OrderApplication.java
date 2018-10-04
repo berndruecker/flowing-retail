@@ -1,5 +1,6 @@
 package io.flowing.retail.kafka.order;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,10 +13,15 @@ import io.zeebe.gateway.ZeebeClient;
 @Configuration
 public class OrderApplication {
   
+  @Value("${zeebe.brokerContactPoint}")
+  private String zeebeBrokerContactPoint;
+  
   @Bean
   public ZeebeClient zeebe() {
     // Cannot yet use Spring Zeebe in current alpha
-    ZeebeClient zeebeClient = ZeebeClient.newClient();    
+    ZeebeClient zeebeClient = ZeebeClient.newClientBuilder() //
+        .brokerContactPoint(zeebeBrokerContactPoint) //
+        .build();
     
     // Trigger deployment
     zeebeClient.workflowClient().newDeployCommand() //
