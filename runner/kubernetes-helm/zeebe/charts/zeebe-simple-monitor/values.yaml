@@ -1,0 +1,17 @@
+# Default values for flowing-retail.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+nameOverride: "zeebe-simple-monitor"
+fullnameOverride: "zeebe-simple-monitor"
+
+image:
+  repository: "flowingretail/zeebe-simple-monitor"
+  tag: latest
+  pullPolicy: Always
+  containerPort: 8080
+
+service:
+  port: 8080

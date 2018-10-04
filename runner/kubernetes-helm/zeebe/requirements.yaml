@@ -1,0 +1,8 @@
+dependencies:
+- name: flowing-retail-zeebe
+  version: 0.1.0
+  repository: file://./charts/zeebe
+- name: flowing-retail-zeebe-simple-monitor
+  version: 0.1.0
+  repository: file://./charts/zeebe-simple-monitor
+

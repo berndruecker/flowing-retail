@@ -1,0 +1,11 @@
+dependencies:
+- name: flowing-retail-kafka-java-choreographed-payment
+  version: 0.1.0
+  repository: file://./charts/kafka-java-choreographed-payment
+- name: flowing-retail-kafka-java-choreographed-inventory
+  version: 0.1.0
+  repository: file://./charts/kafka-java-choreographed-inventory
+- name: flowing-retail-kafka-java-choreographed-shipping
+  version: 0.1.0
+  repository: file://./charts/kafka-java-choreographed-shipping
+

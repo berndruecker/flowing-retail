@@ -1,0 +1,11 @@
+dependencies:
+#- name: cp-helm-charts  
+#  version: 0.1.0
+#  repository: https://raw.githubusercontent.com/confluentinc/cp-helm-charts/master
+- name: flowing-retail-kafka-java-checkout
+  version: 0.1.0
+  repository: file://./charts/kafka-java-checkout
+- name: flowing-retail-kafka-java-monitor
+  version: 0.1.0
+  repository: file://./charts/kafka-java-monitor
+

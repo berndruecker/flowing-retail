@@ -1,0 +1,5 @@
+dependencies:
+- name: kafka-java-choreography-track-zeebe
+  version: 0.1.0
+  repository: file://./charts/kafka-java-choreography-track-zeebe
+

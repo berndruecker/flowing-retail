@@ -1,0 +1,14 @@
+# Default values for flowing-retail.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+cp-schema-registry:
+  enabled: false
+cp-kafka-rest:
+  enabled: false
+cp-kafka-connect:
+  enabled: false
+cp-ksql-server:
+  enabled: false
+
+
