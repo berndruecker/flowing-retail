@@ -4,10 +4,10 @@
 
 replicaCount: 1
 
-nameOverride: "kafka-java-choreographed-payment"
+nameOverride: "kafka-java-orchestrated-payment"
 fullnameOverride: ""
 
 image:
-  repository: "flowingretail/kafka-java-choreography-payment"
+  repository: "flowingretail/kafka-java-payment"
   tag: latest
   pullPolicy: IfNotPresent

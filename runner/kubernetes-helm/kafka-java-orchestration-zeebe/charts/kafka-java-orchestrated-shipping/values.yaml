@@ -8,6 +8,6 @@ nameOverride: "kafka-java-orchestrated-shipping"
 fullnameOverride: ""
 
 image:
-  repository: "flowingretail/kafka-java-orchestration-shipping"
+  repository: "flowingretail/kafka-java-shipping"
   tag: latest
   pullPolicy: IfNotPresent

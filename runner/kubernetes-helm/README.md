@@ -10,6 +10,11 @@
 gcloud container clusters create fr-demo --num-nodes 6
 ```
 
+This makes it easy to tear it down later on
+```
+gcloud container clusters delete fr-demo
+```
+
 ```
 helm init
 ```

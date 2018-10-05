@@ -11,7 +11,3 @@ image:
   repository: "flowingretail/kafka-java-choreography-shipping"
   tag: latest
   pullPolicy: IfNotPresent
-  containerPort: 8092
-
-service:
-  port: 8092

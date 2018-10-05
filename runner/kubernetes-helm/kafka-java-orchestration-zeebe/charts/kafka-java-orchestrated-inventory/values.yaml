@@ -8,6 +8,6 @@ nameOverride: "kafka-java-orchestrated-inventory"
 fullnameOverride: ""
 
 image:
-  repository: "flowingretail/kafka-java-choreography-inventory"
+  repository: "flowingretail/kafka-java-inventory"
   tag: latest
   pullPolicy: IfNotPresent
