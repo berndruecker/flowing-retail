@@ -18,6 +18,8 @@ public class OrderApplication {
   
   @Bean
   public ZeebeClient zeebe() {
+    System.out.println("Connect to Zeebe at '" + zeebeBrokerContactPoint + "'");
+    
     // Cannot yet use Spring Zeebe in current alpha
     ZeebeClient zeebeClient = ZeebeClient.newClientBuilder() //
         .brokerContactPoint(zeebeBrokerContactPoint) //
