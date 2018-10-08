@@ -2,10 +2,11 @@ package io.flowing.retail.checkout.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Order {
   
-  private String orderId;
+  private String orderId = UUID.randomUUID().toString();
   private Customer customer;
   private List<Item> items = new ArrayList<>();
   

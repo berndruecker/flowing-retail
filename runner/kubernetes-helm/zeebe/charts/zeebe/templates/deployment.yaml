@@ -27,3 +27,9 @@ spec:
             - name: http
               containerPort: {{ .Values.image.containerPort }}
               protocol: TCP
+          env:
+            - name: ZEEBE_LOG_LEVEL
+              value: "debug"
+          resources:
+            requests:
+              memory: "3Gi"            

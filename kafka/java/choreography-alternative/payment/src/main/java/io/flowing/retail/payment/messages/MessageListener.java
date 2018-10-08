@@ -38,6 +38,8 @@ public class MessageListener {
     if (orderId == null) {
       // We do not yet have an order id - as the responsibility who creates that is unclear 
       // Bad smell 2 (order context missing)
+      // But actually not that problematic - as a good practice could be to 
+      // generate it in the checkout anyway to improve idempotency
       orderId = UUID.randomUUID().toString();
       payload.put("orderId", orderId);
     }
