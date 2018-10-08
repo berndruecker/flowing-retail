@@ -20,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Order {
 
   @Id
-  @GeneratedValue(generator = "uuid2")
-  @GenericGenerator(name = "uuid2", strategy = "uuid2")
-  protected String id = UUID.randomUUID().toString();
+//  @GeneratedValue(generator = "uuid2")
+//  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+  protected String id; // = UUID.randomUUID().toString();
   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER  )
   protected Customer customer = new Customer();
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER  )

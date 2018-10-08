@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Order {
   
-  private String orderId = UUID.randomUUID().toString();
+  private String orderId = "checkout-generated-" + UUID.randomUUID().toString();
   private Customer customer;
   private List<Item> items = new ArrayList<>();
   
