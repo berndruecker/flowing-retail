@@ -4,10 +4,13 @@
 
 * Install kubectl
 
-* On GKE create a cluster - Kafka runs 3 nodes and we need some microservices, so go for 6 nodes:
+* On GKE create a cluster - Kafka runs 3 nodes and we need some microservices. Memory is more important as CPU for this example :
 
 ```
-gcloud container clusters create fr-demo --num-nodes 6
+gcloud container clusters create fr-demo --num-nodes 4 --machine-type=n1-standard-2
+
+
+n1-highmem-2
 ```
 
 This makes it easy to tear it down later on
@@ -134,7 +137,6 @@ To connect from a client pod:
   # Consume a test message from the topic
   kafka-console-consumer --bootstrap-server dunking-jellyfish-cp-kafka-headless:9092 --topic dunking-jellyfish-topic --from-beginning --timeout-ms 2000 --max-messages 1 | grep "$MESSAGE"
 
-C:\DEV\flowing\flowing-retail\runner\kubernetes-helm>
 
 
 

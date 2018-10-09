@@ -10,4 +10,4 @@ fullnameOverride: ""
 image:
   repository: "flowingretail/kafka-java-order-zeebe"
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
