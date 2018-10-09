@@ -35,13 +35,13 @@ public class MessageListener {
 	private ZeebeClient zeebe;
 
   @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='OrderPlacedEvent'")
-  @Transactional
   public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
     // read data
     Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>() {});
     Order order = message.getPayload();
     
     // persist domain entity
+    // (if we want to do this "transactional" this could be a step in the workflow)
     repository.save(order);
 
     // prepare data for workflow
