@@ -1,7 +1,6 @@
 package io.flowing.retail.kafka.order.messages;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -21,8 +20,7 @@ import io.flowing.retail.kafka.order.flow.payload.GoodsFetchedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.GoodsShippedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.PaymentReceivedEventPayload;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.events.MessageEvent;
+import io.zeebe.client.ZeebeClient;
 
 @Component
 @EnableBinding(Sink.class)
@@ -65,13 +63,13 @@ public class MessageListener {
 
     PaymentReceivedEventPayload event = message.getPayload(); // TODO: Read something from it? 
 
-    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
+    zeebe.workflowClient().newPublishMessageCommand() //
       .messageName(message.getMessageType())
       .correlationKey(message.getCorrelationId())
       .payload("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}")
       .send().join();
     
-    System.out.println("Correlated " + messageEvent );
+    System.out.println("Correlated " + message );
   }
 
   @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='GoodsFetchedEvent'")
@@ -81,13 +79,13 @@ public class MessageListener {
 
     String pickId = message.getPayload().getPickId();     
 
-    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
+    zeebe.workflowClient().newPublishMessageCommand() //
         .messageName(message.getMessageType())
         .correlationKey(message.getCorrelationId())
         .payload("{\"pickId\":\"" + pickId + "\"}") //
         .send().join();
 
-    System.out.println("Correlated " + messageEvent );
+    System.out.println("Correlated " + message );
   }
 
 
@@ -98,12 +96,12 @@ public class MessageListener {
 
     String shipmentId = message.getPayload().getShipmentId();     
 
-    MessageEvent messageEvent = zeebe.workflowClient().newPublishMessageCommand() //
+    zeebe.workflowClient().newPublishMessageCommand() //
         .messageName(message.getMessageType())
         .correlationKey(message.getCorrelationId())
         .payload("{\"shipmentId\":\"" + shipmentId + "\"}") //
         .send().join();
 
-    System.out.println("Correlated " + messageEvent );
+    System.out.println("Correlated " + message );
   }
 }

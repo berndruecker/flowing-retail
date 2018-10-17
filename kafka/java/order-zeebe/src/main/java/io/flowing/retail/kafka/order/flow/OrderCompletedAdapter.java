@@ -12,11 +12,11 @@ import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.flowing.retail.kafka.order.flow.payload.OrderCompletedEventPayload;
 import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.clients.JobClient;
-import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.subscription.JobHandler;
-import io.zeebe.gateway.api.subscription.JobWorker;
+import io.zeebe.client.ZeebeClient;
+import io.zeebe.client.api.clients.JobClient;
+import io.zeebe.client.api.response.ActivatedJob;
+import io.zeebe.client.api.subscription.JobHandler;
+import io.zeebe.client.api.subscription.JobWorker;
 
 @Component
 public class OrderCompletedAdapter implements JobHandler {
@@ -45,8 +45,8 @@ public class OrderCompletedAdapter implements JobHandler {
   }
 
   @Override
-  public void handle(JobClient client, JobEvent event) {
-    OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+  public void handle(JobClient client, ActivatedJob job) {
+    OrderFlowContext context = OrderFlowContext.fromJson(job.getPayload());
        
     messageSender.send( //
         new Message<OrderCompletedEventPayload>( //
@@ -57,7 +57,7 @@ public class OrderCompletedAdapter implements JobHandler {
     
     //TODO: Reintorduce traceId?     .setCorrelationId(event.get)));
     
-    client.newCompleteCommand(event).send().join();
+    client.newCompleteCommand(job.getKey()).send().join();
   }
 
   

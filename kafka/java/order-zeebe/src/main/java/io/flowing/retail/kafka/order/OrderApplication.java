@@ -7,7 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.zeebe.gateway.ZeebeClient;
+import io.zeebe.client.ZeebeClient;
 
 @SpringBootApplication
 @Configuration

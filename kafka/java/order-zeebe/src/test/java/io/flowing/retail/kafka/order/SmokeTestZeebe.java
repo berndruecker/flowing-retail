@@ -1,8 +1,7 @@
 package io.flowing.retail.kafka.order;
 
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.events.MessageEvent;
+import io.zeebe.client.ZeebeClient;
 
 public class SmokeTestZeebe {
 
