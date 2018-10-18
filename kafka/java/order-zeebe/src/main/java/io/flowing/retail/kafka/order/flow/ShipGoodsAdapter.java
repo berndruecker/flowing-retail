@@ -16,11 +16,11 @@ import io.flowing.retail.kafka.order.flow.payload.ShipGoodsCommandPayload;
 import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.clients.JobClient;
-import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.subscription.JobHandler;
-import io.zeebe.gateway.api.subscription.JobWorker;
+import io.zeebe.client.ZeebeClient;
+import io.zeebe.client.api.clients.JobClient;
+import io.zeebe.client.api.response.ActivatedJob;
+import io.zeebe.client.api.subscription.JobHandler;
+import io.zeebe.client.api.subscription.JobWorker;
 
 @Component
 public class ShipGoodsAdapter implements JobHandler {
@@ -53,8 +53,8 @@ public class ShipGoodsAdapter implements JobHandler {
   }
 
   @Override
-  public void handle(JobClient client, JobEvent event) {
-    OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+  public void handle(JobClient client, ActivatedJob job) {
+    OrderFlowContext context = OrderFlowContext.fromJson(job.getPayload());
     Order order = orderRepository.findById(context.getOrderId()).get(); 
     
     // generate an UUID for this communication
@@ -70,7 +70,7 @@ public class ShipGoodsAdapter implements JobHandler {
               .setRecipientAddress(order.getCustomer().getAddress())) //
         .setCorrelationId(correlationId));
     
-    client.newCompleteCommand(event) //
+    client.newCompleteCommand(job.getKey()) //
         .payload(Collections.singletonMap("CorrelationId_ShipGoods", correlationId)) //
         .send().join();
   }  
