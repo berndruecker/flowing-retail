@@ -28,9 +28,7 @@ Now this version of the payment service are available:
 You now can issue a PUT with an empty body:
 
 ```
-curl \
--H "Content-Type: application/json" \
--X PUT \
--d '{}' \
-http://localhost:8100/payment
+curl -X PUT \
+ -d '{"customerId": "42", "creditCardNo": "you-whish-9999", "amount": "100"}' \
+ -i http://localhost:8100/payment
 ```

@@ -92,7 +92,7 @@ func handleHTTPRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(500)
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(202)
 	}
 }
 
