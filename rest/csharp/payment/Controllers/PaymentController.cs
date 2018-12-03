@@ -302,7 +302,7 @@ namespace FlowingRetailPayment.Controllers
                 string customerId = (string)externalTask.Variables["customerId"].Value;
                 long amount = (long)externalTask.Variables["amount"].Value;
                 CreateChargeResponse response = circuitBreakerPolicy.Execute<CreateChargeResponse>(
-                    () => RestApiClient.InvokeRestApi(customerId, amount, TimeSpan.FromSeconds(1)));
+                    () => RestApiClient.InvokeRestApi(customerId, amount, TimeSpan.FromMilliseconds(100)));
 
                 if (!string.IsNullOrEmpty(response.errorCode))
                 {
