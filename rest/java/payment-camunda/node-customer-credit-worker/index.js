@@ -1,7 +1,7 @@
 var request = require('request');
 const { Client, Variables } = require("camunda-external-task-client-js");
 
-const config = { baseUrl: "http://localhost:8100/rest/engine/default", interval: 50};
+const config = { baseUrl: "http://localhost:8100/rest/engine/default", interval: 50, asyncResponseTimeout: 10000};
 const client = new Client(config);
 
 client.subscribe("customer-credit", async function({ task, taskService }) {

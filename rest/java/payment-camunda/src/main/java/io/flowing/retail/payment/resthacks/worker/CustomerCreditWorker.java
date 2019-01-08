@@ -15,7 +15,10 @@ public class CustomerCreditWorker {
 
   public static void main(String[] args) throws InterruptedException {
     // bootstrap the client
-    ExternalTaskClient client = ExternalTaskClient.create().baseUrl(BASE_URL).build();
+    ExternalTaskClient client = ExternalTaskClient.create() //
+        .baseUrl(BASE_URL) //
+        .asyncResponseTimeout(5000) // long polling interval
+        .build();
 
     // subscribe to the topic
     client.subscribe("customer-credit") //
