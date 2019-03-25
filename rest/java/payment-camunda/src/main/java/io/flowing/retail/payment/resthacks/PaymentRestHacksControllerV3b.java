@@ -30,7 +30,19 @@ import io.flowing.retail.payment.resthacks.adapter.FailingOnLastRetry;
  */
 @RestController
 public class PaymentRestHacksControllerV3b {
+  
+  @RequestMapping(path = "/api/payment/v3b", method = PUT)
+  public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
+    String traceId = UUID.randomUUID().toString();
+    String customerId = "0815"; // get somehow from retrievePaymentPayload
+    long amount = 15; // get somehow from retrievePaymentPayload
 
+    chargeCreditCard(customerId, amount);
+    
+    response.setStatus(HttpServletResponse.SC_ACCEPTED);    
+    return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
+  }
+  
   @Autowired
   private ProcessEngine camunda;
 
@@ -50,7 +62,7 @@ public class PaymentRestHacksControllerV3b {
     camunda.getRepositoryService().createDeployment() //
       .addModelInstance("payment.bpmn", flow) //
       .deploy();
-  }
+  }  
   
   @Component("stripeAdapter3b")
   public static class StripeAdapter implements JavaDelegate {
@@ -75,7 +87,7 @@ public class PaymentRestHacksControllerV3b {
       
       ctx.setVariable("paymentTransactionId", response.transactionId);
     }
-  }
+  }  
 
   @Component("stripeCancelAdapter3b")
   public static class StripeCancelAdapter implements JavaDelegate {
@@ -83,18 +95,6 @@ public class PaymentRestHacksControllerV3b {
     public void execute(DelegateExecution execution) throws Exception {
       System.out.println("Making sure the payment is canceled!");
     }
-  }
-  
-  @RequestMapping(path = "/api/payment/v3b", method = PUT)
-  public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
-    String traceId = UUID.randomUUID().toString();
-    String customerId = "0815"; // get somehow from retrievePaymentPayload
-    long amount = 15; // get somehow from retrievePaymentPayload
-
-    chargeCreditCard(customerId, amount);
-    
-    response.setStatus(HttpServletResponse.SC_ACCEPTED);    
-    return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
   }
 
   public void chargeCreditCard(String customerId, long remainingAmount) {

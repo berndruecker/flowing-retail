@@ -1,4 +1,4 @@
-# Flowing Retail Kubernetes HElm Charts
+# Flowing Retail Kubernetes Helm Charts
 
 # UNDER DEVELOPMENT - DON#T USE THIS UNTIL YOU KNOW WHAT YOU ARE DOING
 
