@@ -51,7 +51,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.camunda.bpm.springboot</groupId>
-			<artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
+			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
 	        <!-- 
 		    	Adjust if you want to use Enterprise Edition of Camunda:
 	        	<artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
