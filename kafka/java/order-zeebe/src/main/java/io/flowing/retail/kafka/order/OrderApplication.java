@@ -26,7 +26,7 @@ public class OrderApplication {
         .build();
     
     // Trigger deployment
-    zeebeClient.workflowClient().newDeployCommand() //
+    zeebeClient.newDeployCommand() //
       .addResourceFromClasspath("order-kafka.bpmn") //
       .send().join();
     

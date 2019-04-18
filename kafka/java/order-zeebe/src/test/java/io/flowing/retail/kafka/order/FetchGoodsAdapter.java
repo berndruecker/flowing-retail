@@ -20,7 +20,7 @@ public class FetchGoodsAdapter implements JobHandler {
 
 	public void subscribe(ZeebeClient zeebe) {
 		this.zeebe = zeebe;
-    zeebe.jobClient().newWorker()
+    zeebe.newWorker()
       .jobType("fetch-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
@@ -29,7 +29,7 @@ public class FetchGoodsAdapter implements JobHandler {
 
   @Override
   public void handle(JobClient client, ActivatedJob event) {
-    OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+    OrderFlowContext context = OrderFlowContext.fromJson(event.getVariables());
     
     // generate an UUID for this communication
     String correlationId = UUID.randomUUID().toString();
@@ -37,13 +37,13 @@ public class FetchGoodsAdapter implements JobHandler {
 
         
     client.newCompleteCommand(event.getKey()) //
-      .payload(Collections.singletonMap("CorrelationId_FetchGoods", correlationId)) //
+      .variables(Collections.singletonMap("CorrelationId_FetchGoods", correlationId)) //
       .send().join();
     
-    zeebe.workflowClient().newPublishMessageCommand() //
+    zeebe.newPublishMessageCommand() //
             .messageName("GoodsFetchedEvent")
             .correlationKey(correlationId)
-            .payload("{\"pickId\":\"99\"}") //
+            .variables("{\"pickId\":\"99\"}") //
             .send().join();
 
         System.out.println("Correlated GoodsFetchedEvent");

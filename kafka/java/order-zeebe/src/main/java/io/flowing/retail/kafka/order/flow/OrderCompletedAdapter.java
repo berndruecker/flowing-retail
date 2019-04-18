@@ -32,7 +32,7 @@ public class OrderCompletedAdapter implements JobHandler {
   
   @PostConstruct
   public void subscribe() {
-    subscription = zeebe.jobClient().newWorker()
+    subscription = zeebe.newWorker()
       .jobType("order-completed")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
@@ -46,7 +46,7 @@ public class OrderCompletedAdapter implements JobHandler {
 
   @Override
   public void handle(JobClient client, ActivatedJob job) {
-    OrderFlowContext context = OrderFlowContext.fromJson(job.getPayload());
+    OrderFlowContext context = OrderFlowContext.fromJson(job.getVariables());
        
     messageSender.send( //
         new Message<OrderCompletedEventPayload>( //

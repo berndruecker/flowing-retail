@@ -10,7 +10,7 @@
 		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
 		<spring-cloud-stream.version>Elmhurst.RELEASE</spring-cloud-stream.version>
 
-		<camunda.version>7.10.0</camunda.version>
+		<camunda.version>7.10.0-ee</camunda.version>
 		<!-- 
 		Adjust if you want to use Enterprise Edition of Camunda:
 		<camunda.version>7.10.0-ee</camunda.version>
@@ -59,7 +59,7 @@
 		</dependency>		
 		<dependency>
 			<groupId>org.camunda.bpm.springboot</groupId>
-			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+			<artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>
 	        <!-- 
 		    	Adjust if you want to use Enterprise Edition of Camunda:
 	        	<artifactId>camunda-bpm-spring-boot-starter-webapp-ee</artifactId>

@@ -40,7 +40,7 @@ public class ShipGoodsAdapter implements JobHandler {
   
   @PostConstruct
   public void subscribe() {
-    subscription = zeebe.jobClient().newWorker()
+    subscription = zeebe.newWorker()
       .jobType("ship-goods")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
@@ -54,7 +54,7 @@ public class ShipGoodsAdapter implements JobHandler {
 
   @Override
   public void handle(JobClient client, ActivatedJob job) {
-    OrderFlowContext context = OrderFlowContext.fromJson(job.getPayload());
+    OrderFlowContext context = OrderFlowContext.fromJson(job.getVariables());
     Order order = orderRepository.findById(context.getOrderId()).get(); 
     
     // generate an UUID for this communication
@@ -71,7 +71,7 @@ public class ShipGoodsAdapter implements JobHandler {
         .setCorrelationId(correlationId));
     
     client.newCompleteCommand(job.getKey()) //
-        .payload(Collections.singletonMap("CorrelationId_ShipGoods", correlationId)) //
+        .variables(Collections.singletonMap("CorrelationId_ShipGoods", correlationId)) //
         .send().join();
   }  
 

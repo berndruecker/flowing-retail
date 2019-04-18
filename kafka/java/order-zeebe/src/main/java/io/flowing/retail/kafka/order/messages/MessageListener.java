@@ -1,6 +1,7 @@
 package io.flowing.retail.kafka.order.messages;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -49,10 +50,10 @@ public class MessageListener {
 
     // and kick of a new flow instance
     System.out.println("New order placed, start flow. " + context.asJson());
-    zeebe.workflowClient().newCreateInstanceCommand() //
+    zeebe.newCreateInstanceCommand() //
         .bpmnProcessId("order-kafka") //
         .latestVersion() // 
-        .payload(context.asJson()) //
+        .variables(context.asJson()) //
         .send().join();
   }
 
@@ -63,10 +64,10 @@ public class MessageListener {
 
     PaymentReceivedEventPayload event = message.getPayload(); // TODO: Read something from it? 
 
-    zeebe.workflowClient().newPublishMessageCommand() //
+    zeebe.newPublishMessageCommand() //
       .messageName(message.getMessageType())
       .correlationKey(message.getCorrelationId())
-      .payload("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}")
+      .variables(Collections.singletonMap("paymentInfo", "YeahWeCouldAddSomething"))
       .send().join();
     
     System.out.println("Correlated " + message );
@@ -79,10 +80,10 @@ public class MessageListener {
 
     String pickId = message.getPayload().getPickId();     
 
-    zeebe.workflowClient().newPublishMessageCommand() //
-        .messageName(message.getMessageType())
-        .correlationKey(message.getCorrelationId())
-        .payload("{\"pickId\":\"" + pickId + "\"}") //
+    zeebe.newPublishMessageCommand() //
+        .messageName(message.getMessageType()) //
+        .correlationKey(message.getCorrelationId()) // 
+        .variables(Collections.singletonMap("pickId", pickId)) //
         .send().join();
 
     System.out.println("Correlated " + message );
@@ -96,10 +97,10 @@ public class MessageListener {
 
     String shipmentId = message.getPayload().getShipmentId();     
 
-    zeebe.workflowClient().newPublishMessageCommand() //
-        .messageName(message.getMessageType())
-        .correlationKey(message.getCorrelationId())
-        .payload("{\"shipmentId\":\"" + shipmentId + "\"}") //
+    zeebe.newPublishMessageCommand() //
+        .messageName(message.getMessageType()) //
+        .correlationKey(message.getCorrelationId()) //
+        .variables(Collections.singletonMap("shipmentId", shipmentId)) //
         .send().join();
 
     System.out.println("Correlated " + message );

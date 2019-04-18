@@ -20,7 +20,7 @@ public class RetrievePaymentAdapter implements JobHandler {
 
 	public void subscribe(ZeebeClient zeebe) {
 		this.zeebe = zeebe;
-		zeebe.jobClient().newWorker() //
+		zeebe.newWorker() //
 				.jobType("retrieve-payment") //
 				.handler(this) //
 				.timeout(Duration.ofMinutes(1)) //
@@ -29,18 +29,18 @@ public class RetrievePaymentAdapter implements JobHandler {
 
 	@Override
 	public void handle(JobClient client, ActivatedJob event) {
-		OrderFlowContext context = OrderFlowContext.fromJson(event.getPayload());
+		OrderFlowContext context = OrderFlowContext.fromJson(event.getVariables());
 
 		correlationId = UUID.randomUUID().toString();
 
 		client.newCompleteCommand(event.getKey()) //
-				.payload(Collections.singletonMap("CorrelationId_RetrievePayment", correlationId)) //
+				.variables(Collections.singletonMap("CorrelationId_RetrievePayment", correlationId)) //
 				.send().join();		
 		
-		zeebe.workflowClient().newPublishMessageCommand() //
+		zeebe.newPublishMessageCommand() //
 				.messageName("PaymentReceivedEvent") //
 				.correlationKey(RetrievePaymentAdapter.correlationId) //
-				.payload("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}") //
+				.variables("{\"paymentInfo\": \"YeahWeCouldAddSomething\"}") //
 				.send().join();
 		
 		System.out.println("Correlated PaymentReceivedEvent");

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_1sjy4ad" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1sjy4ad" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.1.0">
   <bpmn:process id="order-tracking" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="OrderPlaced">
       <bpmn:outgoing>SequenceFlow_1bwihkm</bpmn:outgoing>
@@ -29,17 +29,17 @@
   </bpmn:process>
   <bpmn:message id="Message_1xdphvh" name="PaymentReceivedEvent">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="$.traceId" />
+      <zeebe:subscription correlationKey="traceId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_00ysveb" name="GoodsFetchedEvent">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="$.traceId" />
+      <zeebe:subscription correlationKey="traceId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmn:message id="Message_0dtvius" name="GoodsShippedEvent">
     <bpmn:extensionElements>
-      <zeebe:subscription correlationKey="$.traceId" />
+      <zeebe:subscription correlationKey="traceId" />
     </bpmn:extensionElements>
   </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -51,8 +51,8 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1bwihkm_di" bpmnElement="SequenceFlow_1bwihkm">
-        <di:waypoint x="193" y="120" />
-        <di:waypoint x="241" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="193" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="241" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1x4tz0m_di" bpmnElement="IntermediateThrowEvent_1omdzdl">
         <dc:Bounds x="241" y="102" width="36" height="36" />
@@ -61,8 +61,8 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1lnmr56_di" bpmnElement="SequenceFlow_1lnmr56">
-        <di:waypoint x="277" y="120" />
-        <di:waypoint x="333" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="277" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="333" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_16z9ily_di" bpmnElement="IntermediateThrowEvent_1vya2ng">
         <dc:Bounds x="333" y="102" width="36" height="36" />
@@ -71,8 +71,8 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0af4oic_di" bpmnElement="SequenceFlow_0af4oic">
-        <di:waypoint x="369" y="120" />
-        <di:waypoint x="419" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="369" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="419" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1xk5z72_di" bpmnElement="IntermediateThrowEvent_10yvcyw">
         <dc:Bounds x="419" y="102" width="36" height="36" />
@@ -87,8 +87,8 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1vgu3ox_di" bpmnElement="SequenceFlow_1vgu3ox">
-        <di:waypoint x="455" y="120" />
-        <di:waypoint x="510" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="455" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="510" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
