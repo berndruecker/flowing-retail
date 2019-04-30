@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.zeebe.gateway.ZeebeClient;
+import io.zeebe.client.ZeebeClient;
 
 @RestController
 public class ShopRestController {
@@ -50,10 +50,10 @@ public class ShopRestController {
       // a message to broker - which will correlate it himself
       // this is not yet in the current version of zeebe - so we 
       // have to specify the workflow to start
-      zeebe.workflowClient().newCreateInstanceCommand() //
+      zeebe.newCreateInstanceCommand() //
         .bpmnProcessId("order-zeebe") //
         .latestVersion() //
-        .payload(payload) //
+        .variables(payload) //
         .send().join();
     } catch (Exception e) {
       throw new RuntimeException("Could not tranform and send message due to: "+ e.getMessage(), e);

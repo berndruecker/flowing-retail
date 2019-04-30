@@ -8,11 +8,11 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.clients.JobClient;
-import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.subscription.JobHandler;
-import io.zeebe.gateway.api.subscription.JobWorker;
+import io.zeebe.client.ZeebeClient;
+import io.zeebe.client.api.clients.JobClient;
+import io.zeebe.client.api.response.ActivatedJob;
+import io.zeebe.client.api.subscription.JobHandler;
+import io.zeebe.client.api.subscription.JobWorker;
 
 
 @Component
@@ -25,7 +25,7 @@ public class ShipGoodsAdapter implements JobHandler {
   
   @PostConstruct
   public void subscribe() {
-    subscription = zeebe.jobClient().newWorker()
+    subscription = zeebe.newWorker()
       .jobType("ship-goods-z")
       .handler(this)
       .timeout(Duration.ofMinutes(1))
@@ -33,9 +33,9 @@ public class ShipGoodsAdapter implements JobHandler {
   }
 
   @Override
-  public void handle(JobClient client, JobEvent job) {
+  public void handle(JobClient client, ActivatedJob job) {
     System.out.println("ship goods");
-    client.newCompleteCommand(job).send().join();
+    client.newCompleteCommand(job.getKey()).send().join();
   }
 
   @PreDestroy

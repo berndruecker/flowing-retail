@@ -8,9 +8,9 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="retrieve-payment-z" />
         <zeebe:ioMapping>
-          <zeebe:input source="$.order.totalSum" target="$.amount" />
-          <zeebe:input source="$.order.orderId" target="$.refId" />
-          <zeebe:input source="$.traceId" target="$.traceId" />
+          <zeebe:input source="order.totalSum" target="amount" />
+          <zeebe:input source="order.orderId" target="refId" />
+          <zeebe:input source="traceId" target="traceId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1e3ow6n</bpmn:incoming>
