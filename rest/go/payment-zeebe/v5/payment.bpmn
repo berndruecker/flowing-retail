@@ -30,13 +30,13 @@
       <bpmn:outgoing>SequenceFlow_1p2z0of</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1toq1cx" name="no" sourceRef="ExclusiveGateway_12tqjy1" targetRef="ServiceTask_0n4ha8u">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[$.remainingAmount > 0]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[remainingAmount > 0]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_05wovi6">
       <bpmn:incoming>SequenceFlow_1p2z0of</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1p2z0of" name="yes" sourceRef="ExclusiveGateway_12tqjy1" targetRef="EndEvent_05wovi6">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[$.remainingAmount <= 0]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[remainingAmount <= 0]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">

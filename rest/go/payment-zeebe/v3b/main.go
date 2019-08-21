@@ -72,7 +72,7 @@ func init() {
 func chargeCreditCard(someDataAsJSON string) error {
 	payload := make(map[string]interface{})
 	json.Unmarshal([]byte(someDataAsJSON), &payload)
-	request, err := client.NewCreateInstanceCommand().BPMNProcessId("paymentV3").LatestVersion().VariablesFromMap(payload)
+	request, err := client.NewCreateInstanceCommand().BPMNProcessId("paymentV3b").LatestVersion().VariablesFromMap(payload)
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 	}

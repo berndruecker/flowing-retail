@@ -2,45 +2,29 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
-	"os"
-	"os/signal"
 	"strings"
 
-	"github.com/zeebe-io/zbc-go/zbc"
-	"github.com/zeebe-io/zbc-go/zbc/common"
-	"github.com/zeebe-io/zbc-go/zbc/models/zbsubscriptions"
-	"github.com/zeebe-io/zbc-go/zbc/services/zbsubscribe"
+	"github.com/zeebe-io/zeebe/clients/go/entities"
+	"github.com/zeebe-io/zeebe/clients/go/worker"
+	"github.com/zeebe-io/zeebe/clients/go/zbc"
 )
 
 const (
-	zeebeBrokerAddr = "0.0.0.0:51015"
+	zeebeBrokerAddr = "0.0.0.0:26500"
 	port            = "8100"
 )
 
 var (
-	zbClient              *zbc.Client
-	doDeployWorkflowModel = false
+	client zbc.ZBClient
 )
-
-func init() {
-	initParameters()
-	initZeebe()
-}
 
 func main() {
 	startHTTPServer()
-}
-
-func initParameters() {
-	doDeployWorkflowModelPtr := flag.Bool("deploy", false, "-deploy")
-	flag.Parse()
-	doDeployWorkflowModel = *doDeployWorkflowModelPtr
 }
 
 func startHTTPServer() {
@@ -49,38 +33,28 @@ func startHTTPServer() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func initZeebe() {
+func init() {
 	// connect to Zeebe Broker
-	newClient, err := zbc.NewClient(zeebeBrokerAddr)
+	newClient, err := zbc.NewZBClient(&zbc.ZBClientConfig{
+		GatewayAddress:         zeebeBrokerAddr,
+		UsePlaintextConnection: true})
 	if err != nil {
 		log.Fatal(err)
 	}
-	zbClient = newClient
+	client = newClient
 
 	// register job handler for 'charge-credit-card' and subscribe
-	subscription1, err := zbClient.JobSubscription("default-topic", "SomeWorker", "charge-credit-card", 1000, 32, hadleChargeCreditCardJob)
+	client.NewJobWorker().JobType("charge-credit-card").Handler(handleChargeCreditCardJob).Open()
+	client.NewJobWorker().JobType("deduct-customer-credit").Handler(handleDeductCustomerCredit).Open()
+
+	//handleInterrupt(subscription1, subscription2)
+
+	// deploy workflow model
+	deployment, err := client.NewDeployWorkflowCommand().AddResourceFile("payment.bpmn").Send()
 	if err != nil {
 		log.Fatal(err)
 	}
-	subscription1.StartAsync()
-
-	// register job handler for 'deduct-customer-credit' and subscribe
-	subscription2, err := zbClient.JobSubscription("default-topic", "SomeWorker", "deduct-customer-credit", 1000, 32, handleDeductCustomerCredit)
-	if err != nil {
-		log.Fatal(err)
-	}
-	subscription2.StartAsync()
-
-	handleInterrupt(subscription1, subscription2)
-
-	// deploy workflow model if requested
-	if doDeployWorkflowModel {
-		deployment, err := zbClient.CreateWorkflowFromFile("default-topic", zbcommon.BpmnXml, "payment.bpmn")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println("deployed workflow model: ", deployment)
-	}
+	fmt.Println("deployed workflow model: ", deployment)
 }
 
 func handleHTTPRequest(w http.ResponseWriter, r *http.Request) {
@@ -99,10 +73,11 @@ func handleHTTPRequest(w http.ResponseWriter, r *http.Request) {
 func chargeCreditCard(someDataAsJSON string) error {
 	payload := make(map[string]interface{})
 	json.Unmarshal([]byte(someDataAsJSON), &payload)
-
-	instance := zbc.NewWorkflowInstance("paymentV5", -1, payload)
-	workflowInstance, err := zbClient.CreateWorkflowInstance("default-topic", instance)
-
+	request, err := client.NewCreateInstanceCommand().BPMNProcessId("paymentV5").LatestVersion().VariablesFromMap(payload)
+	if err != nil {
+		fmt.Println("Error: " + err.Error())
+	}
+	workflowInstance, err := request.Send()
 	if err != nil {
 		fmt.Println("Error: " + err.Error())
 		return err
@@ -112,27 +87,29 @@ func chargeCreditCard(someDataAsJSON string) error {
 	return nil
 }
 
-func hadleChargeCreditCardJob(client zbsubscribe.ZeebeAPI, event *zbsubscriptions.SubscriptionEvent) {
-	job, err := event.GetJob()
+func handleChargeCreditCardJob(client worker.JobClient, job entities.Job) {
+	variables, err := job.GetVariablesAsMap()
 	if err != nil {
-		log.Fatal(err)
+		// failed to handle job as we require the variables
+		failJob(client, job, err)
+		return
 	}
-	payload, err := job.GetPayload()
+	jsonPayload, err := json.Marshal(variables)
 	if err != nil {
 		log.Fatal(err)
-	}
-	jsonPayload, err := json.Marshal(payload)
-	if err != nil {
-		log.Fatal(err)
+		failJob(client, job, err)
+		return
 	}
 
 	_, err = doHTTPCall(string(jsonPayload))
 	if err != nil {
 		// couldn't do http call, fail job to trigger retry
-		client.FailJob(event)
+		failJob(client, job, err)
 	} else {
 		// complete job after processing
-		client.CompleteJob(event)
+		variables := make(map[string]interface{})
+		variables["chargeSuccess"] = true
+		completeJob(client, job, variables)
 	}
 }
 
@@ -141,42 +118,42 @@ func doHTTPCall(someDataAsJSON string) (resp *http.Response, err error) {
 	return http.Post("http://localhost:8099/charge", "application/json", strings.NewReader(someDataAsJSON))
 }
 
-func handleDeductCustomerCredit(client zbsubscribe.ZeebeAPI, event *zbsubscriptions.SubscriptionEvent) {
-	job, err := event.GetJob()
-	if err != nil {
-		log.Fatal(err)
-	}
-	payload, err := job.GetPayload()
-	if err != nil {
-		log.Fatal(err)
-	}
+func handleDeductCustomerCredit(client worker.JobClient, job entities.Job) {
+	// skip reading any data from the job as we don't care for the demo
 
+	variables := make(map[string]interface{})
+	variables["chargeSuccess"] = true
 	// Hardcoded remaining amount, TODO: replace with randomized value
 	if rand.Intn(10) > 3 {
-		(*payload)["remainingAmount"] = 5
+		variables["remainingAmount"] = 5
 		log.Println("[worker::deduct-customer-credit] Substracting from customer account - with remaining amount")
 	} else {
-		(*payload)["remainingAmount"] = 0
+		variables["remainingAmount"] = 0
 		log.Println("[worker::deduct-customer-credit] Substracting from customer account - no remaining amount")
 	}
-	event.UpdatePayload(payload)
 
-	client.CompleteJob(event)
+	completeJob(client, job, variables)
 }
 
-/*
-	Helpers
-*/
-func handleInterrupt(subscriptions ...*zbsubscribe.JobSubscription) {
-	osCh := make(chan os.Signal, 1)
-	signal.Notify(osCh, os.Interrupt)
-	go func() {
-		<-osCh
-		for _, sub := range subscriptions {
-			sub.Close()
-		}
+func completeJob(client worker.JobClient, job entities.Job, variables map[string]interface{}) {
 
-		fmt.Println("subscription closed")
-		os.Exit(0)
-	}()
+	request, err := client.NewCompleteJobCommand().JobKey(job.GetKey()).VariablesFromMap(variables)
+	if err != nil {
+		failJob(client, job, err)
+		return
+	}
+	log.Println("Complete job", job, variables)
+	request.Send()
+}
+
+func failJob(client worker.JobClient, job entities.Job, err error) {
+	log.Println("Failed to complete job", job.GetKey(), err)
+	if job.Retries > 1 {
+		client.NewFailJobCommand().JobKey(job.GetKey()).Retries(job.Retries - 1).Send()
+	} else {
+		// if no more retries left, complete the task but mark it for being failed
+		variables := make(map[string]interface{})
+		variables["chargeSuccess"] = false
+		completeJob(client, job, variables)
+	}
 }
