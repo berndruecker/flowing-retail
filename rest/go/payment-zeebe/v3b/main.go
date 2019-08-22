@@ -56,10 +56,7 @@ func init() {
 	client = newClient
 
 	// register job handler for 'charge-credit-card' and subscribe
-	// jobWorker :=
 	client.NewJobWorker().JobType("charge-credit-card").Handler(handleChargeCreditCardJob).Open()
-	//defer jobWorker.Close()
-	//jobWorker.AwaitClose()
 
 	// deploy workflow model
 	deployment, err := client.NewDeployWorkflowCommand().AddResourceFile("payment.bpmn").Send()
