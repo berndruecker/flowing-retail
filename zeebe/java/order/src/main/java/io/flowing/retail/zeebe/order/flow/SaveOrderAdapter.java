@@ -11,11 +11,10 @@ import org.springframework.stereotype.Component;
 import io.flowing.retail.zeebe.order.domain.Order;
 import io.flowing.retail.zeebe.order.persistence.OrderRepository;
 import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.clients.JobClient;
-import io.zeebe.client.api.events.JobEvent;
 import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.subscription.JobHandler;
-import io.zeebe.client.api.subscription.JobWorker;
+import io.zeebe.client.api.worker.JobClient;
+import io.zeebe.client.api.worker.JobHandler;
+import io.zeebe.client.api.worker.JobWorker;
 
 
 @Component

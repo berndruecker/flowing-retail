@@ -1,25 +1,25 @@
 package io.flowing.retail.zeebe.order;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 import io.zeebe.client.ZeebeClient;
 
 @SpringBootApplication
 public class OrderApplication {
+  
+  @Autowired
+  private ZeebeClient zeebeClient;  
 
-  @Bean
-  public ZeebeClient zeebe() {
-    // Cannot yet use Spring Zeebe in current alpha
-    ZeebeClient zeebeClient = ZeebeClient.newClient();    
-    
+  @PostConstruct
+  public void deployWorkflowToZeebe() {    
     // Trigger deployment
     zeebeClient.newDeployCommand() //
       .addResourceFromClasspath("order-zeebe.bpmn") //
       .send().join();
-    
-    return zeebeClient;
   }
 
   public static void main(String[] args) throws Exception {
