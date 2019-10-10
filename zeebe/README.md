@@ -19,6 +19,39 @@ You find the variations in the sub folders. Note that in the current tech previe
 * [Java](java/)
 * GoLang (TODO)
 
+## Run on Camunda Cloud
+
+[Camunda Cloud](https://zeebe.io/cloud/) provides a hosted version of Zeebe for you. After sign up you can easily spin up your Zeebe cluster as described here.
+
+In order to run this example on the Cloud you simply have to configure the Zeebe cient correctly, e.g.: 
+
+```
+@Configuration
+public class ZeebeClientConfiguration {
+  
+  @Bean
+  public ZeebeClient zeebe() {
+    final String clusterUUID = "34b386b1-9bc7-4009-8e50-416124a28922";
+    final String baseUrl = "zeebe.camunda.io";
+    final String clientId = "tjYd6oErFeLqIYNdkRX4cG1BKjWpPz8m";
+    final String clientSecret = "_VO8wOg17xzzOWB6a6a_Y7JgXs6YjZhFBeYCHqEehZQYs1xjA4xJLNautxlsfSlw";
+    final String authUrl = "https://login.cloud.camunda.io/oauth/token";
+
+    final String broker = clusterUUID + "." + baseUrl + ":443";
+
+    final OAuthCredentialsProviderBuilder c = new OAuthCredentialsProviderBuilder();
+    final OAuthCredentialsProvider cred = c.audience(clusterUUID + "." + baseUrl).clientId(clientId)
+        .clientSecret(clientSecret).authorizationServerUrl(authUrl).build();
+
+    final ZeebeClientBuilder clientBuilder = ZeebeClient.newClientBuilder().brokerContactPoint(broker)
+        .credentialsProvider(cred);
+
+    return clientBuilder.build();
+  }
+}
+```
+
+
 
 ## Does Zeebe complement or replace middleware?
 

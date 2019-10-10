@@ -7,16 +7,16 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
-		<spring-cloud-stream.version>Elmhurst.RELEASE</spring-cloud-stream.version>
-
-		<camunda.version>7.10.0</camunda.version>
+		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>		
+		<spring-cloud-stream.version>Germantown.RELEASE</spring-cloud-stream.version>
+		
+		<camunda.version>7.11.0</camunda.version>
 		<!-- 
 		Adjust if you want to use Enterprise Edition of Camunda:
-		<camunda.version>7.10.0-ee</camunda.version>
+		<camunda.version>7.11.0-ee</camunda.version>
 		Make sure you also switch to the ee webapp dependency below
 		-->
-		<camunda.spring.boot.version>3.1.0</camunda.spring.boot.version>
+		<camunda.spring.boot.version>3.3.1</camunda.spring.boot.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

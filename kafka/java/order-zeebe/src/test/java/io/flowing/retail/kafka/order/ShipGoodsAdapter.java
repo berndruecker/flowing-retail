@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.clients.JobClient;
 import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.subscription.JobHandler;
+import io.zeebe.client.api.worker.JobClient;
+import io.zeebe.client.api.worker.JobHandler;
 
 @Component
 public class ShipGoodsAdapter implements JobHandler {

@@ -17,10 +17,10 @@ import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;
 import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.clients.JobClient;
 import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.subscription.JobHandler;
-import io.zeebe.client.api.subscription.JobWorker;
+import io.zeebe.client.api.worker.JobClient;
+import io.zeebe.client.api.worker.JobHandler;
+import io.zeebe.client.api.worker.JobWorker;
 
 @Component
 public class ShipGoodsAdapter implements JobHandler {

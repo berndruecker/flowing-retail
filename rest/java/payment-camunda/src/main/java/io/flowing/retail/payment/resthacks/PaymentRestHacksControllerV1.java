@@ -26,6 +26,8 @@ public class PaymentRestHacksControllerV1 {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
+    
+    System.out.println("PUT payment received");
 
     chargeCreditCard(customerId, amount);
     return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\"}";

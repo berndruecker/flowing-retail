@@ -23,6 +23,7 @@ public class OrderApplication {
     // Cannot yet use Spring Zeebe in current alpha
     ZeebeClient zeebeClient = ZeebeClient.newClientBuilder() //
         .brokerContactPoint(zeebeBrokerContactPoint) //
+        .usePlaintext()
         .build();
     
     // Trigger deployment
