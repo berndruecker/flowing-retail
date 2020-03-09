@@ -5,7 +5,7 @@
 	<artifactId>flowing-retail-kafka-checkout</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<maven.compiler.release>1.9</maven.compiler.release>
+		<maven.compiler.release>8</maven.compiler.release>
 		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>		
 		<spring-cloud-stream.version>Germantown.RELEASE</spring-cloud-stream.version>
 	</properties>
@@ -67,6 +67,11 @@
 			        </execution>
 			    </executions>
 	        </plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
+			</plugin>	        
     	</plugins>
     </build>	
 </project>
