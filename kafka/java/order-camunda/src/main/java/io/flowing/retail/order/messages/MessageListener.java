@@ -29,7 +29,10 @@ public class MessageListener {
   
   @Autowired
   private ProcessEngine camunda;
-    
+
+  @Autowired
+  private ObjectMapper objectMapper;
+  
   /**
    * Handles incoming OrderPlacedEvents. 
    * 
@@ -39,11 +42,10 @@ public class MessageListener {
    *  would do (see e.g. https://dturanski.wordpress.com/2017/03/26/spring-cloud-stream-for-event-driven-architectures/)
    */
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='OrderPlacedEvent'")
+      condition="(headers['type']?:'')=='OrderPlacedEvent'")
   @Transactional
   public void orderPlacedReceived(Message<Order> message) throws JsonParseException, JsonMappingException, IOException {
-    // Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>(){});
-    Order order = message.getPayload();
+    Order order = message.getData();
     
     System.out.println("New order placed, start flow. " + order);
     
@@ -51,8 +53,8 @@ public class MessageListener {
     repository.save(order);    
     
     // and kick of a new flow instance
-    camunda.getRuntimeService().createMessageCorrelation(message.getMessageType())
-      .processInstanceBusinessKey(message.getTraceId())
+    camunda.getRuntimeService().createMessageCorrelation(message.getType())
+      .processInstanceBusinessKey(message.getTraceid())
       .setVariable("orderId", order.getId())
       .correlateWithResult();
   }
@@ -65,26 +67,26 @@ public class MessageListener {
    * It might make more sense to handle each and every message type individually.
    */
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'').endsWith('Event')")
+      condition="(headers['type']?:'').endsWith('Event')")
   @Transactional
   public void messageReceived(String messageJson) throws Exception {
-    Message<JsonNode> message = new ObjectMapper().readValue( //
+    Message<JsonNode> message = objectMapper.readValue( //
         messageJson, //
         new TypeReference<Message<JsonNode>>() {});
     
     long correlatingInstances = camunda.getRuntimeService().createExecutionQuery() //
-      .messageEventSubscriptionName(message.getMessageType()) //
-      .processInstanceBusinessKey(message.getTraceId()) //
+      .messageEventSubscriptionName(message.getType()) //
+      .processInstanceBusinessKey(message.getTraceid()) //
       .count();
     
     if (correlatingInstances==1) {
       System.out.println("Correlating " + message + " to waiting flow instance");
       
-      camunda.getRuntimeService().createMessageCorrelation(message.getMessageType())
-        .processInstanceBusinessKey(message.getTraceId())
+      camunda.getRuntimeService().createMessageCorrelation(message.getType())
+        .processInstanceBusinessKey(message.getTraceid())
         .setVariable(//
-            "PAYLOAD_" + message.getMessageType(), // 
-            SpinValues.jsonValue(message.getPayload().toString()).create())//
+            "PAYLOAD_" + message.getType(), // 
+            SpinValues.jsonValue(message.getData().toString()).create())//
         .correlateWithResult();
     } 
     

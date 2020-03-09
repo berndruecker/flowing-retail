@@ -27,24 +27,27 @@ public class MessageListener {
   @Autowired
   private InventoryService inventoryService;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+  
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='FetchGoodsCommand'")
+      condition="(headers['type']?:'')=='FetchGoodsCommand'")
   @Transactional
   public void retrievePaymentCommandReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-    Message<FetchGoodsCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<FetchGoodsCommandPayload>>(){});
+    Message<FetchGoodsCommandPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<FetchGoodsCommandPayload>>(){});
     
-    FetchGoodsCommandPayload fetchGoodsCommand = message.getPayload();    
+    FetchGoodsCommandPayload fetchGoodsCommand = message.getData();    
     String pickId = inventoryService.pickItems( // 
         fetchGoodsCommand.getItems(), fetchGoodsCommand.getReason(), fetchGoodsCommand.getRefId());
     
     messageSender.send( //
         new Message<GoodsFetchedEventPayload>( //
             "GoodsFetchedEvent", //
-            message.getTraceId(), //
+            message.getTraceid(), //
             new GoodsFetchedEventPayload() //
               .setRefId(fetchGoodsCommand.getRefId())
               .setPickId(pickId))
-        .setCorrelationId(message.getCorrelationId()));
+        .setCorrelationid(message.getCorrelationid()));
   }
     
     

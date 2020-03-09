@@ -1,6 +1,7 @@
-package io.flowing.retail.payment.messages;
+package io.flowing.retail.shipping.messages.payload;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;

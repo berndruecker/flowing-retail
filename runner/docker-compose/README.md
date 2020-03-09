@@ -16,7 +16,7 @@ You can show logs by
 docker-compose logs -f
 ```
 
-The cool thing is that cou can "switch" to another config by exectuting this, which will kill all containers that are not needed any more and start the ones missing:
+The cool thing is that cou can "switch" to another config by executing this, which will kill all containers that are not needed any more and start the ones missing:
 
 ```
 docker-compose -f docker-compose-small.yml up -d --remove-orphans

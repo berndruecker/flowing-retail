@@ -23,25 +23,25 @@ public class MessageListener {
   
   @Autowired
   private ProcessEngine camunda;
-  
+
   @Autowired
-  private MessageSender messageSender;
+  private ObjectMapper objectMapper;
 
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='RetrievePaymentCommand'")
+      condition="(headers['type']?:'')=='RetrievePaymentCommand'")
   @Transactional
   public void retrievePaymentCommandReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-    Message<RetrievePaymentCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<RetrievePaymentCommandPayload>>(){});
-    RetrievePaymentCommandPayload retrievePaymentCommand = message.getPayload();    
+    Message<RetrievePaymentCommandPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<RetrievePaymentCommandPayload>>(){});
+    RetrievePaymentCommandPayload retrievePaymentCommand = message.getData();    
     
     System.out.println("Retrieve payment: " + retrievePaymentCommand.getAmount() + " for " + retrievePaymentCommand.getRefId());
     
-    camunda.getRuntimeService().createMessageCorrelation(message.getMessageType()) //
-      .processInstanceBusinessKey(message.getTraceId())
+    camunda.getRuntimeService().createMessageCorrelation(message.getType()) //
+      .processInstanceBusinessKey(message.getTraceid())
       .setVariable("amount", retrievePaymentCommand.getAmount()) //
       .setVariable("remainingAmount", retrievePaymentCommand.getAmount()) //
       .setVariable("refId", retrievePaymentCommand.getRefId()) //
-      .setVariable("correlationId", message.getCorrelationId()) //
+      .setVariable("correlationId", message.getCorrelationid()) //
       .correlateWithResult();    
   }
     

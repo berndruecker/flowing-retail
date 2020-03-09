@@ -8,6 +8,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Component
 @EnableBinding(Source.class)
@@ -16,14 +17,16 @@ public class MessageSender {
   @Autowired
   private MessageChannel output; 
   
+  @Autowired
+  private ObjectMapper objectMapper;
+  
   public void send(Message<?> m) {
     try {
       // avoid too much magic and transform ourselves
-      ObjectMapper mapper = new ObjectMapper();
-      String jsonMessage = mapper.writeValueAsString(m);
+      String jsonMessage = objectMapper.writeValueAsString(m);
       // wrap into a proper message for the transport (Kafka/Rabbit) and send it      
       output.send(
-          MessageBuilder.withPayload(jsonMessage).setHeader("messageType", m.getMessageType()).build());
+          MessageBuilder.withPayload(jsonMessage).setHeader("type", m.getType()).build());
     } catch (Exception e) {
       throw new RuntimeException("Could not tranform and send message due to: "+ e.getMessage(), e);
     }

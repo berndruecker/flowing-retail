@@ -21,27 +21,30 @@ public class MessageListener {
   
   @Autowired
   private ShippingService shippingService;
-
+  
+  @Autowired
+  private ObjectMapper objectMapper;
+  
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='ShipGoodsCommand'")
+      condition="(headers['type']?:'')=='ShipGoodsCommand'")
   @Transactional
   public void shipGoodsCommandReceived(String messageJson) throws Exception {
-    Message<ShipGoodsCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<ShipGoodsCommandPayload>>(){});
+    Message<ShipGoodsCommandPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<ShipGoodsCommandPayload>>(){});
 
     String shipmentId = shippingService.createShipment( //
-        message.getPayload().getPickId(), //
-        message.getPayload().getRecipientName(), //
-        message.getPayload().getRecipientAddress(), //
-        message.getPayload().getLogisticsProvider());
+        message.getData().getPickId(), //
+        message.getData().getRecipientName(), //
+        message.getData().getRecipientAddress(), //
+        message.getData().getLogisticsProvider());
         
     messageSender.send( //
         new Message<GoodsShippedEventPayload>( //
             "GoodsShippedEvent", //
-            message.getTraceId(), //
+            message.getTraceid(), //
             new GoodsShippedEventPayload() //
-              .setRefId(message.getPayload().getRefId())
+              .setRefId(message.getData().getRefId())
               .setShipmentId(shipmentId))
-        .setCorrelationId(message.getCorrelationId()));
+        .setCorrelationid(message.getCorrelationid()));
   }
     
     

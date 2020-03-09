@@ -21,22 +21,25 @@ public class MessageListener {
   @Autowired
   private MessageSender messageSender;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='RetrievePaymentCommand'")
+      condition="(headers['type']?:'')=='RetrievePaymentCommand'")
   @Transactional
   public void retrievePaymentCommandReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-    Message<RetrievePaymentCommandPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<RetrievePaymentCommandPayload>>(){});
-    RetrievePaymentCommandPayload retrievePaymentCommand = message.getPayload();    
+    Message<RetrievePaymentCommandPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<RetrievePaymentCommandPayload>>(){});
+    RetrievePaymentCommandPayload retrievePaymentCommand = message.getData();    
     
     System.out.println("Retrieve payment: " + retrievePaymentCommand.getAmount() + " for " + retrievePaymentCommand.getRefId());
     
     messageSender.send( //
         new Message<PaymentReceivedEventPayload>( //
             "PaymentReceivedEvent", //
-            message.getTraceId(), //
+            message.getTraceid(), //
             new PaymentReceivedEventPayload() //
               .setRefId(retrievePaymentCommand.getRefId()))
-        .setCorrelationId(message.getCorrelationId()));
+        .setCorrelationid(message.getCorrelationid()));
 
   }
   

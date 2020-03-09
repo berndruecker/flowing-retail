@@ -29,15 +29,18 @@ public class MessageListener {
   
   @Autowired
   private InventoryService inventoryService;
+  
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='PaymentReceivedEvent'")
+      condition="(headers['type']?:'')=='PaymentReceivedEvent'")
   @Transactional
   public void paymentReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-    Message<JsonNode> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<JsonNode>>(){});
+    Message<JsonNode> message = objectMapper.readValue(messageJson, new TypeReference<Message<JsonNode>>(){});
     
-    ObjectNode payload = (ObjectNode) message.getPayload();
-    Item[] items = new ObjectMapper().treeToValue(payload.get("items"), Item[].class);
+    ObjectNode payload = (ObjectNode) message.getData();
+    Item[] items = objectMapper.treeToValue(payload.get("items"), Item[].class);
     
     String pickId = inventoryService.pickItems( // 
         Arrays.asList(items), "order", payload.get("orderId").asText());
@@ -50,7 +53,7 @@ public class MessageListener {
     messageSender.send( //
         new Message<JsonNode>( //
             "GoodsFetchedEvent", //
-            message.getTraceId(), //
+            message.getTraceid(), //
             payload));
   }
     

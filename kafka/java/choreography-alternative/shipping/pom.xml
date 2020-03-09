@@ -40,6 +40,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<!-- required to add JSR310 time formats for Jackson to ObjectMapper -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-json</artifactId>
+		</dependency>				
 	</dependencies>
     <build>
     	<plugins>
