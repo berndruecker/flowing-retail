@@ -14,7 +14,7 @@ cache:
   directories:
     - $HOME/.m2
 jdk:
-  - oraclejdk9
+  - oraclejdk8
 os:
   - linux
 
