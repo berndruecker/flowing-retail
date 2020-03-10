@@ -8,7 +8,6 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.flowing.retail.kafka.order.flow.payload.OrderCompletedEventPayload;
 import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
@@ -46,7 +45,7 @@ public class OrderCompletedAdapter implements JobHandler {
 
   @Override
   public void handle(JobClient client, ActivatedJob job) {
-    OrderFlowContext context = OrderFlowContext.fromJson(job.getVariables());
+    OrderFlowContext context = OrderFlowContext.fromMap(job.getVariablesAsMap());
        
     messageSender.send( //
         new Message<OrderCompletedEventPayload>( //

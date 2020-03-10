@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.flowing.retail.kafka.order.domain.Order;
-import io.flowing.retail.kafka.order.domain.OrderFlowContext;
 import io.flowing.retail.kafka.order.flow.payload.ShipGoodsCommandPayload;
 import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
@@ -30,8 +29,6 @@ public class ShipGoodsAdapter implements JobHandler {
 
   @Autowired
   private OrderRepository orderRepository;  
-  
-  
 
   @Autowired
   private ZeebeClient zeebe;
@@ -54,7 +51,7 @@ public class ShipGoodsAdapter implements JobHandler {
 
   @Override
   public void handle(JobClient client, ActivatedJob job) {
-    OrderFlowContext context = OrderFlowContext.fromJson(job.getVariables());
+    OrderFlowContext context = OrderFlowContext.fromMap(job.getVariablesAsMap());
     Order order = orderRepository.findById(context.getOrderId()).get(); 
     
     // generate an UUID for this communication
@@ -68,7 +65,7 @@ public class ShipGoodsAdapter implements JobHandler {
               .setPickId(context.getPickId()) //
               .setRecipientName(order.getCustomer().getName()) //
               .setRecipientAddress(order.getCustomer().getAddress())) //
-        .setCorrelationId(correlationId));
+        .setCorrelationid(correlationId));
     
     client.newCompleteCommand(job.getKey()) //
         .variables(Collections.singletonMap("CorrelationId_ShipGoods", correlationId)) //

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import io.flowing.retail.kafka.order.domain.OrderFlowContext;
+import io.flowing.retail.kafka.order.flow.OrderFlowContext;
 import io.zeebe.client.ZeebeClient;
 import io.zeebe.client.api.response.ActivatedJob;
 import io.zeebe.client.api.worker.JobClient;
@@ -28,7 +28,7 @@ public class ShipGoodsAdapter implements JobHandler {
 
   @Override
   public void handle(JobClient client, ActivatedJob event) {
-    OrderFlowContext context = OrderFlowContext.fromJson(event.getVariables());
+    OrderFlowContext context = OrderFlowContext.fromMap(event.getVariablesAsMap());
     
     // generate an UUID for this communication
     String correlationId = UUID.randomUUID().toString();

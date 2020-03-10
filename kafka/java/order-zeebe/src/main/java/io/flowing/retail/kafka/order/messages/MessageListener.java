@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.flowing.retail.kafka.order.domain.Order;
-import io.flowing.retail.kafka.order.domain.OrderFlowContext;
+import io.flowing.retail.kafka.order.flow.OrderFlowContext;
 import io.flowing.retail.kafka.order.flow.payload.GoodsFetchedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.GoodsShippedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.PaymentReceivedEventPayload;
@@ -52,11 +52,11 @@ public class MessageListener {
     context.setTraceId(message.getTraceid());
 
     // and kick of a new flow instance
-    System.out.println("New order placed, start flow. " + context.asJson());
+    System.out.println("New order placed, start flow with " + context);
     zeebe.newCreateInstanceCommand() //
         .bpmnProcessId("order-kafka") //
         .latestVersion() // 
-        .variables(context.asJson()) //
+        .variables(context.asMap()) //
         .send().join();
   }
 
