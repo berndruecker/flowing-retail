@@ -5,7 +5,7 @@ This folder contains services written in Java that connect to Apache Kafka as me
 Tech stack:
 
 * Java 8
-* Spring Boot 1.5.x
+* Spring Boot 2.1.x
 * Spring Cloud Streams
 * Apache Kafka
 
@@ -53,7 +53,7 @@ docker-compose up
 
 * After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
 * You can place an order via [http://localhost:8091](http://localhost:8091)
-* You can inspect insided of Order via [http://localhost:8092](http://localhost:8092)
+* You can inspect insides of Order via [http://localhost:8092](http://localhost:8092)
 * You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
 
@@ -78,7 +78,7 @@ docker-compose up
 
 * After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
 * You can place an order via [http://localhost:8091](http://localhost:8091)
-* You can inspect insided of Order via [http://localhost:8092](http://localhost:8092)
+* You can inspect insides of Order via [http://localhost:8092](http://localhost:8092)
 * You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
 

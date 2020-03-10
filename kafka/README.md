@@ -20,7 +20,7 @@ You find the variations in the sub folders. Note that I do not yet have implemen
 ### Java
 
 * Java 8
-* Spring Boot 1.5.x
+* Spring Boot 2.1.x
 * Spring Cloud Streams
 
 And of course
