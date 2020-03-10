@@ -18,9 +18,12 @@ services:
       - flowing
     ports:
       - 9092:9092
+      - 29092:29092
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   checkout:
@@ -28,7 +31,7 @@ services:
     networks:
       - flowing
     ports:
-      - "8090:8090"
+      - "8091:8091"
     depends_on:
       - kafka
     environment:
@@ -96,34 +99,42 @@ services:
       - "8099:80"
 
   zeebe:
-    image: camunda/zeebe:0.12.0-alpha4
+    image: camunda/zeebe:0.22.1
     hostname: zeebe
     networks:
       - flowing
     ports:
       - "26500:26500"
-
-  zeebe-simple-monitor:
-    image: flowingretail/zeebe-simple-monitor:latest
-    hostname: zeebe
-    networks:
-      - flowing
+      - "9600:9600"
+    volumes:
+      - zeebe_data:/usr/local/zeebe/data
+      - ./zeebe.cfg.toml:/usr/local/zeebe/conf/zeebe.cfg.toml
     depends_on:
-      - mongo
-      - zeebe
-    ports:
-      - "8096:8080"
-    environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo/flowingretail
+      - elasticsearch
 
-  mongo:
-    image: mongo
-    hostname: mongo
+  operate:
+    image: camunda/operate:1.2.0
+    ports:
+      - "8080:8080"    
+    networks:
+      - flowing 
+      
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - cluster.name=elasticsearch
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - zeebe_elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - flowing
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+
+volumes:
+  zeebe_data:
+  zeebe_elasticsearch_data:
 
 networks:
   flowing:
