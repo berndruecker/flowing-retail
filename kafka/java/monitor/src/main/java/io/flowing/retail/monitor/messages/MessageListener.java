@@ -1,5 +1,7 @@
 package io.flowing.retail.monitor.messages;
 
+import java.nio.charset.Charset;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -27,7 +29,8 @@ public class MessageListener {
 
   @StreamListener(target = Sink.INPUT)
   @Transactional
-  public void messageReceived(String messageJson) throws Exception {
+  public void messageReceived(byte[] messageJsonBytes) throws Exception {
+	String messageJson = new String(messageJsonBytes, "UTF-8");  
     Message<JsonNode> message = objectMapper.readValue( //
         messageJson, //
         new TypeReference<Message<JsonNode>>() {});
