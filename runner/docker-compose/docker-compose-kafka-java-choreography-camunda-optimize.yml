@@ -13,7 +13,7 @@ services:
 
   kafka:
     image: "confluentinc/cp-kafka:latest"
-    hostname: confluent-cp-kafka
+    hostname: kafka
     networks:
       - flowing
     ports:
@@ -35,7 +35,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=confluent-cp-kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
 
   payment:
@@ -45,7 +45,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=confluent-cp-kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
 
   inventory:
@@ -55,7 +55,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=confluent-cp-kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
 
   shipping:
@@ -65,7 +65,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=confluent-cp-kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
 
   monitor:
@@ -77,7 +77,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=confluent-cp-kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
 
   docs:
@@ -90,7 +90,8 @@ services:
   ### Optimize Process Events Monitoring
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.1
-    container_name: elasticsearch
+    networks:
+      - flowing
     environment:
       - discovery.type=single-node
     ports:
@@ -103,7 +104,8 @@ services:
 
   cambpm:
     image: registry.camunda.cloud/camunda-bpm-platform-ee:7.12.1
-    container_name: cambpm
+    networks:
+      - flowing
     environment:
       - TZ=Europe/Berlin
     ports:
@@ -113,13 +115,14 @@ services:
 
   optimize:
     image: registry.camunda.cloud/optimize:3.0.0-alpha2
+    networks:
+      - flowing
     environment:
       - OPTIMIZE_CAMUNDABPM_REST_URL=http://cambpm:8080/engine-rest
       - OPTIMIZE_ELASTICSEARCH_HOST=elasticsearch
       - OPTIMIZE_EVENT_BASED_PROCESSES_ENABLED=true
       - OPTIMIZE_EVENT_BASED_PROCESSES_USER_IDS=['demo']
       - OPTIMIZE_EVENT_INGESTION_ACCESS_TOKEN=mytoken
-    container_name: optimize
     ports:
       - 8090:8090
     depends_on:
@@ -138,8 +141,11 @@ services:
       - kafka
       - optimize
     environment:
-      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=confluent-cp-kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
       - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+      - CAMUNDA_OPTIMIZE_INGESTION_ENDPOINT=http://optimize:8090/api/ingestion/event/batch
+      - CAMUNDA_OPTIMIZE_INGESTION_ACCESSTOKEN=mytoken
+
 
 
 ####
