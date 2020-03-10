@@ -48,5 +48,7 @@ after_success:
   - docker push flowingretail/kafka-java-choreography-shipping
   - docker build -t flowingretail/kafka-java-choreography-zeebe-track ./kafka/java/choreography-alternative/zeebe-track/
   - docker push flowingretail/kafka-java-choreography-zeebe-track
+  - docker build -t flowingretail/kafka-camunda-optimize-ingest ./kafka/java/camunda-optimize-ingest/
+  - docker push flowingretail/kafka-camunda-optimize-ingest
   - docker build -t flowingretail/docs ./docs/
   - docker push flowingretail/docs

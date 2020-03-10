@@ -17,6 +17,7 @@
 		<module>shipping</module>
 
 		<module>choreography-alternative</module>
+		<module>camunda-optimize-ingest</module>
 
 		<module>monitor</module>
 	</modules>
