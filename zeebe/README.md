@@ -14,16 +14,22 @@ Now Zeebe is the only common denominator. For every service you can decide for *
 
 ![Microservices](../docs/zeebe-services.png)
 
-You find the variations in the sub folders. Note that in the current tech preview state of Zeebe it only supports Java and GoLang, but more languages will follow.
+You find the variations in the sub folders. 
 
 * [Java](java/)
-* GoLang (TODO)
+* [Node.js](nodejs/)
 
 ## Run on Camunda Cloud
 
-[Camunda Cloud](https://zeebe.io/cloud/) provides a hosted version of Zeebe for you. After sign up you can easily spin up your Zeebe cluster as described here.
+[Camunda Cloud](https://camunda.io) provides a hosted version of Zeebe for you. After sign up you can easily spin up your Zeebe cluster as described here.
 
 In order to run this example on the Cloud you simply have to configure the Zeebe cient correctly, e.g.: 
+
+* For Nodejs
+
+You can cut and paste the environment variable block from the Camunda Cloud console.
+
+* For Java
 
 ```
 @Configuration
@@ -50,8 +56,6 @@ public class ZeebeClientConfiguration {
   }
 }
 ```
-
-
 
 ## Does Zeebe complement or replace middleware?
 
