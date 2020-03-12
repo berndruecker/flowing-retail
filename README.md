@@ -24,12 +24,13 @@ The most fundamental choice is to select the **communication mechanism**:
 Having chosen that your probably can choose the **workflow engine**:
 
 * **Camunda BPM 7**
-* **Zeebe** (if you are interessted why Zeebe is listed in the communication mechanism as well as workflow engine please look into the [Zeebe example readme](zeebe/))
+* **Zeebe** (if you are interested why Zeebe is listed in the communication mechanism as well as workflow engine please look into the [Zeebe example readme](zeebe/))
 
 and the **programming language**:
 
 * **Java**
 * **Go**
+* **Node.js**
 
 ## Storyline
 
@@ -37,7 +38,7 @@ Flowing retail simulates a very easy order fulfillment system. The business logi
 
 ### Long running services and orchestration
 
-Some services are **long running** in nature, as e.g. the payment service ask customers to update expired credit cards. Hence a workflow engine is used to persist and control these long running interactions.
+Some services are **long running** in nature, as e.g. the payment service asks customers to update expired credit cards. Hence a workflow engine is used to persist and control these long running interactions.
 
 ### Workflows live within service boundaries
 
