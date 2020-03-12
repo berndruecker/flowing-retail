@@ -11,7 +11,7 @@ const zbc = new ZBClient();
 zbc.deployWorkflow(path.join(__dirname, "..", "..", "bpmn", "paymentV4.bpmn"));
 
 // /api/payment/v4
-export const routev4 = async (req, res) => {
+export const routev4 = async (_, res) => {
   const traceId = uuid();
   // const customerId = "0815";
   const amount = 15;
@@ -22,10 +22,10 @@ export const routev4 = async (req, res) => {
       variables: { amount },
       requestTimeout: 500
     })
-    .then(() => ({ status: "completed", traceId }))
+    .then(() => res.json({ status: "completed", traceId }))
     .catch(e => {
       if (e.message.includes("DEADLINE")) {
-        return { status: "pending", traceId };
+        res.json({ status: "pending", traceId });
       } else {
         throw e;
       }

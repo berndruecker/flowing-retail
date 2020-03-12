@@ -19,7 +19,7 @@ export const routev3 = async (req, res) => {
     amount
   });
 
-  return { status: "pending", traceId };
+  res.json({ status: "pending", traceId });
 };
 
 zbc.createWorker<{ amount: number }>({

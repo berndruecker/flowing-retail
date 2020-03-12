@@ -14,7 +14,7 @@ export const routev2 = async (req, res) => {
     timeout: 150
   });
 
-  return brake.exec().then(() => ({ status: "completed", traceId }));
+  return brake.exec().then(() => res.json({ status: "completed", traceId }));
 };
 
 async function chargeCreditCard(customerId, remainingAmount) {

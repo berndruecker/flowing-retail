@@ -10,7 +10,7 @@ export const routev1 = async (req, res) => {
   const amount = 15;
 
   await chargeCreditCard(customerId, amount);
-  return { status: "completed", traceId };
+  res.json({ status: "completed", traceId });
 };
 
 async function chargeCreditCard(customerId, remainingAmount) {
