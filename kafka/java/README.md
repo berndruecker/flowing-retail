@@ -5,7 +5,7 @@ This folder contains services written in Java that connect to Apache Kafka as me
 Tech stack:
 
 * Java 8
-* Spring Boot 1.5.x
+* Spring Boot 2.1.x
 * Spring Cloud Streams
 * Apache Kafka
 
@@ -52,19 +52,12 @@ docker-compose up
 ```
 
 * After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
-* You can place an order via [http://localhost:8090](http://localhost:8090)
-* You can inspect insided of Order via [http://localhost:8091](http://localhost:8091)
-* You can inspect insides of Payment via [http://localhost:8092](http://localhost:8092)
+* You can place an order via [http://localhost:8091](http://localhost:8091)
+* You can inspect insides of Order via [http://localhost:8092](http://localhost:8092)
+* You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
 
-If you like you can connect to Kafka from your local Docker host machine too. Because of so called advertised endpoints you have to map the Kafka container hostname to localhost. This is because the cluster manager of Kafka (Zookeeper) gives you his view of the Kafka cluster which containes of this hostname, even if you connected to localhost in the first place.
-
-For example, on Windows append this entry to ```C:\Windows\System32\drivers\etc\hosts```:
-```
-127.0.0.1 kafkaserver
-```
-
-On Linux edit the ```/etc/hosts``` accordingly.
+If you like you can connect to Kafka from your local Docker host machine too. 
 
 
 ## Docker Compose with local build of Docker images
@@ -84,19 +77,13 @@ docker-compose up
 ```
 
 * After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
-* You can place an order via [http://localhost:8090](http://localhost:8090)
-* You can inspect insided of Order via [http://localhost:8091](http://localhost:8091)
-* You can inspect insides of Payment via [http://localhost:8092](http://localhost:8092)
+* You can place an order via [http://localhost:8091](http://localhost:8091)
+* You can inspect insides of Order via [http://localhost:8092](http://localhost:8092)
+* You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
 
-If you like you can connect to Kafka from your local Docker host machine too. Because of so called advertised endpoints you have to map the Kafka container hostname to localhost. This is because the cluster manager of Kafka (Zookeeper) gives you his view of the Kafka cluster which containes of this hostname, even if you connected to localhost in the first place.
+If you like you can connect to Kafka from your local Docker host machine too. 
 
-For example, on Windows append this entry to ```C:\Windows\System32\drivers\etc\hosts```:
-```
-127.0.0.1 kafkaserver
-```
-
-On Linix edit the ```/etc/hosts``` accordingly.
 
 ## Manual start (Kafka, mvn exec:java)
 
@@ -137,7 +124,7 @@ checkout/io.flowing.retail.java.CheckoutApplication
 ...
 ```
 
-* Now you can place an order via [http://localhost:8090](http://localhost:8090)
-* You can inspect insided of Order via [http://localhost:8091](http://localhost:8091)
-* You can inspect insides of Payment via [http://localhost:8092](http://localhost:8092)
+* Now you can place an order via [http://localhost:8091](http://localhost:8091)
+* You can inspect insided of Order via [http://localhost:8092](http://localhost:8092)
+* You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)

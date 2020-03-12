@@ -5,13 +5,12 @@
 	<artifactId>flowing-retail-kafka-order-zeebe</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.release>8</maven.compiler.release>
 		
 		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>		
 		<spring-cloud-stream.version>Germantown.RELEASE</spring-cloud-stream.version>
 
-		<zeebe.version>0.21.1</zeebe.version>
+		<zeebe.version>0.22.1</zeebe.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -49,6 +48,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+		<dependency>
+			<!-- required to add JSR310 time formats for Jackson to ObjectMapper -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-json</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>io.zeebe</groupId>
 			<artifactId>zeebe-client-java</artifactId>
@@ -91,6 +95,11 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
 			</plugin>
 		</plugins>
 	</build>

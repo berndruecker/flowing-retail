@@ -19,17 +19,21 @@ services:
       - flowing
     ports:
       - 9092:9092
+      - 29092:29092
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
 
   checkout:
     image: flowingretail/kafka-java-checkout
     networks:
       - flowing
     ports:
-      - "8090:8090"
+      - "8091:8091"
     depends_on:
       - kafka
     environment:
@@ -41,7 +45,7 @@ services:
     networks:
       - flowing
     ports:
-      - "8092:8092"
+      - "8093:8093"
     depends_on:
       - kafka
     environment:

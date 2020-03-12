@@ -7,6 +7,8 @@ public class PastEvent {
   private String name;
   private String content;
   private String sender;
+  
+  private String sourceJson;
 
   public PastEvent() {    
   }
@@ -57,6 +59,14 @@ public class PastEvent {
 
   public void setSender(String sender) {
     this.sender = sender;
+  }
+
+  public String getSourceJson() {
+    return sourceJson;
+  }
+
+  public void setSourceJson(String sourceJson) {
+    this.sourceJson = sourceJson;
   }
 
 }

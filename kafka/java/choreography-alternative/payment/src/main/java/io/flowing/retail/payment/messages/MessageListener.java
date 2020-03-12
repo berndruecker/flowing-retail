@@ -25,14 +25,17 @@ public class MessageListener {
   @Autowired
   private PaymentService paymentService;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='OrderPlacedEvent'")
+      condition="(headers['type']?:'')=='OrderPlacedEvent'")
   @Transactional
   public void orderPlaced(String messageJson) throws Exception {
     // Note that we now have to read order data from this message!
     // Bad smell 1 (reading some event instead of dedicated command)
-    JsonNode message = new ObjectMapper().readTree(messageJson);
-    ObjectNode payload = (ObjectNode) message.get("payload");
+    JsonNode message = objectMapper.readTree(messageJson);
+    ObjectNode payload = (ObjectNode) message.get("data");
     
     String orderId = payload.get("orderId").asText();
     if (orderId == null) {
@@ -59,8 +62,8 @@ public class MessageListener {
     messageSender.send( //
         new Message<JsonNode>( //
             "PaymentReceivedEvent", //
-            message.get("traceId").asText(), //
-            message.get("payload")));
+            message.get("traceid").asText(), //
+            message.get("data")));
   }
     
     

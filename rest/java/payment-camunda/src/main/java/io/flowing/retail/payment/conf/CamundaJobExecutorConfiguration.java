@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 
-@Configuration
+//@Configuration
 public class CamundaJobExecutorConfiguration extends DefaultJobConfiguration {
 
-  @Bean
-  @ConditionalOnProperty(prefix = "camunda.bpm.job-execution", name = "enabled", havingValue = "true", matchIfMissing = true)  
+//  @Bean
+//  @ConditionalOnProperty(prefix = "camunda.bpm.job-execution", name = "enabled", havingValue = "true", matchIfMissing = true)  
   public static JobExecutor jobExecutor(@Qualifier(JobConfiguration.CAMUNDA_TASK_EXECUTOR_QUALIFIER) final TaskExecutor taskExecutor) {
     final SpringJobExecutor springJobExecutor = new SpringJobExecutor();
     springJobExecutor.setTaskExecutor(taskExecutor);

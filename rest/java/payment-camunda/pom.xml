@@ -5,17 +5,16 @@
 	<artifactId>flowing-retail-rest-payment-camunda</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+		<maven.compiler.release>8</maven.compiler.release>
+		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
 
-		<camunda.version>7.10.0</camunda.version>
+		<camunda.version>7.12.0</camunda.version>
 		<!-- 
 		Adjust if you want to use Enterprise Edition of Camunda:
 		<camunda.version>7.10.0-ee</camunda.version>
 		Make sure you also switch to the ee webapp dependency below
 		-->
-		<camunda.spring.boot.version>3.1.0</camunda.spring.boot.version>
+		<camunda.spring.boot.version>3.4.1</camunda.spring.boot.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -60,9 +59,9 @@
 			<version>${camunda.spring.boot.version}</version>
 		</dependency>		
 		<dependency>
-		  <groupId>org.camunda.bpm</groupId>
-		  <artifactId>camunda-external-task-client</artifactId>
-		  <version>1.0.0</version>
+		    <groupId>org.camunda.bpm</groupId>
+		    <artifactId>camunda-external-task-client</artifactId>
+		    <version>1.1.1</version>
 		</dependency>
 	    <dependency>
 	        <groupId>org.springframework.boot</groupId>
@@ -92,7 +91,21 @@
 			<groupId>com.netflix.hystrix</groupId>
 			<artifactId>hystrix-core</artifactId>
 			<version>1.5.12</version>
-		</dependency>	
+		</dependency>
+		
+			<!-- API, java.xml.bind module -->
+<dependency>
+    <groupId>jakarta.xml.bind</groupId>
+    <artifactId>jakarta.xml.bind-api</artifactId>
+    <version>2.3.2</version>
+</dependency>
+
+<!-- Runtime, com.sun.xml.bind module -->
+<dependency>
+    <groupId>org.glassfish.jaxb</groupId>
+    <artifactId>jaxb-runtime</artifactId>
+    <version>2.3.2</version>
+</dependency>
 	</dependencies>
 
 	<repositories>
@@ -122,6 +135,11 @@
 			        </execution>
 			    </executions>
 	        </plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
+			</plugin>	        
     	</plugins>
     </build>	
 </project>

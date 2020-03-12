@@ -26,7 +26,7 @@ public class PaymentReceivedAdapter implements JavaDelegate {
             traceId, //
             new PaymentReceivedEventPayload() //
                 .setRefId(refId))
-    		.setCorrelationId(correlationId));
+    		.setCorrelationid(correlationId));
   }
 
 }

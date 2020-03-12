@@ -1,5 +1,7 @@
 package io.flowing.retail.monitor.messages;
 
+import java.nio.charset.Charset;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -21,25 +23,30 @@ public class MessageListener {
 
   @Autowired
   private SimpMessagingTemplate simpMessageTemplate;
+  
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @StreamListener(target = Sink.INPUT)
   @Transactional
-  public void messageReceived(String messageJson) throws Exception {
-    Message<JsonNode> message = new ObjectMapper().readValue( //
+  public void messageReceived(byte[] messageJsonBytes) throws Exception {
+	String messageJson = new String(messageJsonBytes, "UTF-8");  
+    Message<JsonNode> message = objectMapper.readValue( //
         messageJson, //
         new TypeReference<Message<JsonNode>>() {});
     
     String type = "Event";
-    if (message.getMessageType().endsWith("Command")) {
+    if (message.getType().endsWith("Command")) {
       type = "Command";
     }
     
     PastEvent event = new PastEvent( //
         type, //
-        message.getMessageType(), //
-        message.getTraceId(), //
-        message.getSender(), //
-        message.getPayload().toString());
+        message.getType(), //
+        message.getTraceid(), //
+        message.getSource(), //
+        message.getData().toString());
+    event.setSourceJson(messageJson);
     
     // save
     LogRepository.instance.addEvent(event);

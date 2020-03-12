@@ -18,11 +18,11 @@ import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.clients.JobClient;
-import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.subscription.JobHandler;
-import io.zeebe.gateway.api.subscription.JobWorker;
+import io.zeebe.client.ZeebeClient;
+import io.zeebe.client.api.response.ActivatedJob;
+import io.zeebe.client.api.worker.JobClient;
+import io.zeebe.client.api.worker.JobHandler;
+import io.zeebe.client.api.worker.JobWorker;
 import io.zeebe.model.bpmn.Bpmn;
 import io.zeebe.model.bpmn.BpmnModelInstance;
 
@@ -48,11 +48,11 @@ public class PaymentRestHacksControllerV3 {
           .zeebeTaskRetries(2) //        
         .endEvent().done();
     
-    zeebe.workflowClient().newDeployCommand() // 
+    zeebe.newDeployCommand() // 
       .addWorkflowModel(flow, "payment.bpmn") //
       .send().join();
 
-    worker = zeebe.jobClient().newWorker()
+    worker = zeebe.newWorker()
         .jobType("charge-creditcard-v3") // 
         .handler(handler) // 
         .open();  
@@ -66,9 +66,9 @@ public class PaymentRestHacksControllerV3 {
     private String stripeChargeUrl = "http://localhost:8099/charge";
 
     @Override
-    public void handle(JobClient client, JobEvent job) {
+	public void handle(JobClient client, ActivatedJob job) throws Exception {
       CreateChargeRequest request = new CreateChargeRequest();
-      request.amount = (int) job.getPayloadAsMap().get("amount");
+      request.amount = (int) job.getVariablesAsMap().get("amount");
 
       CreateChargeResponse response = new HystrixCommand<CreateChargeResponse>(HystrixCommandGroupKey.Factory.asKey("stripe")) {
         protected CreateChargeResponse run() throws Exception {
@@ -79,8 +79,8 @@ public class PaymentRestHacksControllerV3 {
         }
       }.execute();
       
-      client.newCompleteCommand(job) //
-        .payload(Collections.singletonMap("paymentTransactionId", response.transactionId))
+      client.newCompleteCommand(job.getKey()) //
+        .variables(Collections.singletonMap("paymentTransactionId", response.transactionId))
         .send().join();
     }
 
@@ -99,10 +99,10 @@ public class PaymentRestHacksControllerV3 {
   }
 
   public void chargeCreditCard(String customerId, long remainingAmount) {
-    zeebe.workflowClient().newCreateInstanceCommand() //
+    zeebe.newCreateInstanceCommand() //
       .bpmnProcessId("paymentV3")
       .latestVersion()
-      .payload(Collections.singletonMap("amount", remainingAmount))
+      .variables(Collections.singletonMap("amount", remainingAmount))
       .send().join();
   }
   

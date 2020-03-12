@@ -24,11 +24,11 @@ import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
-import io.zeebe.gateway.ZeebeClient;
-import io.zeebe.gateway.api.clients.JobClient;
-import io.zeebe.gateway.api.events.JobEvent;
-import io.zeebe.gateway.api.subscription.JobHandler;
-import io.zeebe.gateway.api.subscription.JobWorker;
+import io.zeebe.client.ZeebeClient;
+import io.zeebe.client.api.response.ActivatedJob;
+import io.zeebe.client.api.worker.JobClient;
+import io.zeebe.client.api.worker.JobHandler;
+import io.zeebe.client.api.worker.JobWorker;
 import io.zeebe.model.bpmn.Bpmn;
 import io.zeebe.model.bpmn.BpmnModelInstance;
 
@@ -57,16 +57,16 @@ public class PaymentRestHacksControllerV4 {
           // TODO: Still missing in current Zeebe: Ability to use expression language here to start dedicated "Response Queue" for Client
         .endEvent().done();
     
-    workers.add( zeebe.jobClient().newWorker()
+    workers.add( zeebe.newWorker()
       .jobType("charge-creditcard-v4") // 
       .handler(chargeCreditCardHandlerV4) // 
       .open());
-    workers.add( zeebe.jobClient().newWorker()
+    workers.add( zeebe.newWorker()
       .jobType("payment-response-v4") // 
       .handler(new NotifySemaphorHandler()) // 
       .open());
   
-    zeebe.workflowClient().newDeployCommand() // 
+    zeebe.newDeployCommand() // 
       .addWorkflowModel(flow, "payment.bpmn") //
       .send().join();
   }
@@ -79,9 +79,9 @@ public class PaymentRestHacksControllerV4 {
     private String stripeChargeUrl = "http://localhost:8099/charge";
 
     @Override
-    public void handle(JobClient client, JobEvent job) {
+	public void handle(JobClient client, ActivatedJob job) throws Exception {
       CreateChargeRequest request = new CreateChargeRequest();
-      request.amount = (int) job.getPayloadAsMap().get("amount");
+      request.amount = (int) job.getVariablesAsMap().get("amount");
 
       CreateChargeResponse response = new HystrixCommand<CreateChargeResponse>(HystrixCommandGroupKey.Factory.asKey("stripe")) {
         protected CreateChargeResponse run() throws Exception {
@@ -92,8 +92,8 @@ public class PaymentRestHacksControllerV4 {
         }
       }.execute();
       
-      client.newCompleteCommand(job) //
-        .payload(Collections.singletonMap("paymentTransactionId", response.transactionId))
+      client.newCompleteCommand(job.getKey()) //
+        .variables(Collections.singletonMap("paymentTransactionId", response.transactionId))
         .send().join();
     }
 
@@ -123,10 +123,10 @@ public class PaymentRestHacksControllerV4 {
     variables.put("amount", remainingAmount);
     variables.put("traceId", traceId);
     
-    zeebe.workflowClient().newCreateInstanceCommand() //
+    zeebe.newCreateInstanceCommand() //
       .bpmnProcessId("paymentV4")
       .latestVersion()
-      .payload(variables)
+      .variables(variables)
       .send().join();
   }
   
@@ -135,14 +135,14 @@ public class PaymentRestHacksControllerV4 {
     public static Map<String, Semaphore> semaphors = new HashMap<>();
 
     @Override
-    public void handle(JobClient client, JobEvent job) {
-      String traceId = (String) job.getPayloadAsMap().get("traceId");
+	public void handle(JobClient client, ActivatedJob job) throws Exception {
+      String traceId = (String) job.getVariablesAsMap().get("traceId");
       Semaphore s = semaphors.get(traceId);
       if (s!=null) {
         s.release();
         semaphors.remove(traceId);
       }
-      client.newCompleteCommand(job).send().join();
+      client.newCompleteCommand(job.getKey()).send().join();
     }
 
     public static Semaphore newSemaphore(String traceId) {

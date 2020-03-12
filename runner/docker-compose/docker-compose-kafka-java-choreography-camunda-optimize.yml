@@ -1,0 +1,158 @@
+version: "2"
+
+services:
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:latest"
+    hostname: zookeeper
+    networks:
+      - flowing
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: "confluentinc/cp-kafka:latest"
+    hostname: kafka
+    networks:
+      - flowing
+    ports:
+      - 9092:9092
+      - 29092:29092      
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  checkout:
+    image: flowingretail/kafka-java-checkout
+    networks:
+      - flowing
+    ports:
+      - "8091:8091"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+
+  payment:
+    image: flowingretail/kafka-java-choreography-payment
+    networks:
+      - flowing
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+
+  inventory:
+    image: flowingretail/kafka-java-choreography-inventory
+    networks:
+      - flowing
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+
+  shipping:
+    image: flowingretail/kafka-java-choreography-shipping
+    networks:
+      - flowing
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+
+  monitor:
+    image: flowingretail/kafka-java-monitor
+    networks:
+      - flowing
+    ports:
+      - "8095:8095"
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+
+  docs:
+    image: flowingretail/docs
+    networks:
+      - flowing
+    ports:
+      - "8099:80"
+
+  ### Optimize Process Events Monitoring
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.1
+    networks:
+      - flowing
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - elasticsearch-logs:/usr/share/elasticsearch/logs
+    restart: always
+    mem_limit: 2g
+
+  cambpm:
+    image: registry.camunda.cloud/camunda-bpm-platform-ee:7.12.1
+    networks:
+      - flowing
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - 8080:8080
+    restart: always
+    mem_limit: 1g
+
+  optimize:
+    image: registry.camunda.cloud/optimize:3.0.0-alpha2
+    networks:
+      - flowing
+    environment:
+      - OPTIMIZE_CAMUNDABPM_REST_URL=http://cambpm:8080/engine-rest
+      - OPTIMIZE_ELASTICSEARCH_HOST=elasticsearch
+      - OPTIMIZE_EVENT_BASED_PROCESSES_ENABLED=true
+      - OPTIMIZE_EVENT_BASED_PROCESSES_USER_IDS=['demo']
+      - OPTIMIZE_EVENT_INGESTION_ACCESS_TOKEN=mytoken
+    ports:
+      - 8090:8090
+    depends_on:
+      - cambpm
+      - elasticsearch
+    restart: always
+    mem_limit: 2g
+    volumes:
+      - ./OptimizeLicense.txt:/optimize/environment/OptimizeLicense.txt
+
+  optimizeingest:
+    image: flowingretail/kafka-camunda-optimize-ingest
+    networks:
+      - flowing
+    depends_on:
+      - kafka
+      - optimize
+    environment:
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_ZKNODES=zookeeper:2181
+      - CAMUNDA_OPTIMIZE_INGESTION_ENDPOINT=http://optimize:8090/api/ingestion/event/batch
+      - CAMUNDA_OPTIMIZE_INGESTION_ACCESSTOKEN=mytoken
+
+
+
+####
+volumes:
+  elasticsearch-data:
+  elasticsearch-logs:
+
+networks:
+  flowing:
+    driver: bridge

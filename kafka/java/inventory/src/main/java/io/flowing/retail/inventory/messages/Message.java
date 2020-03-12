@@ -3,97 +3,106 @@ package io.flowing.retail.inventory.messages;
 import java.util.Date;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class Message<T> {
 
-  private String messageType;
-  private String id = UUID.randomUUID().toString(); // unique id of this message
-  private String traceId = UUID.randomUUID().toString(); // trace id, default: new unique
-  private String sender = "Inventory";
-  private Date timestamp = new Date();
-  private String correlationId; // id which can be used for correlation later if required
-
-  private T payload;
+  // Cloud Events compliant 
+  private String type;
+  private String id = UUID.randomUUID().toString(); // unique id of this message  
+  private String source = "Inventory";
+  private Date time = new Date();
+  private T data;
+  private String datacontenttype="application/json";
+  private String specversion="1.0";
+  
+  // Extension attributes
+  private String traceid = UUID.randomUUID().toString(); // trace id, default: new unique
+  private String correlationid; // id which can be used for correlation later if required
+  private String group = "flowing-retail";
   
   public Message() {    
   }
   
   public Message(String type, T payload) {
-    this.messageType = type;
-    this.payload = payload;
+    this.type = type;
+    this.data = payload;
   }
   
-  public Message(String type, String traceId, T payload) {
-    this.messageType = type;
-    this.traceId = traceId;
-    this.payload = payload;
+  public Message(String type, String traceid, T payload) {
+    this.type = type;
+    this.traceid = traceid;
+    this.data = payload;
   }
 
-  public String getMessageType() {
-    return messageType;
+  @Override
+  public String toString() {
+    return "Message [type=" + type + ", id=" + id + ", time=" + time + ", data=" + data + ", correlationid=" + correlationid + ", traceid=" + traceid + "]";
   }
 
-  public Message<T> setMessageType(String messageType) {
-    this.messageType = messageType;
-    return this;
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 
   public String getId() {
     return id;
   }
 
-  public Message<T> setId(String id) {
+  public void setId(String id) {
     this.id = id;
+  }
+
+  public Date getTime() {
+    return time;
+  }
+
+  public void setTime(Date time) {
+    this.time = time;
+  }
+
+  public T getData() {
+    return data;
+  }
+
+  public void setData(T data) {
+    this.data = data;
+  }
+
+  public String getTraceid() {
+    return traceid;
+  }
+
+  public void setTraceid(String traceid) {
+    this.traceid = traceid;
+  }
+
+  public String getCorrelationid() {
+    return correlationid;
+  }
+
+  public Message<T> setCorrelationid(String correlationid) {
+    this.correlationid = correlationid;
     return this;
   }
 
-  public Date getTimestamp() {
-    return timestamp;
+  public String getSource() {
+    return source;
   }
 
-  public Message<T> setTimestamp(Date timestamp) {
-    this.timestamp = timestamp;
-    return this;
+  public String getDatacontenttype() {
+    return datacontenttype;
   }
 
-  public T getPayload() {
-    return payload;
+  public String getSpecversion() {
+    return specversion;
   }
 
-  public Message<T> setPayload(T payload) {
-    this.payload = payload;
-    return this;
-  }
-
-  public String getTraceId() {
-    return traceId;
-  }
-
-  public Message<T> setTraceId(String traceId) {
-    this.traceId = traceId;
-    return this;    
-  }
-
-  public String getSender() {
-    return sender;
-  }
-
-  public Message<T> setSender(String sender) {
-    this.sender = sender;
-    return this;    
-  }
-
-  public String getCorrelationId() {
-    return correlationId;
-  }
-
-  public Message<T> setCorrelationId(String correlationId) {
-    this.correlationId = correlationId;
-    return this;
-  }
-  
-  @Override
-  public String toString() {
-    return "Message [messageType=" + messageType + ", id=" + id + ", timestamp=" + timestamp + ", payload=" + payload + ", correlationId=" + correlationId + "]";
+  public String getGroup() {
+    return group;
   }
 
 }

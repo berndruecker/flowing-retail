@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.flowing.retail.kafka.order.domain.Order;
-import io.flowing.retail.kafka.order.domain.OrderFlowContext;
+import io.flowing.retail.kafka.order.flow.OrderFlowContext;
 import io.flowing.retail.kafka.order.flow.payload.GoodsFetchedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.GoodsShippedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.PaymentReceivedEventPayload;
@@ -32,12 +32,15 @@ public class MessageListener {
 
 	@Autowired
 	private ZeebeClient zeebe;
+	
+  @Autowired
+  private ObjectMapper objectMapper;	
 
-  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='OrderPlacedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['type']?:'')=='OrderPlacedEvent'")
   public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
     // read data
-    Message<Order> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<Order>>() {});
-    Order order = message.getPayload();
+    Message<Order> message = objectMapper.readValue(messageJson, new TypeReference<Message<Order>>() {});
+    Order order = message.getData();
     
     // persist domain entity
     // (if we want to do this "transactional" this could be a step in the workflow)
@@ -46,43 +49,43 @@ public class MessageListener {
     // prepare data for workflow
     OrderFlowContext context = new OrderFlowContext();
     context.setOrderId(order.getId());
-    context.setTraceId(message.getTraceId());
+    context.setTraceId(message.getTraceid());
 
     // and kick of a new flow instance
-    System.out.println("New order placed, start flow. " + context.asJson());
+    System.out.println("New order placed, start flow with " + context);
     zeebe.newCreateInstanceCommand() //
         .bpmnProcessId("order-kafka") //
         .latestVersion() // 
-        .variables(context.asJson()) //
+        .variables(context.asMap()) //
         .send().join();
   }
 
-  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='PaymentReceivedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['type']?:'')=='PaymentReceivedEvent'")
   @Transactional
   public void paymentReceived(String messageJson) throws Exception {
-    Message<PaymentReceivedEventPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<PaymentReceivedEventPayload>>() {});
+    Message<PaymentReceivedEventPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<PaymentReceivedEventPayload>>() {});
 
-    PaymentReceivedEventPayload event = message.getPayload(); // TODO: Read something from it? 
+    PaymentReceivedEventPayload event = message.getData(); // TODO: Read something from it? 
 
     zeebe.newPublishMessageCommand() //
-      .messageName(message.getMessageType())
-      .correlationKey(message.getCorrelationId())
+      .messageName(message.getType())
+      .correlationKey(message.getCorrelationid())
       .variables(Collections.singletonMap("paymentInfo", "YeahWeCouldAddSomething"))
       .send().join();
     
     System.out.println("Correlated " + message );
   }
 
-  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='GoodsFetchedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['type']?:'')=='GoodsFetchedEvent'")
   @Transactional
   public void goodsFetchedReceived(String messageJson) throws Exception {
-    Message<GoodsFetchedEventPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<GoodsFetchedEventPayload>>() {});
+    Message<GoodsFetchedEventPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<GoodsFetchedEventPayload>>() {});
 
-    String pickId = message.getPayload().getPickId();     
+    String pickId = message.getData().getPickId();     
 
     zeebe.newPublishMessageCommand() //
-        .messageName(message.getMessageType()) //
-        .correlationKey(message.getCorrelationId()) // 
+        .messageName(message.getType()) //
+        .correlationKey(message.getCorrelationid()) // 
         .variables(Collections.singletonMap("pickId", pickId)) //
         .send().join();
 
@@ -90,16 +93,16 @@ public class MessageListener {
   }
 
 
-  @StreamListener(target = Sink.INPUT, condition = "(headers['messageType']?:'')=='GoodsShippedEvent'")
+  @StreamListener(target = Sink.INPUT, condition = "(headers['type']?:'')=='GoodsShippedEvent'")
   @Transactional
   public void goodsShippedReceived(String messageJson) throws Exception {
-    Message<GoodsShippedEventPayload> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<GoodsShippedEventPayload>>() {});
+    Message<GoodsShippedEventPayload> message = objectMapper.readValue(messageJson, new TypeReference<Message<GoodsShippedEventPayload>>() {});
 
-    String shipmentId = message.getPayload().getShipmentId();     
+    String shipmentId = message.getData().getShipmentId();     
 
     zeebe.newPublishMessageCommand() //
-        .messageName(message.getMessageType()) //
-        .correlationKey(message.getCorrelationId()) //
+        .messageName(message.getType()) //
+        .correlationKey(message.getCorrelationid()) //
         .variables(Collections.singletonMap("shipmentId", shipmentId)) //
         .send().join();
 

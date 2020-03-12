@@ -32,7 +32,7 @@ function newEventReceived(event) {
         color = 'danger'; // or 'warning'?
     }
     var randomId = Math.floor((1 + Math.random()) * 0x10000);
-    var prettyJson = JSON.stringify(JSON.parse(event.content), null, 2);
+    var prettyJson = JSON.stringify(JSON.parse(event.sourceJson), null, 2);
     var html = 
           '<div class="alert alert-'+color+'">'+event.type+': '+event.name+' (from '+event.sender+') '          
         + '<a label="Details" data-toggle="collapse" data-target="#'+randomId+'" class="btn btn-default table-row-btn"><span class="glyphicon glyphicon-eye-open"></span></a>'

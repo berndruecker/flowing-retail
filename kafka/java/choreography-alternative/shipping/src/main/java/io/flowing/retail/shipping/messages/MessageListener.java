@@ -26,13 +26,17 @@ public class MessageListener {
   @Autowired
   private ShippingService shippingService;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @StreamListener(target = Sink.INPUT, 
-      condition="(headers['messageType']?:'')=='GoodsFetchedEvent'")
+      condition="(headers['type']?:'')=='GoodsFetchedEvent'")
   @Transactional
   public void shipGoodsCommandReceived(String messageJson) throws Exception {
-    Message<JsonNode> message = new ObjectMapper().readValue(messageJson, new TypeReference<Message<JsonNode>>(){});
-    ObjectNode payload = (ObjectNode) message.getPayload();
-    GoodsFetchedEventPayload payloadEvent = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) //
+    Message<JsonNode> message = objectMapper.readValue(messageJson, new TypeReference<Message<JsonNode>>(){});
+    ObjectNode payload = (ObjectNode) message.getData();
+    GoodsFetchedEventPayload payloadEvent = objectMapper //
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) //
         .treeToValue(payload, GoodsFetchedEventPayload.class);
 
     String shipmentId = shippingService.createShipment( //
@@ -46,14 +50,14 @@ public class MessageListener {
     messageSender.send( //
         new Message<JsonNode>( //
             "GoodsShippedEvent", //
-            message.getTraceId(), //
+            message.getTraceid(), //
             payload));
     // as nobody else can send an order completed event I will issue it here
     // Bad smell (order context is missing)
     messageSender.send( //
         new Message<JsonNode>( //
             "OrderCompletedEvent", //
-            message.getTraceId(), //
+            message.getTraceid(), //
             payload));
   }
     

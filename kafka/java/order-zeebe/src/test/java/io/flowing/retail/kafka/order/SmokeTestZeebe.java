@@ -1,6 +1,6 @@
 package io.flowing.retail.kafka.order;
 
-import io.flowing.retail.kafka.order.domain.OrderFlowContext;
+import io.flowing.retail.kafka.order.flow.OrderFlowContext;
 import io.zeebe.client.ZeebeClient;
 
 public class SmokeTestZeebe {
@@ -23,11 +23,11 @@ public class SmokeTestZeebe {
 	    context.setTraceId("123");
 
 	    // and kick of a new flow instance
-	    System.out.println("New order placed, start flow. " + context.asJson());
+	    System.out.println("New order placed, start flow. " + context);
 	    zeebe.newCreateInstanceCommand() //
 	        .bpmnProcessId("order-kafka") //
 	        .latestVersion() // 
-	        .variables(context.asJson()) //
+	        .variables(context.asMap()) //
 	        .send().join();
 
 	    

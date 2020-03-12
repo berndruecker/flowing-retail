@@ -5,10 +5,9 @@
 	<artifactId>flowing-retail-kafka-monitor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>		
-		<spring-cloud-stream.version>Germantown.RELEASE</spring-cloud-stream.version>
+		<maven.compiler.release>8</maven.compiler.release>
+		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
+		<spring-cloud-stream.version>Horsham.RELEASE</spring-cloud-stream.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -61,7 +60,7 @@
 		<dependency>
 		    <groupId>org.webjars</groupId>
 		    <artifactId>jquery</artifactId>
-		    <version>3.1.1</version>
+		    <version>3.4.1</version>
 		</dependency>		
         <dependency>
             <groupId>org.webjars</groupId>
@@ -99,6 +98,11 @@
 			        </execution>
 			    </executions>
 	        </plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
+			</plugin>
     	</plugins>
     </build>
 </project>
