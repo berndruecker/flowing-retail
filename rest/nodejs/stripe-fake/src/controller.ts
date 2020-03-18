@@ -2,11 +2,12 @@ import { v4 as uuid } from "uuid";
 
 export const fakeStripeController = {
   slow: false,
-  handler: (_, res) => {
+  handler: (req, res) => {
     const waitTimeMillis = fakeStripeController.slow
-      ? 0
-      : Math.floor(Math.random() * 60 * 1000);
+      ? Math.floor(Math.random() * 60 * 1000)
+      : 0;
 
+    console.log(`Charge for ${req.body.traceId}`);
     console.log(
       `Charge on credit card will take ${waitTimeMillis / 1000} seconds`
     );

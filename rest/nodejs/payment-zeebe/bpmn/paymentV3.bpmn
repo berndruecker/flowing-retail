@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1hvsvjo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.8.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1hvsvjo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.8.0">
   <bpmn:process id="paymentV3" name="paymentV3" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_1r3ncia</bpmn:outgoing>
@@ -9,14 +9,29 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1796qrk" sourceRef="charge-creditcard-v3" targetRef="EndEvent_1wp4s35" />
     <bpmn:sequenceFlow id="SequenceFlow_1r3ncia" sourceRef="StartEvent_1" targetRef="charge-creditcard-v3" />
-    <bpmn:serviceTask id="charge-creditcard-v3" name="Stripe">
+    <bpmn:serviceTask id="charge-creditcard-v3" name="Charge Credit card">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="charge-creditcard-v3" retries="2" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1r3ncia</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_07gic52</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1796qrk</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_0sgthnb" name="Service 503" attachedToRef="charge-creditcard-v3">
+      <bpmn:outgoing>SequenceFlow_0rijvqc</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1a0de1k" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0rijvqc" sourceRef="IntermediateThrowEvent_0sgthnb" targetRef="IntermediateThrowEvent_1o0w84s" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1o0w84s" name="10 second">
+      <bpmn:incoming>SequenceFlow_0rijvqc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07gic52</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_07gic52" sourceRef="IntermediateThrowEvent_1o0w84s" targetRef="charge-creditcard-v3" />
   </bpmn:process>
+  <bpmn:error id="Error_1a0de1k" name="Not Available" errorCode="503" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="paymentV3">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
@@ -36,6 +51,29 @@
       <bpmndi:BPMNShape id="ServiceTask_0r97e7w_di" bpmnElement="charge-creditcard-v3">
         <dc:Bounds x="300" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_05tbuo9_di" bpmnElement="IntermediateThrowEvent_0sgthnb">
+        <dc:Bounds x="352" y="139" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="390" y="173" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rijvqc_di" bpmnElement="SequenceFlow_0rijvqc">
+        <di:waypoint x="370" y="175" />
+        <di:waypoint x="370" y="240" />
+        <di:waypoint x="308" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0nzy70z_di" bpmnElement="IntermediateThrowEvent_1o0w84s">
+        <dc:Bounds x="272" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="266" y="265" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_07gic52_di" bpmnElement="SequenceFlow_07gic52">
+        <di:waypoint x="272" y="240" />
+        <di:waypoint x="240" y="240" />
+        <di:waypoint x="240" y="147" />
+        <di:waypoint x="300" y="147" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

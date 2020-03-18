@@ -16,7 +16,7 @@
     "brakes": "^2.8.0",
     "express": "^4.17.1",
     "uuid": "^7.0.2",
-    "zeebe-node": "^0.23.0-alpha.2"
+    "zeebe-node": "^0.23.0-alpha.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.3"

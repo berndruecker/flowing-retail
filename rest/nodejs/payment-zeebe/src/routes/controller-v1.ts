@@ -9,14 +9,15 @@ export const routev1 = async (req, res) => {
   const customerId = "0815";
   const amount = 15;
 
-  await chargeCreditCard(customerId, amount);
+  await chargeCreditCard({ customerId, amount, traceId });
   res.json({ status: "completed", traceId });
 };
 
-async function chargeCreditCard(customerId, remainingAmount) {
+async function chargeCreditCard({ customerId, amount, traceId }) {
   const response = await axios.post(stripeChargeUrl, {
-    amount: remainingAmount,
-    customerId
+    amount,
+    customerId,
+    traceId
   });
   return response.data.transactionId;
 }

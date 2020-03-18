@@ -25,23 +25,28 @@ export const routev4 = async (_, res) => {
     .then(() => res.json({ status: "completed", traceId }))
     .catch(e => {
       if (e.message.includes("DEADLINE")) {
-        res.json({ status: "pending", traceId });
+        res.status(202).json({ status: "pending", traceId });
       } else {
-        throw e;
+        res.status(500).json({ error: e.toString() });
       }
     });
 };
+
+const brake = new Brakes(axios.post, {
+  timeout: 150
+});
 
 zbc.createWorker<{ amount: number; traceId: string }>({
   taskType: "charge-creditcard-v4",
   taskHandler: async (job, complete) => {
     const { amount, traceId } = job.variables;
     const request = { amount, traceId };
-    const brake = new Brakes(axios.post(stripeChargeUrl, request), {
-      timeout: 150
-    });
-    const res = await brake.exec();
-    complete.success({ paymentTransactionId: res.transactionId });
+    brake
+      .exec(stripeChargeUrl, request)
+      .then(res =>
+        complete.success({ paymentTransactionId: res.transactionId })
+      )
+      .catch(e => complete.error("503", "Service unavailable"));
   }
 });
 

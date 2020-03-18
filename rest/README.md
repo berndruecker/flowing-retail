@@ -1,21 +1,22 @@
 # Flowing Retail / REST
 
-This folder contains services that connect via REST. Currently this is reduced to showcasing resilience patterns.
+This folder contains services that connect via REST. Currently, this is reduced to showcasing resilience patterns.
 
 # Sample service demonstrating stateful resilience patterns in a REST environment
 
-This sample (micro-)service can retrieve payments and therefor needs to be called via REST. It requires an upstream REST service to charge credit cards.
+This sample REST (micro-)service effects payments in response to a PUT call. It requires an upstream REST service that charges credit cards.
 
 ![REST callstack](../docs/resilience-patterns/situation.png)
 
-This simple call-chain is great to demonstrate various important resilience patterns.
+This simple call-chain is perfect for demonstrating important resilience patterns.
 
-There are the following technology choices available for the code demos:
+The following technology choices are available for the code demos:
 
 * [**Java**](java/payment) + Spring, Hystrix, Camunda
 * [**C#**](csharp/payment) + Polly, Camunda
+* [**Node.js**](nodejs/payment) + [Brakes](https://github.com/awolden/brakes), Zeebe on Camunda Cloud
 
-There is a stripped down version available for:
+There is a stripped-down version available for:
 
 * [**GoLang**](go/payment-zeebe), Zeebe
 
@@ -24,29 +25,31 @@ There is a stripped down version available for:
 
 See **Fail fast is not enough**: https://blog.bernd-ruecker.com/fail-fast-is-not-enough-84645d6864d3
 
-Assume the credit card service goes nuts, meaning it still responds, but very slow. Having no pattern in place this is the worst thing that can happen - as now the payment service will call the credit card service and block until he gets a response. As this take a long time all threads from the payment service are hold hostile and the payment service will eventually time out for its clients. Tiny failures somewhere in your system might blow up your whole system:
+Let's assume a scenario where the upstream credit card service still responds, but its very slow. With no resilience pattern in place, this is the worst thing that can happen - as now the payment service will call the credit card service and block until it gets a response. As this take a long time, all threads from the payment service are held hostage, and the payment service will eventually time out for its clients. Tiny failures somewhere in your system might blow up your whole system:
 
 ![V1](../docs/resilience-patterns/v1.png)
 
 * Java: [PaymentRestHacksControllerV1.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java)
 * C#: [PaymentControllerV1](csharp/payment/Controllers/PaymentController.cs#L16)
+* Node.js: [controller-v1.ts](nodejs/payment-zeebe/routes/controller-v1.ts)
 
 ## Fail fast
 
-The least you have to do is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix). If a service responds to slow the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (I cannot charge credit cards).
+A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix) (_and Polly for C# / Brakes for Node.js, which provide equivalent functionality_). If a service responds too slowly, the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (meaning: we cannot charge credit cards).
 
 ![V2](../docs/resilience-patterns/v2.png)
 
 * Java: [PaymentRestHacksControllerV2.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV2.java#L41)
 * C#: [PaymentControllerV2](csharp/payment/Controllers/PaymentController.cs#L74)
+* Node.js: [controller-v2.ts](nodejs/payment-zeebe/routes/controller-v2.ts#13)
 
 ## Fail fast is not enough
 
-But failing fast is not enough. Very often a retry after the credit card service has been fixed resolves the situation. This retry needs to be stateful to not only retry right away but again in a couple of minutes, hours or even days. Having this stateful retrying as possibility keeps the failure handling local to payment making the whole architecture less complex.
+But failing fast is not enough. Frequently, a retry after the credit card service has been fixed resolves the situation. This retry needs to be stateful to not only retry right away but again in a couple of minutes, hours or even days. Keeping this stateful retry local to the payment service reduces overall  architectural complexity.
 
 ![V3](../docs/resilience-patterns/v3.png)
 
-In the example I use the [Camunda workflow engine](http://camunda.com/) to do the stateful retry reliably.
+In the example, I use the [Camunda workflow engine](http://camunda.com/) (or Zeebe in Camunda Cloud) to do the stateful retry reliably.
 
 * Java
     * [PaymentRestHacksControllerV3.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV3.java#L45)
@@ -54,14 +57,17 @@ In the example I use the [Camunda workflow engine](http://camunda.com/) to do th
 * C#
     * [PaymentControllerV3](csharp/payment/Controllers/PaymentController.cs#L110)
     * [PaymentV3.bpmn](csharp/payment/Models/PaymentV3.bpmn)
+* Node.js
+    * [controller-v3.ts](nodejs/payment-zeebe/routes/controller-v3.ts#25)
+    * [paymentV3.bpmn](nodejs/payment-zeebe/bpmn/paymentV3.bpmn)
 
 ## Keep synchronous responses
 
-The processing just got asynchronous, which is often not wanted. In this scenario you could very well return a synchronous response whenever the credit card service is available, but switch to asynchronicity only if it is not.
+The processing just got asynchronous, which is often not wanted. In this scenario you could very well return a synchronous response whenever the credit card service is available, but switch to asynchronicity when it is not.
 
 ![V4](../docs/resilience-patterns/v4.png)
 
-HTTP supports this by differntiating the return code (200 OK means all OK, 202 ACCEPTED means I call you back later).
+HTTP supports this via return codes: `200 OK` means "_all OK_", `202 ACCEPTED` means "_I'll call you back later_".
 
 ![Sync vs. async](../docs/resilience-patterns/syncAsync.png)
 
@@ -71,14 +77,16 @@ HTTP supports this by differntiating the return code (200 OK means all OK, 202 A
 * C#
     * [PaymentControllerV4](csharp/payment/Controllers/PaymentController.cs#L159).
     * [PaymentV4.bpmn](csharp/payment/Models/PaymentV4.bpmn)
-
+* Nodejs
+    * [controller-v4.ts](nodejs/payment-zeebe/routes/controller-v3.ts#25)
+    * [paymentV4.bpmn](nodejs/payment-zeebe/bpmn/paymentV3.bpmn)
 
 
 ## Asynchronous work distribution without messaging
 
-An alternative to synchronously call an upstream service is to communicate asynchronously. The default would be messaging.
+An alternative to synchronously calling an upstream service is to communicate asynchronously. The default would be messaging.
 
-In this example I show one alternative which a lot of customers use very sucessfully: Using the workflow engine as work distribution, behaving like a queue. Therefor I leveraged a concept called [External Tasks](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/).
+This example shows a successful approach taken by many customers: using the workflow engine as work distribution, behaving like a queue. This  leverages the [External Tasks](https://docs.camunda.org/manual/latest/user-guide/process-engine/external-tasks/) pattern.
 
 ![Microservices](../docs/resilience-patterns/v5.png)
 
@@ -91,15 +99,13 @@ In this example I show one alternative which a lot of customers use very sucessf
     * [PaymentControllerV6](csharp/payment/Controllers/PaymentController.cs#L74)
 
 
-
 ## Business transactions using compensation
 
-The last part of the example adds compensation to the game. In distributed systems ACID transactions are not applicable (or at least do not scale well). Using compensation is the alternative - meaning that you reliably undo already executed work if something later on fails.
+The last part of the example adds compensation to the game. In distributed systems, ACID transactions are not applicable (or at least do not scale well). Using compensation is the alternative - meaning that you reliably undo already executed work if something later on fails.
 
 ![Microservices](../docs/resilience-patterns/v6.png)
 
 See [payment6.bpmn / Java](java/payment/src/main/resources/payment6.bpmn) and [PaymentV6.bpmn / C#](csharp/payment/Models/PaymentV6.bpmn) for the workflow
-
 
 # How-to run
 
@@ -108,8 +114,9 @@ You have to startup both services:
 * Payment Service
 
 This varies:
-* [How to run in Java](java/payment)
-* [How to run in .NET](csharp/payment)
+* [How to run in Java](java/payment-camunda/README.md)
+* [How to run in .NET](csharp/payment/README.md)
+* [How to run in Node.js](nodejs/payment-zeebe/README.md)
 
 Now the different versions of the payment service are available:
 
@@ -126,9 +133,6 @@ curl \
 -d '{}' \
 http://localhost:8100/api/payment/v1
 ```
-
-
-
 
 ## Hint on using Camunda Enterprise Edition
 

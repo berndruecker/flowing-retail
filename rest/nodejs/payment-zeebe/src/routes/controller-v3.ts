@@ -16,20 +16,31 @@ export const routev3 = async (req, res) => {
   const amount = 15;
 
   await zbc.createWorkflowInstance("paymentV3", {
-    amount
+    amount,
+    traceId
   });
 
   res.json({ status: "pending", traceId });
 };
 
-zbc.createWorker<{ amount: number }>({
+const brake = new Brakes(axios.post, {
+  timeout: 150
+});
+
+zbc.createWorker<{ amount: number; traceId: string }>({
   taskType: "charge-creditcard-v3",
   taskHandler: async (job, complete) => {
-    const request = { amount: job.variables.amount };
-    const brake = new Brakes(axios.post(stripeChargeUrl, request), {
-      timeout: 150
-    });
-    const res = await brake.exec();
-    complete.success({ paymentTransactionId: res.transactionId });
+    const { traceId, amount } = job.variables;
+    const request = { amount, traceId };
+    brake
+      .exec(stripeChargeUrl, request)
+      .then(res => {
+        console.log(`Payment processed for ${traceId}`);
+        complete.success({ paymentTransactionId: res.transactionId });
+      })
+      .catch(e => {
+        console.log(`Failure for ${traceId}! Sending BPMN Error 503.`);
+        complete.error("503", e.message);
+      });
   }
 });

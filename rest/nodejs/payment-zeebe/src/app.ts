@@ -1,7 +1,7 @@
 import express from "express";
 import { routev1, routev2, routev3, routev4 } from "./routes";
 const app = express();
-const port = 3000;
+const port = 8100;
 
 app.put("/api/payment/v1", routev1);
 app.put("/api/payment/v2", routev2);

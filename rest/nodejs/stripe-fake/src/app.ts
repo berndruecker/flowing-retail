@@ -1,11 +1,13 @@
 import express from "express";
 import { fakeStripeController } from "./controller";
+import bodyParser from "body-parser";
 import keypress from "keypress";
 
 keypress(process.stdin);
 
 const app = express();
 const port = 8099;
+app.use(bodyParser.json());
 
 app.post("/charge", fakeStripeController.handler);
 
