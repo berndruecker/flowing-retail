@@ -8,21 +8,19 @@ const stripeChargeUrl = "http://localhost:8099/charge";
 
 const zbc = new ZBClient();
 
-zbc.deployWorkflow(path.join(__dirname, "..", "..", "bpmn", "paymentV4.bpmn"));
-
-// See also https://github.com/zeebe-io/zeebe/issues/4080
+zbc.deployWorkflow(path.join(__dirname, "..", "..", "bpmn", "paymentV6.bpmn"));
 
 // /api/payment/v4
-export const routev4 = async (_, res) => {
+export const routev6 = async (_, res) => {
   const traceId = uuid();
-  // const customerId = "0815";
+  const customerId = "0815";
   const amount = 15;
 
   return zbc
     .createWorkflowInstanceWithResult({
-      bpmnProcessId: "paymentV4",
-      variables: { amount },
-      requestTimeout: 500
+      bpmnProcessId: "paymentV6",
+      variables: { amount, customerId, traceId },
+      requestTimeout: 1500
     })
     .then(() => res.json({ status: "completed", traceId }))
     .catch(e => {
@@ -40,7 +38,7 @@ const brake = new Brakes(axios.post, {
 });
 
 zbc.createWorker<{ amount: number; traceId: string }>({
-  taskType: "charge-creditcard-v4",
+  taskType: "charge-creditcard-v6",
   taskHandler: async (job, complete) => {
     const { amount, traceId } = job.variables;
     const request = { amount, traceId };
@@ -54,7 +52,32 @@ zbc.createWorker<{ amount: number; traceId: string }>({
 });
 
 zbc.createWorker<{ amount: number }>({
-  taskType: "payment-response-v4",
+  taskType: "customer-credit-refund-v6",
+  taskHandler: async (_, complete) => {
+    // Here is where you credit the customer account in the database
+    complete.success({
+      remainingAmount: 15,
+      amount: 15,
+      credit: 0
+    });
+  }
+});
+
+zbc.createWorker<{ amount: number }>({
+  taskType: "customer-credit-v6",
+  taskHandler: async (job, complete) => {
+    // Here you get the customer credit from a database, decrement it
+    // and apply the credit to the purchase
+    const credit = Math.floor(Math.random() * 16);
+    complete.success({
+      remainingAmount: job.variables.amount - credit,
+      credit
+    });
+  }
+});
+
+zbc.createWorker<{ amount: number }>({
+  taskType: "payment-response-v6",
   taskHandler: async (job, complete) => {
     // You need to implement a callback mechanism here to communicate
     // the outcome if the sync response didn't pan out

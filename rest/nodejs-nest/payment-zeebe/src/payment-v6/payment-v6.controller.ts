@@ -1,14 +1,13 @@
-import { Controller, Put, Inject } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
-import axios from 'axios';
-import * as Brakes from 'brakes';
-import { ZBClient } from 'zeebe-node';
-import { CompleteFn, Job } from 'zeebe-node';
+import { Controller, Inject, Put, Res } from '@nestjs/common';
 import { ZEEBE_CONNECTION_PROVIDER, ZeebeWorker } from '@payk/nestjs-zeebe';
-import { Ctx, Payload } from '@nestjs/microservices';
+import { ZBClient, Job, CompleteFn } from 'zeebe-node';
+import { Payload, Ctx } from '@nestjs/microservices';
+import { v4 as uuid } from 'uuid';
 import * as path from 'path';
-import { Res } from '@nestjs/common';
 import { Response } from 'express';
+import * as Brakes from 'brakes';
+import axios from 'axios';
+
 const stripeChargeUrl = 'http://localhost:8099/charge';
 
 const brake = new Brakes(axios.post, {
@@ -16,26 +15,26 @@ const brake = new Brakes(axios.post, {
 });
 
 @Controller('/api/payment')
-export class PaymentV4Controller {
+export class PaymentV6Controller {
   constructor(
     @Inject(ZEEBE_CONNECTION_PROVIDER) private readonly zbClient: ZBClient,
   ) {
     this.zbClient.deployWorkflow(
-      path.join(__dirname, '..', '..', 'bpmn', 'paymentV4.bpmn'),
+      path.join(__dirname, '..', '..', 'bpmn', 'paymentV6.bpmn'),
     );
   }
 
-  @Put('/v4')
+  @Put('/v6')
   async postPayment(@Res() res: Response) {
     const traceId = uuid();
-    // const customerId = "0815";
+    const customerId = '0815';
     const amount = 15;
 
     return this.zbClient
       .createWorkflowInstanceWithResult({
-        bpmnProcessId: 'paymentV4',
-        variables: { amount },
-        requestTimeout: 1500,
+        bpmnProcessId: 'paymentV6',
+        variables: { amount, customerId, traceId },
+        requestTimeout: 500,
       })
       .then(() => res.status(200).json({ status: 'completed', traceId }))
       .catch(e =>
@@ -45,7 +44,7 @@ export class PaymentV4Controller {
       );
   }
 
-  @ZeebeWorker('charge-creditcard-v4')
+  @ZeebeWorker('charge-creditcard-v6')
   async chargeCreditCard(
     @Payload() job: Job,
     @Ctx() complete: CompleteFn<any>,
@@ -60,11 +59,30 @@ export class PaymentV4Controller {
       .catch(() => complete.error('503', 'Service Down'));
   }
 
-  @ZeebeWorker('payment-response-v4')
-  paymentResponse(@Payload() job: Job, @Ctx() complete: CompleteFn<any>) {
+  @ZeebeWorker('customer-credit-refund-v6')
+  refund(@Payload() _: Job, @Ctx() complete: CompleteFn<any>) {
+    // Here is where you credit the customer account in the database
+    complete.success({
+      remainingAmount: 15,
+      amount: 15,
+      credit: 0,
+    });
+  }
+
+  @ZeebeWorker('customer-credit-v6')
+  chargeAccount(@Payload() job: Job, @Ctx() complete: CompleteFn<any>) {
+    // Here you get the customer credit from a database, decrement it
+    // and apply the credit to the purchase
+    const credit = Math.floor(Math.random() * 16);
+    complete.success({
+      remainingAmount: job.variables.amount - credit,
+      credit,
+    });
+  }
+
+  @ZeebeWorker('payment-response-v6')
+  paymentResponse(@Payload() _: Job, @Ctx() complete: CompleteFn<any>) {
     // If we returned 202 above, use callback, message, or populate poll endpoint with outcome
-    // tslint:disable-next-line: no-console
-    // console.log(job);
     complete.success();
   }
 }

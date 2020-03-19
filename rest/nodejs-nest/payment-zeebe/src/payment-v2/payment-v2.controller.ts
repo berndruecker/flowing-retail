@@ -1,9 +1,13 @@
 import { Controller, Put } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import axios from 'axios';
-import Brakes from 'brakes';
+import * as Brakes from 'brakes';
 
 const stripeChargeUrl = 'http://localhost:8099/charge';
+
+const brake = new Brakes(this.chargeCreditCard, {
+  timeout: 150,
+});
 
 @Controller('/api/payment')
 export class PaymentV2Controller {
@@ -13,18 +17,17 @@ export class PaymentV2Controller {
     const customerId = '0815';
     const amount = 15;
 
-    const brake = new Brakes(this.chargeCreditCard(customerId, amount), {
-      timeout: 150,
-    });
-
-    await brake.exec();
-    return { status: 'completed', traceId };
+    return brake
+      .exec({ customerId, amount, traceId })
+      .then(() => ({ status: 'completed', traceId }))
+      .catch(e => ({ error: e.message }));
   }
 
-  async chargeCreditCard(customerId, remainingAmount) {
+  async chargeCreditCard({ customerId, amount, traceId }) {
     const response = await axios.post(stripeChargeUrl, {
-      amount: remainingAmount,
+      amount,
       customerId,
+      traceId,
     });
     return response.data.transactionId;
   }

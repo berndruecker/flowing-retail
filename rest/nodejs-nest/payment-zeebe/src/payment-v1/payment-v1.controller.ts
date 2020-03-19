@@ -12,14 +12,15 @@ export class PaymentV1Controller {
     const customerId = '0815';
     const amount = 15;
 
-    await this.chargeCreditCard(customerId, amount);
+    await this.chargeCreditCard({ customerId, amount, traceId });
     return { status: 'completed', traceId };
   }
 
-  async chargeCreditCard(customerId, remainingAmount) {
+  async chargeCreditCard({ customerId, amount, traceId }) {
     const response = await axios.post(stripeChargeUrl, {
-      amount: remainingAmount,
+      amount,
       customerId,
+      traceId,
     });
     return response.data.transactionId;
   }

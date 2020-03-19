@@ -20,7 +20,7 @@ export const routev3 = async (req, res) => {
     traceId
   });
 
-  res.json({ status: "pending", traceId });
+  res.status(202).json({ status: "pending", traceId });
 };
 
 const brake = new Brakes(axios.post, {

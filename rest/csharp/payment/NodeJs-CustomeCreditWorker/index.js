@@ -1,14 +1,10 @@
-var request = require('request');
 const { Client, Variables } = require("camunda-external-task-client-js");
 
 const config = { baseUrl: "http://localhost:8080/engine-rest/engine/default/", interval: 50};
 const client = new Client(config);
 
 client.subscribe("customer-credit", async function({ task, taskService }) {
-  var remainingAmount = 0;
-  if (Math.random() > 0.3) {
-    remainingAmount = 15;   
-  }
+  const remainingAmount = (Math.random() > 0.3) ? 15 : 0;
 
   const processVariables = new Variables();
   processVariables.set("remainingAmount", remainingAmount);

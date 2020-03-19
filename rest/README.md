@@ -35,7 +35,7 @@ Let's assume a scenario where the upstream credit card service still responds, b
 
 ## Fail fast
 
-A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix) (_and Polly for C# / Brakes for Node.js, which provide equivalent functionality_). If a service responds too slowly, the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (meaning: we cannot charge credit cards).
+A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix) (_and [Polly](https://github.com/App-vNext/Polly) for C# / [Brakes](https://github.com/awolden/brakes) for Node.js, which provide equivalent functionality_). If a service responds too slowly, the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (meaning: we cannot charge credit cards).
 
 ![V2](../docs/resilience-patterns/v2.png)
 
@@ -43,13 +43,14 @@ A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker*
 * C#: [PaymentControllerV2](csharp/payment/Controllers/PaymentController.cs#L74)
 * Node.js: [controller-v2.ts](nodejs/payment-zeebe/routes/controller-v2.ts#13)
 
+
 ## Fail fast is not enough
 
-But failing fast is not enough. Frequently, a retry after the credit card service has been fixed resolves the situation. This retry needs to be stateful to not only retry right away but again in a couple of minutes, hours or even days. Keeping this stateful retry local to the payment service reduces overall  architectural complexity.
+Failing fast is good, but it is not enough. Frequently, a retry after the credit card service has been fixed resolves the situation (if the service was in a hard failure mode) - or a retry may discover that the earlier attempt succeeded, but took an abnormal amount of time (if the service is in a degraded performance mode). This retry needs to be stateful to not only retry right away but again in a couple of minutes, hours or even days. Keeping this stateful retry local to the payment service reduces overall architectural complexity.
 
 ![V3](../docs/resilience-patterns/v3.png)
 
-In the example, I use the [Camunda workflow engine](http://camunda.com/) (or Zeebe in Camunda Cloud) to do the stateful retry reliably.
+In the example, I use the [Camunda workflow engine](http://camunda.com/) (or Zeebe in [Camunda Cloud](https://camunda.io)) to do the stateful retry reliably.
 
 * Java
     * [PaymentRestHacksControllerV3.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV3.java#L45)
@@ -143,3 +144,7 @@ For Camunda there is an enterprise edition available with [https://camunda.com/p
 * .NET: Download the Camunda enterprise version
 
 Note that you do not need the enterprise edition to run the examples, the community edition will also do fine. But because of less features you do not see historical workflow instances - and that means you do not see that much in Camunda Cockpit if everything runs smoothly.
+
+## Using Camunda Cloud
+
+You can get a free hosted instance of Zeebe in Camunda Cloud at [https://camunda.io](https://camunda.io).
