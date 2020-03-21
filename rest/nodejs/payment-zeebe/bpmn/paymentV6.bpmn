@@ -42,7 +42,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_0j8j0xx" sourceRef="Task_12e9t5y" targetRef="Task_0eg06m6" />
     <bpmn:serviceTask id="Task_12e9t5y" name="Restore customer credit">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="customer-credit-refund" />
+        <zeebe:taskDefinition type="customer-credit-refund-v6" />
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0vfwx96</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0j8j0xx</bpmn:outgoing>
