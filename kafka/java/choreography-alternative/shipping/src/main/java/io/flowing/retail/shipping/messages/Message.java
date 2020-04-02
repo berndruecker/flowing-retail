@@ -1,6 +1,8 @@
 package io.flowing.retail.shipping.messages;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.Instant;
 import java.util.UUID;
 
 public class Message<T> {
@@ -9,7 +11,8 @@ public class Message<T> {
   private String type;
   private String id = UUID.randomUUID().toString(); // unique id of this message
   private String source = "Shipping-Choreography";
-  private Date time = new Date();
+  @JsonFormat(shape = JsonFormat.Shape.STRING) // ISO-8601 compliant format
+  private Instant time = Instant.now();
   private T data;
   private String datacontenttype="application/json";
   private String specversion="1.0";
@@ -54,11 +57,11 @@ public class Message<T> {
     this.id = id;
   }
 
-  public Date getTime() {
+  public Instant getTime() {
     return time;
   }
 
-  public void setTime(Date time) {
+  public void setTime(Instant time) {
     this.time = time;
   }
 
