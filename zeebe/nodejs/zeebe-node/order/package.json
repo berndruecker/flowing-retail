@@ -1,0 +1,17 @@
+{
+  "name": "order",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0",
+    "start": "tsc && node dist/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^3.8.3",
+    "zeebe-node": "^0.23.0-alpha.3"
+  }
+}

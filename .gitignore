@@ -1,3 +1,11 @@
+# Node
+node_modules
+dist
+
+.DS_Store
+.idea
+.vscode
+
 # Compiled class file
 *.class
 

@@ -1,0 +1,24 @@
+<html>
+
+<body>
+  Place your order: <br />
+  <img src="button.png" onclick="placeOrder()" style="width: 100px;"></img>
+  <div id="thanks"></div>
+</body>
+
+	<script type="text/javascript">
+    var count = 0;
+		function placeOrder() {
+			 $.ajax({
+              url: "./api/cart/order?customerId=123",
+              type: "put",
+              data: {}
+          }).done(function(result) {
+            count = count+1;
+            $('#thanks').html('Thank you for order #' + count + '.<br>Trace id: <b>' + JSON.parse(result).traceId + '</b>');
+          })
+		}
+	</script>
+  <script src="./jquery.min.js"></script>
+
+</html>

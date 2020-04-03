@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0qps476" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.8.0">
+  <bpmn:process id="paymentV4" name="paymentV4" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0jg9hdw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0jg9hdw" sourceRef="StartEvent_1" targetRef="Task_0li6hm0" />
+    <bpmn:sequenceFlow id="SequenceFlow_0w63tfk" sourceRef="Task_0li6hm0" targetRef="Task_0836c9u" />
+    <bpmn:endEvent id="EndEvent_1cgqpr3">
+      <bpmn:incoming>SequenceFlow_1kf7shs</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1kf7shs" sourceRef="Task_0836c9u" targetRef="EndEvent_1cgqpr3" />
+    <bpmn:serviceTask id="Task_0li6hm0" name="Charge Credit card">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="charge-creditcard-v4" retries="2" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0jg9hdw</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1yxus6c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0w63tfk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_0836c9u" name="response">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment-response-v4" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0w63tfk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1kf7shs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="IntermediateThrowEvent_0l8zn2n" name="Service Failed" attachedToRef="Task_0li6hm0">
+      <bpmn:outgoing>SequenceFlow_0hf27kh</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1eha144" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0hf27kh" sourceRef="IntermediateThrowEvent_0l8zn2n" targetRef="IntermediateThrowEvent_1ihw1b8" />
+    <bpmn:sequenceFlow id="SequenceFlow_1yxus6c" sourceRef="IntermediateThrowEvent_1ihw1b8" targetRef="Task_0li6hm0" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1ihw1b8" name="PT10S">
+      <bpmn:incoming>SequenceFlow_0hf27kh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yxus6c</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_1eha144" name="Service unavailable" errorCode="503" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="paymentV4">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jg9hdw_di" bpmnElement="SequenceFlow_0jg9hdw">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0w63tfk_di" bpmnElement="SequenceFlow_0w63tfk">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="450" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1cgqpr3_di" bpmnElement="EndEvent_1cgqpr3">
+        <dc:Bounds x="622" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kf7shs_di" bpmnElement="SequenceFlow_1kf7shs">
+        <di:waypoint x="550" y="117" />
+        <di:waypoint x="622" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1iryxp6_di" bpmnElement="Task_0li6hm0">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0d69vow_di" bpmnElement="Task_0836c9u">
+        <dc:Bounds x="450" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_12mwq7t_di" bpmnElement="IntermediateThrowEvent_0l8zn2n">
+        <dc:Bounds x="352" y="139" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="375" y="183" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hf27kh_di" bpmnElement="SequenceFlow_0hf27kh">
+        <di:waypoint x="370" y="175" />
+        <di:waypoint x="370" y="240" />
+        <di:waypoint x="328" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yxus6c_di" bpmnElement="SequenceFlow_1yxus6c">
+        <di:waypoint x="292" y="240" />
+        <di:waypoint x="280" y="240" />
+        <di:waypoint x="280" y="157" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1id4ybz_di" bpmnElement="IntermediateThrowEvent_1ihw1b8">
+        <dc:Bounds x="292" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="293" y="265" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
