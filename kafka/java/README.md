@@ -27,7 +27,7 @@ The default is that Camunda is used in these settings. When you want to use Zeeb
 
 ## Hint on using Camunda Enterprise Edition
 
-For Camunda there is an enterprise edition available with [https://camunda.com/products/cockpit/#/features](additional features in Cockpit) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
+For Camunda there is an enterprise edition available with [additional features in Cockpit](https://camunda.com/products/cockpit/#/features) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
 
 * Get a trial license if you don't have a license yet: https://camunda.com/download/enterprise/
 * Adjust Camunda version used in pom (order and payment use Camunda): [./order-camunda/pom.xml#L19](./order-camunda/pom.xml#L19), [./order-camunda/pom.xml#L69](./order-camunda/pom.xml#L69), [./payment-camunda/pom.xml#L13](./payment-camunda/pom.xml#L13) and [./payment-camunda/pom.xml#L63](./payment-camunda/pom.xml#L63)
@@ -38,17 +38,17 @@ Note that you do not need the enterprise edition to run the examples, the commun
 
 ## Docker Compose with pre-build Docker images
 
-* Download [docker-dist/docker-compose.yml](../../docker-dist/kafka-java-camunda/docker-compose.yml) or clone the source code
+* Download [docker-compose-kafka-java-order-camunda.yml](../../runner/docker-compose/docker-compose-kafka-java-order-camunda.yml) or clone this repo and goto [docker-compose/](../../runner/docker-compose/)
 * Goto directory where you downloaded this file
 
 ```
-cd docker-dist
+cd docker-compose
 ```
 
 * Start using docker compose:
 
 ```
-docker-compose up
+docker-compose -f docker-compose-kafka-java-order-camunda.yml up
 ```
 
 * After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
@@ -58,6 +58,8 @@ docker-compose up
 * You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
 
 If you like you can connect to Kafka from your local Docker host machine too. 
+
+Note that there are a couple of other docker-compose files available too, e.g. to play around with the choreography.
 
 
 ## Docker Compose with local build of Docker images
