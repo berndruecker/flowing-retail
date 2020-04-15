@@ -31,9 +31,9 @@ mvn exec:java
 
 Now the different versions of the payment service are available:
 
-* http://localhost:8100/api/payment/v1
+* http://localhost:8100/payment/v1
 * ...
-* http://localhost:8100/api/payment/v6
+* http://localhost:8100/payment/v6
 
 You now can issue a PUT with an empty body:
 

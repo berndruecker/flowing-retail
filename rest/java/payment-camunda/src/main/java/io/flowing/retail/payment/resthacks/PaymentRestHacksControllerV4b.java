@@ -90,7 +90,7 @@ public class PaymentRestHacksControllerV4b {
     }
   }  
 
-  @RequestMapping(path = "/api/payment/v4b", method = PUT)
+  @RequestMapping(path = "/payment/v4b", method = PUT)
   public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload

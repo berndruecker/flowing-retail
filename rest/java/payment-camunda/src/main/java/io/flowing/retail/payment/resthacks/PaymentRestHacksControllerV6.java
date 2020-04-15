@@ -35,7 +35,7 @@ public class PaymentRestHacksControllerV6 {
   @Autowired
   private ProcessEngine camunda;
 
-  @RequestMapping(path = "/api/payment/v6", method = PUT)
+  @RequestMapping(path = "/payment/v6", method = PUT)
   public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload
