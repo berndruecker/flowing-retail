@@ -7,10 +7,10 @@
 	<properties>
 		<maven.compiler.release>8</maven.compiler.release>
 		
-		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>		
-		<spring-cloud-stream.version>Germantown.RELEASE</spring-cloud-stream.version>
+		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
+		<spring-cloud-stream.version>Horsham.RELEASE</spring-cloud-stream.version>
 
-		<zeebe.version>0.22.1</zeebe.version>
+		<zeebe.version>0.25.0</zeebe.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -52,10 +52,10 @@
 			<!-- required to add JSR310 time formats for Jackson to ObjectMapper -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
-		</dependency>		
+		</dependency>
 		<dependency>
-			<groupId>io.zeebe</groupId>
-			<artifactId>zeebe-client-java</artifactId>
+			<groupId>io.zeebe.spring</groupId>
+			<artifactId>spring-zeebe-starter</artifactId>
 			<version>${zeebe.version}</version>
 		</dependency>
 		<!-- 

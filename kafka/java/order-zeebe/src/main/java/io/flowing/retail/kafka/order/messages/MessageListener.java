@@ -34,12 +34,11 @@ public class MessageListener {
 	private ZeebeClient zeebe;
 	
   @Autowired
-  private ObjectMapper objectMapper;	
+  private ObjectMapper objectMapper;
 
-  @StreamListener(target = Sink.INPUT, condition = "(headers['type']?:'')=='OrderPlacedEvent'")
-  public void orderPlacedReceived(String messageJson) throws JsonParseException, JsonMappingException, IOException {
-    // read data
-    Message<Order> message = objectMapper.readValue(messageJson, new TypeReference<Message<Order>>() {});
+  @StreamListener(target = Sink.INPUT,
+          condition="(headers['type']?:'')=='OrderPlacedEvent'")
+  public void orderPlacedReceived(Message<Order> message) throws JsonParseException, JsonMappingException, IOException {
     Order order = message.getData();
     
     // persist domain entity

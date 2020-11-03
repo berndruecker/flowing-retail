@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import io.zeebe.spring.client.annotation.ZeebeWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ import io.zeebe.client.api.worker.JobHandler;
 import io.zeebe.client.api.worker.JobWorker;
 
 @Component
-public class FetchGoodsAdapter implements JobHandler {
+public class FetchGoodsAdapter {
   
   @Autowired
   private MessageSender messageSender; 
@@ -30,26 +31,7 @@ public class FetchGoodsAdapter implements JobHandler {
   @Autowired
   private OrderRepository orderRepository;
 
-  @Autowired
-  private ZeebeClient zeebe;
-
-  private JobWorker subscription;
-  
-  @PostConstruct
-  public void subscribe() {
-    subscription = zeebe.newWorker()
-      .jobType("fetch-goods")
-      .handler(this)
-      .timeout(Duration.ofMinutes(1))
-      .open();      
-  }
-
-  @PreDestroy
-  public void closeSubscription() {
-    subscription.close();      
-  }
-
-  @Override
+  @ZeebeWorker(type = "fetch-goods")
   public void handle(JobClient client, ActivatedJob job) {
     OrderFlowContext context = OrderFlowContext.fromMap(job.getVariablesAsMap());
     Order order = orderRepository.findById( context.getOrderId() ).get();
