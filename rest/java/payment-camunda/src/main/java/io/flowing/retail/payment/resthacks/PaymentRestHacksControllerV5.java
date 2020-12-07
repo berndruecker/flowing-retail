@@ -1,5 +1,6 @@
 package io.flowing.retail.payment.resthacks;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.UUID;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.camunda.bpm.engine.history.HistoricProcessInstance;
 import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
@@ -19,6 +21,7 @@ import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.builder.EndEventBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -46,19 +49,11 @@ public class PaymentRestHacksControllerV5 {
     NotifySemaphorAdapter.removeSemaphore(traceId);
     
     if (finished) {
-      HistoricVariableInstance historicVariableInstance = camunda.getHistoryService().createHistoricVariableInstanceQuery()
-          .processInstanceId(pi.getId()) //
-          .variableName("paymentTransactionId") //
-          .singleResult();
-        if (historicVariableInstance!=null) {
-          String paymentTransactionId = (String)historicVariableInstance.getValue(); 
-          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
-        } else {
-          return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";        
-        }
+      response.setStatus(HttpServletResponse.SC_OK);
+      return resultUsingProcessHistory(traceId, pi.getId());
     } else {
       response.setStatus(HttpServletResponse.SC_ACCEPTED);
-      return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
+      return resultPending(traceId);
     }    
   }
 
@@ -66,6 +61,37 @@ public class PaymentRestHacksControllerV5 {
     return camunda.getRuntimeService() //
         .startProcessInstanceByKey("paymentV5", traceId,//
             Variables.putValue("amount", remainingAmount));
+  }
+
+  @RequestMapping(path = "/payment/v5/{traceId}/status", method = GET)
+  public String getPaymentStatus(@PathVariable("traceId") String traceId, HttpServletResponse response) throws Exception {
+    HistoricProcessInstance processInstance = camunda.getHistoryService() //
+            .createHistoricProcessInstanceQuery() //
+            .processInstanceBusinessKey(traceId) //
+            .singleResult();
+
+    if (processInstance.getEndTime()!=null) { // process has ended
+      return resultUsingProcessHistory(processInstance.getId(), traceId);
+    } else { // process has not yet ended
+      return resultPending(traceId);
+    }
+  }
+
+  private String resultPending(String traceId) {
+    return "{\"status\":\"pending\", \"traceId\": \"" + traceId + "\"}";
+  }
+
+  private String resultUsingProcessHistory(String processInstanceId, String traceId) {
+    HistoricVariableInstance historicVariableInstance = camunda.getHistoryService().createHistoricVariableInstanceQuery()
+            .processInstanceId(processInstanceId) //
+            .variableName("paymentTransactionId") //
+            .singleResult();
+    if (historicVariableInstance!=null) {
+      String paymentTransactionId = (String)historicVariableInstance.getValue();
+      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"paymentTransactionId\": \""+paymentTransactionId+"\"}";
+    } else {
+      return "{\"status\":\"completed\", \"traceId\": \"" + traceId + "\", \"payedByCredit\": \"true\"}";
+    }
   }
 
 }
