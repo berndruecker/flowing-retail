@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <bpmn:process id="order-zeebe" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0khqnmm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTaskRetrievePayment" name="Retrieve payment">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="retrieve-payment-z" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=order.totalSum" target="amount" />
+          <zeebe:input source="=order.orderId" target="refId" />
+          <zeebe:input source="=traceId" target="traceId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1e3ow6n</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1xjl1oj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0khqnmm" sourceRef="StartEvent_1" targetRef="ServiceTaskSaveOrder" />
+    <bpmn:serviceTask id="ServiceTaskFetchGoods" name="Fetch goods">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fetch-goods-z" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1xjl1oj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1bpuqsi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1xjl1oj" sourceRef="ServiceTaskRetrievePayment" targetRef="ServiceTaskFetchGoods" />
+    <bpmn:serviceTask id="ServiceTaskShipGoods" name="Ship goods">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="ship-goods-z" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1bpuqsi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0wm07rt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1bpuqsi" sourceRef="ServiceTaskFetchGoods" targetRef="ServiceTaskShipGoods" />
+    <bpmn:endEvent id="EndEvent_02dgehc">
+      <bpmn:incoming>SequenceFlow_0wm07rt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0wm07rt" sourceRef="ServiceTaskShipGoods" targetRef="EndEvent_02dgehc" />
+    <bpmn:serviceTask id="ServiceTaskSaveOrder" name="Save order">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="save-order-z" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0khqnmm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1e3ow6n</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1e3ow6n" sourceRef="ServiceTaskSaveOrder" targetRef="ServiceTaskRetrievePayment" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="order-zeebe">
+      <bpmndi:BPMNEdge id="SequenceFlow_1e3ow6n_di" bpmnElement="SequenceFlow_1e3ow6n">
+        <di:waypoint x="337" y="120" />
+        <di:waypoint x="370" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="188.5" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wm07rt_di" bpmnElement="SequenceFlow_0wm07rt">
+        <di:waypoint x="758" y="120" />
+        <di:waypoint x="802" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="660" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bpuqsi_di" bpmnElement="SequenceFlow_1bpuqsi">
+        <di:waypoint x="616" y="120" />
+        <di:waypoint x="658" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="517" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xjl1oj_di" bpmnElement="SequenceFlow_1xjl1oj">
+        <di:waypoint x="470" y="120" />
+        <di:waypoint x="516" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="373" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0khqnmm_di" bpmnElement="SequenceFlow_0khqnmm">
+        <di:waypoint x="193" y="120" />
+        <di:waypoint x="237" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="50" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="157" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="10" y="138" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0qrnrfc_di" bpmnElement="ServiceTaskRetrievePayment">
+        <dc:Bounds x="370" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_026x4p7_di" bpmnElement="ServiceTaskFetchGoods">
+        <dc:Bounds x="516" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1hyum3r_di" bpmnElement="ServiceTaskShipGoods">
+        <dc:Bounds x="658" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_02dgehc_di" bpmnElement="EndEvent_02dgehc">
+        <dc:Bounds x="802" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="700" y="142" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_08g9u5d_di" bpmnElement="ServiceTaskSaveOrder">
+        <dc:Bounds x="237" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -2,6 +2,8 @@
 
 This folder contains services that connect via REST. Currently, this is reduced to showcasing resilience patterns.
 
+A good background read is this InfoWorld article [3 common pitfalls of microservices integration—and how to avoid them](https://www.infoworld.com/article/3254777/application-development/3-common-pitfalls-of-microservices-integrationand-how-to-avoid-them.html)
+
 # Sample service demonstrating stateful resilience patterns in a REST environment
 
 This sample REST (micro-)service effects payments in response to a PUT call. It requires an upstream REST service that charges credit cards.

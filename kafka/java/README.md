@@ -51,7 +51,7 @@ cd docker-compose
 docker-compose -f docker-compose-kafka-java-order-camunda.yml up
 ```
 
-* After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
+* After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8089)
 * You can place an order via [http://localhost:8091](http://localhost:8091)
 * You can inspect insides of Order via [http://localhost:8092](http://localhost:8092)
 * You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)
@@ -78,7 +78,7 @@ docker-compose build
 docker-compose up
 ```
 
-* After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8099)
+* After everything has started up you are ready to visit the overview page [http://localhost:8099](http://localhost:8089)
 * You can place an order via [http://localhost:8091](http://localhost:8091)
 * You can inspect insides of Order via [http://localhost:8092](http://localhost:8092)
 * You can inspect insides of Payment via [http://localhost:8093](http://localhost:8093)

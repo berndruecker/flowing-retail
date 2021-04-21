@@ -1,14 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>io.flowing.retail</groupId>
 	<artifactId>flowing-retail-zeebe-inventory</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<properties>
-		<maven.compiler.release>8</maven.compiler.release>
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-		<zeebe.version>0.22.1</zeebe.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<spring.boot.version>2.3.4.RELEASE</spring.boot.version>
+		<spring.zeebe.version>1.0.0-alpha5</spring.zeebe.version>
 	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -26,9 +30,9 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.zeebe</groupId>
-			<artifactId>zeebe-client-java</artifactId>
-			<version>${zeebe.version}</version>
+			<groupId>io.zeebe.spring</groupId>
+			<artifactId>spring-zeebe-starter</artifactId>
+			<version>${spring.zeebe.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

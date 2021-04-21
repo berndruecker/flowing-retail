@@ -1,18 +1,16 @@
 # Flowing Retail / Zeebe
 
-This folder contains services that leverage the horizontally scalable workflow engine Zeebe for work distribution and as means of communication.
+This folder contains services that leverage the horizontally scalable workflow engine Zeebe within Camunda Cloud for work distribution and as means of communication.
 
-One important aspect of this design is that Zeebe is used as central middleware. By doing this, you don't need any other messaging system like Apache Kafka or RabbitMQ. This might feel unusual for you - but we know of a number of projects taking this approach, for various reasons. We discuss the differences of the alternatives below.
+One important aspect of this design is that the workflow engine is used as central middleware. By doing this, you don't need any other messaging system like Apache Kafka or RabbitMQ. This might feel unusual for you - but we know of a number of projects taking this approach, for various reasons. We discuss the differences of the alternatives below.
 
-In order to use Zeebe as orchestrator, a workflow model describing the orchestration is deployed from the order service to the broker. The services then subscribe to work items of that workflow. Zeebe publishes the work and streams it to the corresponding clients:
+In order to use the workflow engine as orchestrator, a workflow model describing the orchestration is deployed from the order service to the broker. The services then subscribe to work items of that workflow. The workflow engine publishes the work and streams it to the corresponding clients:
 
 ![Example](../docs/zeebe-example.png)
 
-Note that the workflow model is owned by the Order Service and deployed from there to the broker automatically, during startup of the service. The broker then versions it and runs it.
+Note that the workflow model is owned by the Order service and deployed from there to the broker automatically, during startup of the service. The broker then versions it and runs it.
 
-Now Zeebe is the only common denominator. For every service you can decide for **programming language**.
-
-![Microservices](../docs/zeebe-services.png)
+The workflow engine is the only common denominator. For every service you can decide the **programming language** you want to use.
 
 You find the variations in the sub folders. 
 
@@ -21,41 +19,38 @@ You find the variations in the sub folders.
 
 ## Run on Camunda Cloud
 
-[Camunda Cloud](https://camunda.io) provides a hosted version of Zeebe for you. After sign up you can easily spin up your Zeebe cluster as described here.
+[Camunda Cloud](https://camunda.io) provides a hosted version of Zeebe for you. After sign up you can easily spin up a workflow engine cluster [as described here](https://docs.camunda.io/docs/guides/).
 
-In order to run this example on the Cloud you simply have to configure the Zeebe cient correctly, e.g.: 
+Then you have to configure the cloud credentials and start the microservices.
 
-* For Nodejs
+### Java 
 
-You can cut and paste the environment variable block from the [Camunda Cloud console](https://camunda.io) to set the configuration through the environment.
-
-* For Java
+In Java the [Spring Zeebe](https://github.com/zeebe-io/spring-zeebe/) integration is used to configure and manage the client, so you configure it via the `application.properties` in all services, for example:
 
 ```
-@Configuration
-public class ZeebeClientConfiguration {
-  
-  @Bean
-  public ZeebeClient zeebe() {
-    final String clusterUUID = "34b386b1-9bc7-4009-8e50-416124a28922";
-    final String baseUrl = "zeebe.camunda.io";
-    final String clientId = "tjYd6oErFeLqIYNdkRX4cG1BKjWpPz8m";
-    final String clientSecret = "_VO8wOg17xzzOWB6a6a_Y7JgXs6YjZhFBeYCHqEehZQYs1xjA4xJLNautxlsfSlw";
-    final String authUrl = "https://login.cloud.camunda.io/oauth/token";
-
-    final String broker = clusterUUID + "." + baseUrl + ":443";
-
-    final OAuthCredentialsProviderBuilder c = new OAuthCredentialsProviderBuilder();
-    final OAuthCredentialsProvider cred = c.audience(clusterUUID + "." + baseUrl).clientId(clientId)
-        .clientSecret(clientSecret).authorizationServerUrl(authUrl).build();
-
-    final ZeebeClientBuilder clientBuilder = ZeebeClient.newClientBuilder().brokerContactPoint(broker)
-        .credentialsProvider(cred);
-
-    return clientBuilder.build();
-  }
-}
+zeebe.client.cloud.clusterId=210b559d-717f-4570-90e8-93c0c5922967
+zeebe.client.cloud.clientId=vqbR4rET8RurfXmv1455FXHsR4hzIIRG
+zeebe.client.cloud.clientSecret=-2lT24YnOzOD9EmojR_p3eClYux12efjwqnudesdGkMEHBrACD9FWe-cxwbRo7VW
 ```
+
+Now start the different microservices components using Spring Boot one by one (make sure you are in the `java` directory):
+
+```
+mvn -f checkout exec:java
+mvn -f inventory exec:java
+...
+```
+
+Now you can simulate a new order by a PUT request
+
+```
+curl -X PUT http://localhost:8090/api/cart/order?customerId="0815"
+```
+
+### For Nodejs
+
+You can cut and paste the environment variable block from the [Camunda Cloud console](https://camunda.io) to set the configuration through environment variables.
+
 
 ## Does Zeebe complement or replace middleware?
 

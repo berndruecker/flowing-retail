@@ -4,11 +4,14 @@
 	<groupId>io.flowing.retail</groupId>
 	<artifactId>flowing-retail-zeebe-checkout</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<properties>
-		<maven.compiler.release>8</maven.compiler.release>
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-		<zeebe.version>0.22.1</zeebe.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<spring.boot.version>2.3.4.RELEASE</spring.boot.version>
+		<spring.zeebe.version>1.0.0-alpha5</spring.zeebe.version>
 	</properties>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -26,9 +29,9 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.zeebe</groupId>
-			<artifactId>zeebe-client-java</artifactId>
-			<version>${zeebe.version}</version>
+			<groupId>io.zeebe.spring</groupId>
+			<artifactId>spring-zeebe-starter</artifactId>
+			<version>${spring.zeebe.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish</groupId>
