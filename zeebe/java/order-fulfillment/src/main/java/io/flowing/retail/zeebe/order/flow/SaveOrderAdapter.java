@@ -1,21 +1,12 @@
 package io.flowing.retail.zeebe.order.flow;
 
-import java.time.Duration;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import io.zeebe.spring.client.annotation.ZeebeWorker;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.zeebe.client.api.worker.JobClient;
+import io.camunda.zeebe.spring.client.annotation.ZeebeWorker;
 import io.flowing.retail.zeebe.order.domain.Order;
 import io.flowing.retail.zeebe.order.persistence.OrderRepository;
-import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.worker.JobClient;
-import io.zeebe.client.api.worker.JobHandler;
-import io.zeebe.client.api.worker.JobWorker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 @Component

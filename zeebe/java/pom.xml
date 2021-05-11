@@ -9,7 +9,7 @@
 
 	<modules>
 		<module>checkout</module>
-		<module>order</module>
+		<module>order-fulfillment</module>
 		<module>payment</module>
 		<module>inventory</module>
 		<module>shipping</module>

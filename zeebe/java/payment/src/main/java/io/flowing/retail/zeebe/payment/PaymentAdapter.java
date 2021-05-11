@@ -1,20 +1,11 @@
 package io.flowing.retail.zeebe.payment;
 
-import java.time.Duration;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import io.zeebe.spring.client.annotation.ZeebeWorker;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.zeebe.client.api.worker.JobClient;
+import io.camunda.zeebe.spring.client.annotation.ZeebeWorker;
 import org.springframework.stereotype.Component;
 
-import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.worker.JobClient;
-import io.zeebe.client.api.worker.JobHandler;
-import io.zeebe.client.api.worker.JobWorker;
+import java.util.Map;
 
 @Component
 public class PaymentAdapter {

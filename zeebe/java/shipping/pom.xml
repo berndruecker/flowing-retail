@@ -8,7 +8,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring.boot.version>2.3.4.RELEASE</spring.boot.version>
-		<spring.zeebe.version>1.0.0-alpha5</spring.zeebe.version>
+		<zeebe.version>1.0.0-rc3</zeebe.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -27,9 +27,9 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.zeebe.spring</groupId>
-			<artifactId>spring-zeebe-starter</artifactId>
-			<version>${spring.zeebe.version}</version>
+		    <groupId>io.camunda</groupId>
+		    <artifactId>spring-zeebe-starter</artifactId>
+		    <version>${zeebe.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
