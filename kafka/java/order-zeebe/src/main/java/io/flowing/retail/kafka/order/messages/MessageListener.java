@@ -21,7 +21,7 @@ import io.flowing.retail.kafka.order.flow.payload.GoodsFetchedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.GoodsShippedEventPayload;
 import io.flowing.retail.kafka.order.flow.payload.PaymentReceivedEventPayload;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;
-import io.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.ZeebeClient;
 
 @Component
 @EnableBinding(Sink.class)

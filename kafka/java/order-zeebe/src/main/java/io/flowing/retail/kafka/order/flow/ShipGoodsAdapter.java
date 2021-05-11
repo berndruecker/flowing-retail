@@ -7,7 +7,7 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import io.zeebe.spring.client.annotation.ZeebeWorker;
+import io.camunda.zeebe.spring.client.annotation.ZeebeWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +16,11 @@ import io.flowing.retail.kafka.order.flow.payload.ShipGoodsCommandPayload;
 import io.flowing.retail.kafka.order.messages.Message;
 import io.flowing.retail.kafka.order.messages.MessageSender;
 import io.flowing.retail.kafka.order.persistence.OrderRepository;
-import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.worker.JobClient;
-import io.zeebe.client.api.worker.JobHandler;
-import io.zeebe.client.api.worker.JobWorker;
+import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.zeebe.client.api.worker.JobClient;
+import io.camunda.zeebe.client.api.worker.JobHandler;
+import io.camunda.zeebe.client.api.worker.JobWorker;
 
 @Component
 public class ShipGoodsAdapter {

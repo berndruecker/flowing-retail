@@ -10,7 +10,7 @@
 		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
 		<spring-cloud-stream.version>Horsham.RELEASE</spring-cloud-stream.version>
 
-		<spring.zeebe.version>1.0.0-alpha5</spring.zeebe.version>
+		<zeebe.version>1.0.0-rc3</zeebe.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -54,9 +54,9 @@
 			<artifactId>spring-boot-starter-json</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.zeebe.spring</groupId>
-			<artifactId>spring-zeebe-starter</artifactId>
-			<version>${spring.zeebe.version}</version>
+		    <groupId>io.camunda</groupId>
+		    <artifactId>spring-zeebe-starter</artifactId>
+		    <version>${zeebe.version}</version>
 		</dependency>
 		
 		<!-- Persistence for order entity itself -->
