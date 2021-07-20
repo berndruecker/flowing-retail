@@ -42,7 +42,7 @@ curl \
 -H "Content-Type: application/json" \
 -X PUT \
 -d '{}' \
-http://localhost:8100/api/payment/v1
+http://localhost:8100/payment/v1
 ```
 
 
