@@ -99,7 +99,7 @@ services:
       - "8099:80"
 
   zeebe:
-    image: camunda/zeebe:0.22.1
+    image: camunda/zeebe:1.2.1
     hostname: zeebe
     networks:
       - flowing
@@ -120,7 +120,7 @@ services:
       - flowing 
       
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
     ports:
       - "9200:9200"
     environment:

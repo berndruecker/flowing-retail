@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableZeebeClient
-@ZeebeDeployment(classPathResources = "order-kafka.bpmn")
+@ZeebeDeployment(resources = "classpath:order-kafka.bpmn")
 public class OrderFulfillmentApplication {
   
   public static void main(String[] args) throws Exception {

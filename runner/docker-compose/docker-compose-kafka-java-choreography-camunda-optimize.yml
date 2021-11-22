@@ -89,7 +89,7 @@ services:
 
   ### Optimize Process Events Monitoring
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.1
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
     networks:
       - flowing
     environment:
@@ -103,7 +103,7 @@ services:
     mem_limit: 2g
 
   cambpm:
-    image: registry.camunda.cloud/camunda-bpm-platform-ee:7.12.1
+    image: registry.camunda.cloud/camunda-bpm-platform-ee:7.16.0
     networks:
       - flowing
     environment:
@@ -114,7 +114,7 @@ services:
     mem_limit: 1g
 
   optimize:
-    image: registry.camunda.cloud/optimize:3.0.0
+    image: registry.camunda.cloud/optimize-ee/optimize:3.6.0
     networks:
       - flowing
     environment:

@@ -6,37 +6,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<maven.compiler.release>8</maven.compiler.release>
-
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-		<spring-cloud-stream.version>Horsham.RELEASE</spring-cloud-stream.version>
-
-		<zeebe.version>1.0.0-rc3</zeebe.version>
+		<spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+		<spring-cloud-stream.version>3.0.13.RELEASE</spring-cloud-stream.version>
+		<zeebe.version>1.2.1</zeebe.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
- 
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>${spring-cloud-stream.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
+			<version>${spring-cloud-stream.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -45,13 +23,10 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
 			<!-- required to add JSR310 time formats for Jackson to ObjectMapper -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
+			<version>${spring.boot.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>io.camunda</groupId>
@@ -63,10 +38,23 @@
   		<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>${spring.boot.version}</version>
         </dependency>
+		<!-- API & Runtime, java.xml.bind module -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>2.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.2</version>
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<version>1.4.200</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -81,6 +69,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring.boot.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -96,13 +85,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>zeebe-alphas</id>
-			<url>https://app.camunda.com/nexus/content/repositories/zeebe-io/</url>
-			<snapshots>
-	            <enabled>true</enabled>
-	        </snapshots>			
-		</repository>
-	</repositories>
 </project>
