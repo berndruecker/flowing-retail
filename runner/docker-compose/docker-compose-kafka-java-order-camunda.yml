@@ -56,7 +56,7 @@ services:
     networks:
       - flowing
     ports:
-      - "8093:8094"
+      - "8093:8093"
     depends_on:
       - kafka
     environment:
