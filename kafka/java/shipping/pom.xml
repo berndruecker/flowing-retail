@@ -6,42 +6,20 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<maven.compiler.release>8</maven.compiler.release>
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-		<spring-cloud-stream.version>Horsham.RELEASE</spring-cloud-stream.version>
+		<spring.boot.version>2.6.7</spring.boot.version>
+		<spring.kafka.version>2.8.5</spring.kafka.version>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring.boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-stream-dependencies</artifactId>
-				<version>${spring-cloud-stream.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-web</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<!-- required to add JSR310 time formats for Jackson to ObjectMapper -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+			<version>${spring.kafka.version}</version>
 		</dependency>
 	</dependencies>
     <build>
