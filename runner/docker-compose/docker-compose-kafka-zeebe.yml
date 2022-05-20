@@ -1,0 +1,106 @@
+version: "2"
+
+services:
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:latest"
+    hostname: zookeeper
+    networks:
+      - flowing
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: "confluentinc/cp-kafka:latest"
+    hostname: kafka
+    networks:
+      - flowing
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  docs:
+    image: flowingretail/docs
+    networks:
+      - flowing
+    ports:
+      - "8099:80"
+
+  zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.0.2}
+    container_name: zeebe
+    ports:
+      - "26500:26500"
+      - "9600:9600"
+    environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
+      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+      # allow running with low disk space
+      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
+      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+    restart: always
+    volumes:
+      - zeebe:/usr/local/zeebe/data
+    networks:
+      - flowing
+    depends_on:
+      - elasticsearch
+
+  operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.0.2}
+    container_name: operate
+    ports:
+      - "8081:8080"
+    environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
+      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
+      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - flowing
+    depends_on:
+      - zeebe
+      - elasticsearch
+
+  elasticsearch: # https://hub.docker.com/_/elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.0}
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      # allow running with low disk space
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cat/health | grep -q green" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+    networks:
+      - flowing
+
+volumes:
+  zeebe:
+  elastic:
+
+networks:
+  flowing:
+    driver: bridge
