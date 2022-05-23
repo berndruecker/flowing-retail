@@ -24,7 +24,7 @@ public class ShipGoodsAdapter {
   @Autowired
   private OrderRepository orderRepository;  
 
-  @ZeebeWorker(type = "ship-goods")
+  @ZeebeWorker(type = "ship-goods", autoComplete = true)
   public Map<String, String> handle(ActivatedJob job) {
     OrderFlowContext context = OrderFlowContext.fromMap(job.getVariablesAsMap());
     Order order = orderRepository.findById(context.getOrderId()).get(); 
