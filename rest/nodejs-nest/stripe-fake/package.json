@@ -22,7 +22,7 @@
   "dependencies": {
     "@nestjs/common": "^6.7.2",
     "@nestjs/core": "^6.7.2",
-    "@nestjs/platform-express": "^6.7.2",
+    "@nestjs/platform-express": "^9.2.1",
     "keypress": "^0.2.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
