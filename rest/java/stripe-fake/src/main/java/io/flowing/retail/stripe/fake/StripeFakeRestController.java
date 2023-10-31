@@ -30,6 +30,7 @@ public class StripeFakeRestController {
     long waitTimeMillis = 0;
     if (slow) {
       waitTimeMillis = Math.round( Math.random() * 60 * 1000 ); // up to 60 seconds
+      waitTimeMillis = 5 * 1000; // 5 seconds - enough to trigger timeouts, not yet too annoying
     }
 
     if (Math.random() > 0.8d) {

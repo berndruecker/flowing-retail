@@ -12,9 +12,54 @@ This sample REST (micro-)service effects payments in response to a PUT call. It 
 
 This simple call-chain is perfect for demonstrating important resilience patterns.
 
-The following technology choices are available for the code demos:
+The following technologies are used:
 
-* [**Java**](java/payment) + Spring, Hystrix, Camunda
+* Java 17
+* Spring Boot 3.1.x
+* Resilience4j 2.1
+* Camunda 8.x
+
+# How-to run
+
+First you have to startup the "[Stripe Fake Server](java/stripe-fake)", as this handles the credit card payments:
+
+```
+mvn -f java/stripe-fake/ exec:java
+```
+
+Now you can run the [Payment Service](java/payment/) itself:
+
+```
+mvn -f java/payment/ exec:java
+```
+
+Now the different versions of the payment service are available:
+
+* http://localhost:8100/api/payment/v1
+* ...
+* http://localhost:8100/api/payment/v6
+
+You now can issue a PUT with an empty body:
+
+```
+curl \
+-H "Content-Type: application/json" \
+-X PUT \
+-d '{}' \
+http://localhost:8100/api/payment/v1
+```
+
+
+## Using Camunda 
+
+All examples from version 3 and above use Camunda as a workflow engine, so you need a Camunda instance to run those. The easiest way to play around is to get a test account in the [Camunda SaaS offering](https://camunda.io/), [create a cluster and API credentials](https://docs.camunda.io/docs/next/guides/orchestrate-microservices/#create-a-cluster) and add them to the [application.properties](java/payment/src/main/resources/application.properties).
+
+
+
+
+
+
+
 
 
 # Storyline
@@ -25,15 +70,20 @@ Let's assume a scenario where the upstream credit card service still responds, b
 
 ![V1](../docs/resilience-patterns/v1.png)
 
-* Java: [PaymentRestHacksControllerV1.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java)
+* Java: [PaymentRestHacksControllerV1.java](java/payment/src/main/java/io/flowing/retail/payment/rest/PaymentRestHacksControllerV1.java)
 
 ## Fail fast
 
-A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Netflix Hystrix](https://github.com/Netflix/Hystrix) (_and [Polly](https://github.com/App-vNext/Polly) for C# / [Brakes](https://github.com/awolden/brakes) for Node.js, which provide equivalent functionality_). If a service responds too slowly, the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (meaning: we cannot charge credit cards).
+A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker**](https://martinfowler.com/bliki/CircuitBreaker.html). In this example I use [Resilience4J](https://resilience4j.readme.io/). If a service responds too slowly, the circuit breaker interrupts and the payment service gets a failure right away. This way you make sure the overall system is still responding, even if functionality degrades (meaning: we cannot charge credit cards).
 
 ![V2](../docs/resilience-patterns/v2.png)
 
-* Java: [PaymentRestHacksControllerV2.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV2.java#L41)
+* Java: [PaymentRestHacksControllerV2.java](java/payment/src/main/java/io/flowing/retail/payment/rest/PaymentRestHacksControllerV2.java#L24)
+
+There is also an extended version adding some stateless retrying to the mix also using Resilience4J. This can be usefuly to mitigate problems with a flaky network:
+
+* Java: [PaymentRestHacksControllerV2.java](java/payment/src/main/java/io/flowing/retail/payment/rest/PaymentRestHacksControllerV2b.java#L27)
+
 
 
 ## Fail fast is not enough
@@ -42,11 +92,9 @@ Failing fast is good, but it is not enough. Frequently, a retry after the credit
 
 ![V3](../docs/resilience-patterns/v3.png)
 
-In the example, I use the [Camunda workflow engine](http://camunda.com/) (or Zeebe in [Camunda Cloud](https://camunda.io)) to do the stateful retry reliably.
+In the example, I use the [Camunda workflow engine](http://camunda.com/) to do the stateful retry reliably.
 
-* Java
-    * [PaymentRestHacksControllerV3.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV3.java#L45)
-    * The workflow is created by Java DSL
+* Java: [PaymentRestHacksControllerV3.java](java/payment/src/main/java/io/flowing/retail/payment/rest/PaymentRestHacksControllerV3.java)
 
 ## Keep synchronous responses
 
@@ -58,9 +106,7 @@ HTTP supports this via return codes: `200 OK` means "_all OK_", `202 ACCEPTED` m
 
 ![Sync vs. async](../docs/resilience-patterns/syncAsync.png)
 
-* Java
-    * [PaymentRestHacksControllerV4.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV4.java#L83)
-    * The workflow is created by Java DSL
+* Java: [PaymentRestHacksControllerV4.java](java/payment/src/main/java/io/flowing/retail/payment/rest/PaymentRestHacksControllerV4.java)
 
 
 ## Asynchronous work distribution without messaging
@@ -85,31 +131,3 @@ The last part of the example adds compensation to the game. In distributed syste
 
 See [payment6.bpmn / Java](java/payment/src/main/resources/payment6.bpmn) and [PaymentV6.bpmn / C#](csharp/payment/Models/PaymentV6.bpmn) for the workflow
 
-# How-to run
-
-You have to startup both services:
-* Stripe Fake Server
-* Payment Service
-
-This varies:
-* [How to run in Java](java/payment-camunda/README.md)
-
-Now the different versions of the payment service are available:
-
-* http://localhost:8100/api/payment/v1
-* ...
-* http://localhost:8100/api/payment/v6
-
-You now can issue a PUT with an empty body:
-
-```
-curl \
--H "Content-Type: application/json" \
--X PUT \
--d '{}' \
-http://localhost:8100/api/payment/v1
-```
-
-## Using Camunda 8 SaaS
-
-You can get a free trial instance of Zeebe in Camunda 8 SaaS at [https://camunda.io](https://camunda.io).
