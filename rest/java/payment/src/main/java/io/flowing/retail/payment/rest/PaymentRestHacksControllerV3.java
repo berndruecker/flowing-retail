@@ -3,85 +3,66 @@ package io.flowing.retail.payment.rest;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.servlet.http.HttpServletResponse;
-
+import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.model.bpmn.Bpmn;
+import io.camunda.zeebe.model.bpmn.BpmnModelInstance;
+import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.zeebe.spring.client.annotation.Variable;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
 
-import io.zeebe.client.ZeebeClient;
-import io.zeebe.client.api.response.ActivatedJob;
-import io.zeebe.client.api.worker.JobClient;
-import io.zeebe.client.api.worker.JobHandler;
-import io.zeebe.client.api.worker.JobWorker;
-import io.zeebe.model.bpmn.Bpmn;
-import io.zeebe.model.bpmn.BpmnModelInstance;
 
 /**
- * Step3: Use Zeebe state machine for long-running retry
+ * Step3: Use Zeebe workflow engine for long-running retry
  */
 @RestController
 public class PaymentRestHacksControllerV3 {
 
   @Autowired
   private ZeebeClient zeebe;
-  
-  @Autowired
-  private ChargeCreditCardHandler handler;
-
-  private JobWorker worker;
 
   @PostConstruct
   public void createFlowDefinition() {
     BpmnModelInstance flow = Bpmn.createExecutableProcess("paymentV3") //
         .startEvent() //
-        .serviceTask("stripe").zeebeTaskType("charge-creditcard-v3") //
-          .zeebeTaskRetries(2) //        
+        .serviceTask("stripe").zeebeJobType("charge-creditcard-v3") //
+          .zeebeJobRetries("2") //
         .endEvent().done();
     
-    zeebe.newDeployCommand() // 
-      .addWorkflowModel(flow, "payment.bpmn") //
-      .send().join();
-
-    worker = zeebe.newWorker()
-        .jobType("charge-creditcard-v3") // 
-        .handler(handler) // 
-        .open();  
+    zeebe.newDeployResourceCommand() //
+        .addProcessModel(flow, "payment.bpmn") //
+        .send().join();
   }
   
   @Component
-  public static class ChargeCreditCardHandler implements JobHandler {
+  public static class ChargeCreditCardHandler  {
 
     @Autowired
     private RestTemplate rest;
     private String stripeChargeUrl = "http://localhost:8099/charge";
 
-    @Override
-	public void handle(JobClient client, ActivatedJob job) throws Exception {
+    @JobWorker(type = "charge-creditcard-v3")
+    @CircuitBreaker(name = "creditcard")
+	public Map<String, String> handleJob(@Variable int amount) throws Exception {
       CreateChargeRequest request = new CreateChargeRequest();
-      request.amount = (int) job.getVariablesAsMap().get("amount");
+      request.amount = amount;
 
-      CreateChargeResponse response = new HystrixCommand<CreateChargeResponse>(HystrixCommandGroupKey.Factory.asKey("stripe")) {
-        protected CreateChargeResponse run() throws Exception {
-            return rest.postForObject( //
+      CreateChargeResponse response = rest.postForObject( //
               stripeChargeUrl, //
               request, //
               CreateChargeResponse.class);
-        }
-      }.execute();
-      
-      client.newCompleteCommand(job.getKey()) //
-        .variables(Collections.singletonMap("paymentTransactionId", response.transactionId))
-        .send().join();
+
+      return Collections.singletonMap("paymentTransactionId", response.transactionId);
     }
 
   }
@@ -112,11 +93,6 @@ public class PaymentRestHacksControllerV3 {
 
   public static class CreateChargeResponse {
     public String transactionId;
-  }
-
-  @PreDestroy
-  public void closeSubscription() {
-    worker.close();
   }
 
 }

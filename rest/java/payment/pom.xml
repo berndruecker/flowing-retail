@@ -5,10 +5,11 @@
 	<artifactId>flowing-retail-rest-payment-zeebe</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<maven.compiler.release>8</maven.compiler.release>
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
+		<maven.compiler.release>17</maven.compiler.release>
+		<spring.boot.version>3.1.5</spring.boot.version>
+		<resilience4j.version>2.1.0</resilience4j.version>
 
-		<zeebe.version>0.22.1</zeebe.version>
+		<camunda.client.version>8.3.1</camunda.client.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -19,25 +20,55 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>io.github.resilience4j</groupId>
+				<artifactId>resilience4j-bom</artifactId>
+				<version>${resilience4j.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.zeebe</groupId>
-			<artifactId>zeebe-client-java</artifactId>
-			<version>${zeebe.version}</version>
+			<groupId>io.camunda.spring</groupId>
+			<artifactId>spring-boot-starter-camunda</artifactId>
+			<version>${camunda.client.version}</version>
 		</dependency>
-		
+
 		<dependency>
-			<groupId>io.zeebe</groupId>
+			<groupId>io.camunda</groupId>
 			<artifactId>zeebe-bpmn-model</artifactId>
-			<version>${zeebe.version}</version>
+			<version>${camunda.client.version}</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-spring-boot3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-reactor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-all</artifactId>
+		</dependency>
+
+		<!--
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -51,7 +82,8 @@
 			<groupId>com.netflix.hystrix</groupId>
 			<artifactId>hystrix-core</artifactId>
 			<version>1.5.12</version>
-		</dependency>	
+		</dependency>
+		-->
 	</dependencies>
 
 	<repositories>

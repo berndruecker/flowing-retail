@@ -4,8 +4,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +20,7 @@ public class PaymentRestHacksControllerV1 {
   private String stripeChargeUrl = "http://localhost:8099/charge";
   
   @RequestMapping(path = "/api/payment/v1", method = PUT)
-  public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
+  public String retrievePayment(String retrievePaymentPayload) throws Exception {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload
     long amount = 15; // get somehow from retrievePaymentPayload
