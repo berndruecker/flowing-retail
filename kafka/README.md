@@ -11,8 +11,7 @@ The nice thing about this architecture is, that Kafka is the only common denomin
 
 You find the variations in the sub folders. Note that I do not yet have implemented all possible combinations. So you might want to start with:
 
-* [Java and Camunda BPM 7](java/)
-* [Java and Zeebe](java/)
+* [Java and Camunda 8](java/)
 
 
 ## Concrete technologies/frameworks:
@@ -25,7 +24,7 @@ You find the variations in the sub folders. Note that I do not yet have implemen
 
 And of course
 * Apache Kafka
-* Camunda or Zeebe
+* Camunda 8 (aka Zeebe)
 
 ## Communication of services
 

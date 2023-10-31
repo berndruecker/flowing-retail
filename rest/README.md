@@ -15,12 +15,6 @@ This simple call-chain is perfect for demonstrating important resilience pattern
 The following technology choices are available for the code demos:
 
 * [**Java**](java/payment) + Spring, Hystrix, Camunda
-* [**C#**](csharp/payment) + Polly, Camunda
-* [**Node.js**](nodejs/payment) + [Brakes](https://github.com/awolden/brakes), Zeebe on Camunda Cloud
-
-There is a stripped-down version available for:
-
-* [**GoLang**](go/payment-zeebe), Zeebe
 
 
 # Storyline
@@ -32,8 +26,6 @@ Let's assume a scenario where the upstream credit card service still responds, b
 ![V1](../docs/resilience-patterns/v1.png)
 
 * Java: [PaymentRestHacksControllerV1.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV1.java)
-* C#: [PaymentControllerV1](csharp/payment/Controllers/PaymentController.cs#L16)
-* Node.js: [controller-v1.ts](nodejs/payment-zeebe/routes/controller-v1.ts)
 
 ## Fail fast
 
@@ -42,8 +34,6 @@ A simple mitigation is to apply a **fail fast** pattern like [**circuit breaker*
 ![V2](../docs/resilience-patterns/v2.png)
 
 * Java: [PaymentRestHacksControllerV2.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV2.java#L41)
-* C#: [PaymentControllerV2](csharp/payment/Controllers/PaymentController.cs#L74)
-* Node.js: [controller-v2.ts](nodejs/payment-zeebe/routes/controller-v2.ts#13)
 
 
 ## Fail fast is not enough
@@ -57,12 +47,6 @@ In the example, I use the [Camunda workflow engine](http://camunda.com/) (or Zee
 * Java
     * [PaymentRestHacksControllerV3.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV3.java#L45)
     * The workflow is created by Java DSL
-* C#
-    * [PaymentControllerV3](csharp/payment/Controllers/PaymentController.cs#L110)
-    * [PaymentV3.bpmn](csharp/payment/Models/PaymentV3.bpmn)
-* Node.js
-    * [controller-v3.ts](nodejs/payment-zeebe/routes/controller-v3.ts#25)
-    * [paymentV3.bpmn](nodejs/payment-zeebe/bpmn/paymentV3.bpmn)
 
 ## Keep synchronous responses
 
@@ -77,12 +61,6 @@ HTTP supports this via return codes: `200 OK` means "_all OK_", `202 ACCEPTED` m
 * Java
     * [PaymentRestHacksControllerV4.java](java/payment/src/main/java/io/flowing/retail/payment/port/resthacks/PaymentRestHacksControllerV4.java#L83)
     * The workflow is created by Java DSL
-* C#
-    * [PaymentControllerV4](csharp/payment/Controllers/PaymentController.cs#L159).
-    * [PaymentV4.bpmn](csharp/payment/Models/PaymentV4.bpmn)
-* Nodejs
-    * [controller-v4.ts](nodejs/payment-zeebe/routes/controller-v3.ts#25)
-    * [paymentV4.bpmn](nodejs/payment-zeebe/bpmn/paymentV3.bpmn)
 
 
 ## Asynchronous work distribution without messaging
@@ -97,9 +75,6 @@ This example shows a successful approach taken by many customers: using the work
     * Workflow model: [payment5.bpmn](java/payment/src/main/resources/payment5.bpmn) (hint: use the free [Camunda Modeler](https://camunda.com/download/modeler/) to show this model graphically)
     * Worker Node.js: [index.js](java/payment/node-customer-credit-worker/index.js)
     * Worker in Java (alternative): [CustomerCreditWorker.java](java/payment/src/main/java/io/flowing/retail/payment/worker/CustomerCreditWorker.java)
-* C# (skipped V5 and directly implemented V6)
-    * Workflow model:[PaymentV6.bpmn](csharp/payment/Models/PaymentV6.bpmn)
-    * [PaymentControllerV6](csharp/payment/Controllers/PaymentController.cs#L74)
 
 
 ## Business transactions using compensation
@@ -118,8 +93,6 @@ You have to startup both services:
 
 This varies:
 * [How to run in Java](java/payment-camunda/README.md)
-* [How to run in .NET](csharp/payment/README.md)
-* [How to run in Node.js](nodejs/payment-zeebe/README.md)
 
 Now the different versions of the payment service are available:
 
@@ -137,16 +110,6 @@ curl \
 http://localhost:8100/api/payment/v1
 ```
 
-## Hint on using Camunda Enterprise Edition
+## Using Camunda 8 SaaS
 
-For Camunda there is an enterprise edition available with [https://camunda.com/products/cockpit/#/features](additional features in Cockpit) (the monitoring tool). It is quite handy to use this when playing around with the example. You can easily switch to use enterprise edition:
-
-* Get a trial license if you don't have a license yet: https://camunda.com/download/enterprise/
-* Java: Adjust Camunda version used in pom: [./pom.xml#L12](./pom.xml#L12), [./pom.xml#L50](./pom.xml#L50)
-* .NET: Download the Camunda enterprise version
-
-Note that you do not need the enterprise edition to run the examples, the community edition will also do fine. But because of less features you do not see historical workflow instances - and that means you do not see that much in Camunda Cockpit if everything runs smoothly.
-
-## Using Camunda Cloud
-
-You can get a free hosted instance of Zeebe in Camunda Cloud at [https://camunda.io](https://camunda.io).
+You can get a free trial instance of Zeebe in Camunda 8 SaaS at [https://camunda.io](https://camunda.io).

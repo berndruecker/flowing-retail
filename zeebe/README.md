@@ -15,11 +15,10 @@ The workflow engine is the only common denominator. For every service you can de
 You find the variations in the sub folders. 
 
 * [Java](java/)
-* [Node.js](nodejs/)
 
-## Run on Camunda Cloud
+## Run on Camunda 8
 
-[Camunda Cloud](https://camunda.io) provides a hosted version of Zeebe for you. After sign up you can easily spin up a workflow engine cluster [as described here](https://docs.camunda.io/docs/guides/).
+[Camunda 8](https://camunda.io) provides a hosted version of Zeebe for you. After sign up you can easily spin up a workflow engine cluster [as described here](https://docs.camunda.io/docs/guides/).
 
 Then you have to configure the cloud credentials and start the microservices.
 
@@ -46,10 +45,6 @@ Now you can simulate a new order by a PUT request
 ```
 curl -X PUT http://localhost:8090/api/cart/order?customerId="0815"
 ```
-
-### For Nodejs
-
-You can cut and paste the environment variable block from the [Camunda Cloud console](https://camunda.io) to set the configuration through environment variables.
 
 
 ## Does Zeebe complement or replace middleware?

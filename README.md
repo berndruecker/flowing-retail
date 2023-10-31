@@ -27,14 +27,11 @@ The most fundamental choice is to select the **communication mechanism**:
 
 After the communication mechanism, the next choice is the **workflow engine**:
 
-* **Camunda Platform**
-* **Zeebe as managed service on Camunda Cloud**
+* **Camunda 8 (aka Zeebe)**
 
 and the **programming language**:
 
 * **Java**
-* **Go**
-* **JavaScript / TypeScript**
 
 ## Storyline
 
