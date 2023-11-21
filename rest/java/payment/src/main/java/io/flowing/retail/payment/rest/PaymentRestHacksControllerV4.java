@@ -65,7 +65,7 @@ public class PaymentRestHacksControllerV4 {
     private String stripeChargeUrl = "http://localhost:8099/charge";
 
     @JobWorker(type = "charge-creditcard-v4")
-    @CircuitBreaker(name = "CREDIT_CARD")
+    @CircuitBreaker(name = "creditcard")
 	public Map<String, String> handleJob(ActivatedJob job) throws Exception {
       CreateChargeRequest request = new CreateChargeRequest();
       request.amount = (int) job.getVariablesAsMap().get("amount");
@@ -81,7 +81,6 @@ public class PaymentRestHacksControllerV4 {
   }
 
   @RequestMapping(path = "/api/payment/v4", method = PUT)
-  @CircuitBreaker(name = "creditcard")
   public String retrievePayment(String retrievePaymentPayload, HttpServletResponse response) throws Exception {
     String traceId = UUID.randomUUID().toString();
     String customerId = "0815"; // get somehow from retrievePaymentPayload

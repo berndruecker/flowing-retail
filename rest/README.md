@@ -52,7 +52,7 @@ http://localhost:8100/api/payment/v1
 
 ## Using Camunda 
 
-All examples from version 3 and above use Camunda as a workflow engine, so you need a Camunda instance to run those. The easiest way to play around is to get a test account in the [Camunda SaaS offering](https://camunda.io/), [create a cluster and API credentials](https://docs.camunda.io/docs/next/guides/orchestrate-microservices/#create-a-cluster) and add them to the [application.properties](java/payment/src/main/resources/application.properties).
+All examples from version 3 and above use Camunda as a workflow engine, so you need a Camunda instance to run those. The easiest way to play around is to get a test account in the [Camunda SaaS offering](https://camunda.io/), [create a cluster and API credentials](https://docs.camunda.io/docs/next/guides/orchestrate-microservices/#create-a-cluster) and add them to the [application.properties](java/payment/src/main/resources/application.properties#L3-L6).
 
 
 
